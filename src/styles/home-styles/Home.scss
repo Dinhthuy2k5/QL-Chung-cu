@@ -1,0 +1,9 @@
+// src/styles/Home.scss
+
+.home-container {
+    display: flex;
+    // ✅ Đây là thuộc tính quan trọng nhất để tạo layout trái - giữa - phải
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 40px;
+}

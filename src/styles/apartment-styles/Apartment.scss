@@ -1,0 +1,68 @@
+// src/styles/Apartment.scss
+
+// Biến màu cho theme tối
+$dark-bg: #2c3038;
+$header-bg: #353a42;
+$border-color: #495057;
+$text-color: #e9ecef;
+$row-hover-bg: #3e444c;
+
+// Container cho cả bảng
+.apartment-table-container {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    margin: 20px 40px; // Thêm khoảng cách cho bảng
+    color: $text-color;
+}
+
+// Hàng tiêu đề của bảng
+.apartment-header-row {
+    display: flex;
+    background-color: $header-bg;
+    font-weight: bold;
+    border-bottom: 2px solid $border-color;
+
+    h4 {
+        flex: 1;
+        padding: 15px;
+        margin: 0;
+        font-size: 1rem;
+        text-align: left;
+        
+        &:not(:last-child) {
+            border-right: 1px solid $border-color;
+        }
+    }
+}
+
+// Phần thân bảng
+.apartment-table-body {
+    background-color: $dark-bg;
+
+    // Style cho mỗi hàng dữ liệu
+    .apartment-data-row {
+        display: flex;
+        border-bottom: 1px solid $border-color;
+        transition: background-color 0.2s ease;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: $row-hover-bg;
+        }
+
+        // Style cho mỗi ô dữ liệu
+        div {
+            flex: 1;
+            padding: 15px;
+            
+            &:not(:last-child) {
+                border-right: 1px solid $border-color;
+            }
+        }
+    }
+}

@@ -1,0 +1,86 @@
+// Container chính cho cả trang
+
+
+.page-container {
+  display: flex;
+  flex-direction: column; // Sắp xếp các mục theo chiều dọc (menu trên, bảng dưới)
+  align-items: center; // Căn giữa các mục theo chiều ngang
+  width: 100%;
+  max-width: 5000px;
+}
+
+// Container cho riêng phần menu 4 mục
+.resident-menu {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 0;
+  margin-bottom: 20px; // Tạo khoảng cách giữa menu và bảng
+
+  h4 {
+    margin: 0 25px;
+    cursor: pointer;
+    font-weight: 500;
+    color: white; // Đặt màu chữ trắng cho menu
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #e70f30;
+    }
+  }
+}
+.menu-item {
+    position: relative; // Cực kỳ quan-trọng: làm "mỏ neo" cho dropdown
+    display: inline-block; // Hiển thị như một khối nội dòng
+}
+
+// Khung dropdown
+.dropdown-menu {
+    position: absolute; // Định vị tuyệt đối so với .menu-item
+    top: 100%; // Hiển thị ngay bên dưới thẻ cha
+    left: 50%; // Căn giữa dropdown so với mục menu
+    transform: translateX(-50%);
+    background-color: #333; // Màu nền tối
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: 200px; // Độ rộng tối thiểu
+    z-index: 1000; // Đảm bảo luôn nằm trên cùng
+    padding: 5px 0;
+    border-top: 3px solid #e70f30; // Thêm đường kẻ đỏ ở trên cùng cho giống mẫu
+}
+
+// Các mục con trong dropdown
+.dropdown-item {
+    display: block; // Mỗi mục chiếm một dòng
+    width: 100%;
+    padding: 12px 20px;
+    color: #f0f0f0; // Chữ màu trắng
+    text-decoration: none;
+    white-space: nowrap; // Ngăn chữ xuống dòng
+    border-top: 1px solid #444; // Đường kẻ ngăn cách các mục
+    transition: background-color 0.2s ease;
+
+    &:first-child {
+        border-top: none; // Bỏ đường kẻ cho mục đầu tiên
+    }
+
+    &:hover {
+        background-color: #555; // Màu nền khi di chuột vào
+    }
+  
+}
+
+/* Thêm vào cuối file Resident.scss */
+
+.h4-navlink {
+  text-decoration: none; // Loại bỏ gạch chân mặc định của link
+}
+
+.active-link h4,       /* Áp dụng cho "Danh sách cư dân" */
+h4.active-link { 
+   text-decoration: none; // Loại bỏ gạch chân mặc định của link      /* Áp dụng cho "Thống kê" và "Truy vấn" */
+  font-weight: bold;
+  color: #f0ecec !important; /* Dùng !important để đảm bảo ghi đè lên các style khác */
+  border-bottom: 2px solid #e70f30;
+  padding-bottom: 5px; /* Tạo khoảng cách cho đường gạch chân */
+}

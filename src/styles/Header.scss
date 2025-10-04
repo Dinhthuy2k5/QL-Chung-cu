@@ -1,0 +1,157 @@
+// Biến màu sắc để dễ quản lý
+$top-bar-bg: #f9f2e7; // Màu vàng nhạt giống ảnh
+$nav-bar-bg: #222222; // Màu đen/xám đậm
+$button-bg: #c0392b;  // Màu đỏ của nút
+$button-hover-bg: #a93226;
+$active-link-color: #e74c3c; // Màu đỏ cho link active
+
+// Container chính của Header
+.header-container {
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ================== Thanh trên (Top Bar) ================== */
+.top-bar {
+    background-color: $top-bar-bg;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+// Phần logo
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+// Các nút hành động bên phải
+.nav-actions {
+    // Thêm vào: Dùng flex để căn chỉnh các item bên trong (chữ và nút)
+    display: flex;
+    align-items: center;
+    .user-menu {
+        position: relative; // Quan trọng: để dropdown có thể định vị theo thẻ cha này
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            font-size: 24px; // Kích thước icon
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%; // Hiển thị ngay bên dưới .user-menu
+            right: 0; // Căn lề phải
+            background-color: #333; // Màu nền của dropdown
+            border: 1px solid #555;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 8px 0;
+            z-index: 1000;
+            min-width: 160px; // Độ rộng tối thiểu
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+
+            .dropdown-item {
+                padding: 10px 20px;
+                color: #f0f0f0;
+                text-decoration: none;
+                display: block; // Hiển thị mỗi item trên một dòng
+                transition: background-color 0.2s ease;
+                white-space: nowrap; // Ngăn không cho chữ xuống dòng
+
+                &:hover {
+                    background-color: #555;
+                }
+
+                // CSS riêng cho nút đăng xuất để trông giống button hơn
+                &.logout {
+                    color: #ff8a8a; // Màu đỏ để cảnh báo
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #fff;
+                        background-color: #d32f2f;
+                    }
+                }
+            }
+        }
+    }
+
+    .btn-login {
+        background-color: $button-bg;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: $button-hover-bg;
+        }
+    }
+
+    // Thêm vào: Style cho dòng chữ "Xin chào"
+    .welcome-message {
+        margin-right: 15px; // Tạo khoảng cách với nút Đăng xuất
+        font-weight: 600;
+        color: #333; // Màu chữ tối cho dễ đọc
+    }
+
+    // Thêm vào: Style cho nút "Đăng xuất"
+    .btn-logout {
+        @extend .btn-login; // Kế thừa toàn bộ style của .btn-login
+        border: none; // Đảm bảo không có viền mặc định của thẻ <button>
+        cursor: pointer; // Biến con trỏ thành hình bàn tay
+    }
+}
+
+
+
+/* ================== Thanh điều hướng (Navigation Bar) ================== */
+.navigation-bar {
+    background-color: $nav-bar-bg;
+    padding: 0 30px;
+}
+
+// Các link điều hướng
+.nav-links {
+    display: flex;
+    align-items: center;
+
+    a {
+        color: #f1f1f1;
+        text-decoration: none;
+        padding: 18px 20px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        border-bottom: 3px solid transparent; // Tạo nền cho hiệu ứng active
+
+        &:hover {
+            background-color: #444;
+        }
+
+        // Style cho link đang active (ví dụ: Trang chủ)
+        &.active {
+            color: white;
+            font-weight: bold;
+            border-bottom: 3px solid $active-link-color; // Gạch chân màu đỏ
+        }
+    }
+}

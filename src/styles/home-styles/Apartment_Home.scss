@@ -1,0 +1,92 @@
+// Biến màu sắc để dễ dàng tùy chỉnh
+$card-bg: #ffffff;
+$border-color: #e0e0e0;
+$title-color: #333;
+$count-color: #0056b3;
+$button-bg: #007bff;
+$button-hover-bg: #0056b3;
+
+// Định dạng cho toàn bộ khung chữ nhật (card)
+.apartment-card {
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px; // Chiều rộng của khung, bạn có thể thay đổi
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    font-family: Arial, sans-serif;
+     // ✅ Thêm vào: Biến card thành flex container dạng cột
+    display: flex;
+    flex-direction: column;
+}
+
+// Định dạng cho phần đầu của card (tiêu đề và nút)
+.card-header {
+    display: flex;
+    justify-content: space-between; // Đẩy tiêu đề và nút ra 2 phía
+    align-items: center;
+    margin-bottom: 20px; // Khoảng cách với phần body
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: $title-color;
+}
+
+// Định dạng cho nút "+"
+.add-button {
+    background-color: $button-bg;
+    color: white;
+    border: none;
+    border-radius: 50%; // Bo tròn thành hình tròn
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: $button-hover-bg;
+    }
+}
+
+// Định dạng cho phần thân card (Tổng số)
+.card-body {
+    // ✅ Thêm vào: Cho phép phần body co giãn để đẩy nút xuống dưới
+    flex-grow: 1; 
+    .label {
+        color: #666;
+        margin-right: 8px;
+    }
+    
+    .count {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: $count-color;
+    }
+}
+
+// Thêm vào: Định dạng cho nút "Xem tất cả"
+.view-all-apartment {
+    width: 100%; // Nút rộng bằng card
+    padding: 12px;
+    background-color: $button-bg; // Sử dụng lại màu nút chính
+    color: white;
+    border: none;
+    border-radius: 6px; // Bo góc nhẹ
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: $button-hover-bg; // Hiệu ứng khi di chuột
+    }
+}
