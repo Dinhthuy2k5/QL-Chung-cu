@@ -10,7 +10,8 @@ class Apartment extends React.Component {
             { id: 'B205', soNha: '205', loaiCanHo: '3PN+1', dienTich: '98m²', diaChi: 'Tòa P4, Times City' },
             { id: 'C512', soNha: '512', loaiCanHo: '1PN', dienTich: '50m²', diaChi: 'Tòa G3, Green Bay' }
         ],
-        isEditFilter: false
+        isEditFilter: false,
+        activeFilters: {} // State mới để lưu các filter đang áp dụng
     }
 
     setIsEditFilter = (temp) => {
@@ -18,15 +19,26 @@ class Apartment extends React.Component {
             isEditFilter: temp
         })
     }
+
+    handleApplyFilter = (filters) => {
+        this.setState({
+            activeFilters: filters
+        })
+        // logic loc danh sach o day
+    }
     render() {
         let { listApartments } = this.state;
+
+
         return (
             <div className="apartment-table-container">
                 <div className="apartment-header-row">
                     <button onClick={() => this.setIsEditFilter(true)}
                     > Lọc </button>
 
-                    <EditFilter show={this.state.isEditFilter} />
+                    <EditFilter show={this.state.isEditFilter}
+                        onClose={() => { this.setIsEditFilter(false) }}
+                        onApplyFilter={this.handleApplyFilter} />
 
                     <h4>Id Căn hộ</h4>
                     <h4>Số nhà</h4>
@@ -44,7 +56,7 @@ class Apartment extends React.Component {
                                     <div>{item.id} </div>
                                     <div> {item.soNha} </div>
                                     <div>  {item.loaiCanHo} </div>
-                                    <div> {item.dienTich} </div>
+                                    <div> {item.dienTich}m² </div>
                                     <div> {item.diaChi}</div>
 
                                 </div>
