@@ -1,8 +1,7 @@
-// --- BIẾN MÀU SẮC ĐỂ DỄ QUẢN LÝ ---
+// --- BIẾN MÀU SẮC ---
 $primary-red: #e74c3c;
 $light-gray: #f0f0f0;
 $medium-gray: #ccc;
-$dark-gray: #888;
 $text-color: #333;
 
 // --- LỚP PHỦ VÀ KHUNG MODAL ---
@@ -12,176 +11,153 @@ $text-color: #333;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); // Tăng độ mờ để tập trung hơn
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(5px); // Hiệu ứng làm mờ nền phía sau
+    backdrop-filter: blur(5px);
 }
 
 .filter-content {
     background-color: white;
-    padding: 0; // Bỏ padding cũ để kiểm soát layout bên trong
-    border-radius: 12px;
+    border-radius: 8px;
     width: 100%;
-    max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    position: relative;
+    max-width: 400px; // Kích thước vừa vặn
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     color: $text-color;
-    overflow: hidden; // Giúp bo góc cho header và footer
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 // --- HEADER ---
 .filter-header {
-    padding: 20px 25px;
-    background-color: #fafafa;
+    padding: 15px 20px;
     border-bottom: 1px solid $light-gray;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 
     h2 {
         margin: 0;
-        font-size: 20px;
+        font-size: 18px;
     }
 
-    .close-button {
+    .close-button, .back-button {
         background: none;
         border: none;
-        font-size: 28px;
-        font-weight: 300;
+        font-size: 24px;
         cursor: pointer;
-        color: $dark-gray;
+        color: #888;
         line-height: 1;
-        transition: transform 0.2s ease;
-
         &:hover {
             color: #000;
-            transform: rotate(90deg);
         }
     }
 }
 
-// --- BODY (NỘI DUNG CHÍNH) ---
+// --- BODY ---
 .filter-body {
-    padding: 25px;
+    padding: 10px 20px 20px 20px;
+    overflow-y: auto; // Cho phép cuộn nếu nội dung dài
 
     .form-group {
-        margin-bottom: 25px;
+        margin-top: 20px;
+    }
 
-        .section-title {
-            font-size: 12px;
-            color: $dark-gray;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+    .section-title {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+
+    // Input cho "Số nhà"
+    input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid $medium-gray;
+        border-radius: 8px;
+        font-size: 14px; // Đảm bảo input cũng có size 14px
+        &:focus {
+            outline: none;
+            border-color: $primary-red;
+            box-shadow: 0 0 5px rgba($primary-red, 0.3);
+        }
+    }
+
+    // Hàng có thể click (Diện tích)
+    .filter-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        border: 1px solid $medium-gray;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-color: $primary-red;
+            box-shadow: 0 0 5px rgba($primary-red, 0.3);
+        }
+        .arrow-icon {
+            font-size: 20px;
+            color: $medium-gray;
+        }
+        span {
+            font-size: 14px;
+            color: #333; // Đảm bảo màu chữ đồng bộ
+        }
+    }
+
+    // Nhóm các nút bấm
+    .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .option-button {
+        padding: 8px 15px;
+        border: 1px solid $medium-gray;
+        background-color: white;
+        color: $text-color;
+        border-radius: 20px; // Bo tròn
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+
+        &:hover {
+            border-color: $primary-red;
+        }
+
+        &.active {
+            background-color: $primary-red;
+            color: white;
+            border-color: $primary-red;
             font-weight: 600;
         }
+    }
+}
 
-        // --- Input Text ---
-        input[type="text"] {
-            width: 100%;
-            padding: 10px 5px;
-            border: none;
-            border-bottom: 2px solid $light-gray;
-            font-size: 16px;
-            background-color: transparent;
-            transition: border-color 0.3s ease;
-
-            &:focus {
-                outline: none;
-                border-bottom-color: $primary-red;
-            }
-        }
-
-        // --- Custom Checkbox & Radio ---
-        .options-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-
-            // Ẩn input mặc định
-            input {
-                display: none;
-            }
-
-            // Tạo style cho label
-            label {
-                position: relative;
-                padding-left: 30px; // Khoảng cách cho custom box
-                font-size: 16px;
-                user-select: none; // Không cho phép chọn chữ
-            }
-
-            // Tạo custom box/circle
-            label::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 20px;
-                height: 20px;
-                border: 2px solid $medium-gray;
-                background-color: white;
-                transition: all 0.2s ease;
-            }
-
-            // Tạo dấu tick / dấu chấm
-            label::after {
-                content: '';
-                position: absolute;
-                display: none; // Ẩn mặc định
-            }
-
-            // Style khi được check
-            input:checked + label::before {
-                background-color: $primary-red;
-                border-color: $primary-red;
-            }
-             input:checked + label::after {
+// --- Màn hình chọn diện tích ---
+.area-slider-body {
+    padding: 25px 20px;
+    .area-display {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        .area-box {
+            width: 48%;
+            text-align: center;
+            span {
                 display: block;
-            }
-        }
-        
-        // --- Riêng cho Checkbox ---
-        .checkbox-item {
-            label::before {
-                border-radius: 4px; // Hình vuông
-            }
-            // Dấu tick
-            label::after {
-                left: 7px;
-                top: 3px;
-                width: 5px;
-                height: 10px;
-                border: solid white;
-                border-width: 0 3px 3px 0;
-                transform: rotate(45deg);
-            }
-        }
-
-        // --- Riêng cho Radio ---
-         .radio-item {
-            label::before {
-                border-radius: 50%; // Hình tròn
-            }
-             // Dấu chấm
-            label::after {
-                left: 5px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: white;
+                font-weight: 600;
+                margin-top: 5px;
+                font-size: 18px;
             }
         }
     }
@@ -192,12 +168,13 @@ $text-color: #333;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding: 20px 25px;
+    padding: 15px 20px;
     background-color: #fafafa;
     border-top: 1px solid $light-gray;
+    flex-shrink: 0;
 
     button {
-        padding: 12px 25px;
+        padding: 10px 20px;
         border-radius: 8px;
         border: none;
         cursor: pointer;
@@ -212,14 +189,25 @@ $text-color: #333;
                 background-color: #e0e0e0;
             }
         }
-
         &.apply-btn {
             background-color: $primary-red;
             color: white;
             &:hover {
                 opacity: 0.9;
-                box-shadow: 0 4px 15px rgba($primary-red, 0.3);
             }
+        }
+    }
+}
+
+// --- CUSTOM STYLE CHO RC-SLIDER ---
+.rc-slider {
+    .rc-slider-track {
+        background-color: $primary-red;
+    }
+    .rc-slider-handle {
+        border-color: $primary-red;
+        &:focus, &:active {
+            box-shadow: 0 0 0 5px rgba($primary-red, 0.2);
         }
     }
 }
