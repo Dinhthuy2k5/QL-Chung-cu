@@ -59,9 +59,11 @@ $border-color: #4a515e;
 
 // Định dạng cho khu vực chứa nút "Thêm nhân khẩu"
 .list-resident-header {
-  display: flex;
-  justify-content: flex-end; // Đẩy nút về phía bên phải
-  margin-bottom: 20px; // Tạo khoảng cách với bảng
+    display: flex;
+    justify-content: space-between; // Đẩy các phần tử ra hai bên
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px; // Thêm chút padding
 }
 
 // Style chung cho tất cả các nút để đảm bảo sự đồng bộ

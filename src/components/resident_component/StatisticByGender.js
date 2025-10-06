@@ -2,27 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import '../../styles/resident-styles/StatisticByGender.scss'
+import { getToken } from "../../services/localStorageService";
+import axios from "axios";
 
 // Đăng ký các thành phần của Chart.js mà chúng ta sẽ sử dụng
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 // --- Giả lập hàm gọi API ---
-const FetchGenderDataFromAPI = () => {
-    return new Promise((resolve => {
-        setTimeout(() => {
-            // Dữ liệu mẫu nhận được từ backend
-            const apiResponse = {
-                success: true,
-                data: {
-                    nam: 125, // Số lượng nam
-                    nu: 98,   // Số lượng nữ
-                    khac: 5   // Số lượng giới tính khác
-                }
-            };
-            resolve(apiResponse.data);
-        }, 1000); // Giả lập độ trễ 1 giây
-    })
-    )
+const FetchGenderDataFromAPI = async () => {
+
+    const token = getToken();
+    if (!token) {
+        alert(" Phiên đăng nhập hết hạn");
+        return Promise.reject("No token found");
+    }
+
+    const config = {
+        headers: {
+            'Authorization': `bearer ${token}`
+        }
+    }
+    try {
+        const apiUrl = `http://localhost:8080/qlcc/thong-ke/gioi-tinh`;
+
+        const response = await axios.get(apiUrl, config);
+        console.log("Thống kê giới tính thành công");
+        return response.data.result;
+    } catch (error) {
+        console.log("Có lỗi khi thống kê giới tính", error.response ? error.response.data : error.message);
+    }
+
 }
 
 const StatisticByGender = () => {
@@ -39,7 +48,7 @@ const StatisticByGender = () => {
                 datasets: [
                     {
                         label: 'Số lượng',
-                        data: [data.nam, data.nu, data.khac],
+                        data: [data.soLuongNam, data.soLuongNu, data.soLuongKhac],
                         backgroundColor: [
                             'rgba(54, 162, 235, 0.7)', // Màu xanh cho Nam
                             'rgba(255, 99, 132, 0.7)',  // Màu hồng cho Nữ

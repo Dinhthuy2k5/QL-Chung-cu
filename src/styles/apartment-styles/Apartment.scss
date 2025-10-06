@@ -1,19 +1,54 @@
-// src/styles/Apartment.scss
-
 // Biến màu cho theme tối
 $dark-bg: #2c3038;
 $header-bg: #353a42;
 $border-color: #495057;
 $text-color: #e9ecef;
 $row-hover-bg: #3e444c;
+$primary-red: #e74c3c; // Màu đỏ nhấn
 
-// Container cho cả bảng
+// --- KHU VỰC CHÍNH CỦA TRANG CĂN HỘ ---
+.apartment-container {
+    padding: 0 40px; // Thêm padding cho cả trang thay vì cho bảng
+}
+
+// --- KHU VỰC CHỨA CÁC NÚT HÀNH ĐỘNG ---
+.table-actions {
+    display: flex;
+    justify-content: flex-end; // Đẩy các nút về bên phải
+    padding: 15px 0;
+}
+
+// --- STYLE CHO NÚT LỌC ---
+.filter-btn {
+    background-color: $primary-red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; // Khoảng cách giữa icon và chữ
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        background-color: darken($primary-red, 10%);
+        transform: translateY(-2px); // Hiệu ứng nhấc lên khi hover
+    }
+
+    .icon {
+        font-size: 1.1rem;
+    }
+}
+
+// --- BẢNG DỮ LIỆU ---
 .apartment-table-container {
     border: 1px solid $border-color;
     border-radius: 8px;
     overflow: hidden;
     font-family: Arial, sans-serif;
-    margin: 20px 40px; // Thêm khoảng cách cho bảng
     color: $text-color;
 }
 
@@ -25,7 +60,7 @@ $row-hover-bg: #3e444c;
     border-bottom: 2px solid $border-color;
 
     h4 {
-        flex: 1;
+        flex: 1; // Chia đều 5 cột
         padding: 15px;
         margin: 0;
         font-size: 1rem;
@@ -41,7 +76,6 @@ $row-hover-bg: #3e444c;
 .apartment-table-body {
     background-color: $dark-bg;
 
-    // Style cho mỗi hàng dữ liệu
     .apartment-data-row {
         display: flex;
         border-bottom: 1px solid $border-color;
@@ -55,9 +89,8 @@ $row-hover-bg: #3e444c;
             background-color: $row-hover-bg;
         }
 
-        // Style cho mỗi ô dữ liệu
         div {
-            flex: 1;
+            flex: 1; // Chia đều 5 cột
             padding: 15px;
             
             &:not(:last-child) {

@@ -1,0 +1,28 @@
+// Biến màu cho theme tối
+$dark-box-bg: #2c3e50;
+$shadow-color: rgba(0, 0, 0, 0.3);
+
+// Class container chính cho biểu đồ
+.statistic-container {
+    // Kích thước của khung chứa biểu đồ
+    max-width: 500px;
+    height: 400px;
+    width: 100%;
+
+    // Căn giữa khung trên trang
+    margin: 40px auto;
+    
+    // Style cho khung
+    padding: 25px;
+    background-color: $dark-box-bg;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px $shadow-color;
+}
+
+// Style cho dòng chữ "Đang tải dữ liệu..."
+.loading-message {
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    padding: 50px;
+}

@@ -1,0 +1,98 @@
+$border-color: #ddd;
+$primary-color: #e70f30;
+$light-gray: #343030;
+
+.search-bar-wrapper {
+    position: relative;
+    width: 350px;
+}
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #f0f2f5;
+    border-radius: 20px;
+    padding: 8px 15px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+        background-color: white;
+        border-color: $border-color;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .search-icon {
+        color: #606770;
+        margin-right: 8px;
+    }
+
+    input {
+        border: none;
+        background: none;
+        outline: none;
+        width: 100%;
+        font-size: 15px;
+
+        &::placeholder {
+            color: #606770;
+        }
+    }
+}
+
+// ... (các style cho .search-bar-wrapper và .search-input-container giữ nguyên) ...
+
+.search-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ccc; // Làm viền rõ hơn một chút
+    z-index: 100;
+    overflow: hidden;
+
+    .dropdown-title {
+        padding: 10px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #606770;
+        background-color: #f7f7f7; // Thêm nền nhẹ cho tiêu đề
+        border-bottom: 1px solid $light-gray;
+    }
+
+    .dropdown-option {
+        padding: 12px 15px;
+        cursor: pointer;
+        font-size: 15px;
+        color: #333; // 1. Chuyển màu chữ thành đen để dễ đọc
+        transition: background-color 0.2s ease;
+        position: relative;
+        padding-left: 35px; // Thêm khoảng trống cho icon check
+
+        // 2. Style cho mục đang được chọn
+        &.is-selected {
+            color: $primary-color; // Chữ màu đỏ
+            font-weight: 600;
+            background-color: #fdf territorio; // Nền hơi khác một chút
+
+            // Thêm dấu check vào trước mục đang được chọn
+            &::before {
+                content: '✓';
+                font-weight: bold;
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: $primary-color;
+            }
+        }
+        
+        // 3. Style khi di chuột vào (không áp dụng cho mục đang được chọn)
+        &:not(.is-selected):hover {
+            background-color: #f0f2f5;
+        }
+    }
+}

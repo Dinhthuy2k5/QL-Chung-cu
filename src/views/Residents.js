@@ -9,122 +9,15 @@ import { getToken } from "../services/localStorageService";
 import { NavLink, Routes, Route } from "react-router-dom";
 import StatisticByGender from "../components/resident_component/StatisticByGender";
 import StatisticByAge from "../components/resident_component/StatisticByAge";
+import StatisticByStatus from "../components/resident_component/StatisticByStatus";
 
-const StatisticByStatus = () => {
-    return <div style={{ color: 'white', padding: '20px' }}>Đây là khu vực hiển thị biểu đồ thống kê theo Tình trạng cư trú.</div>;
-};
+
 
 class Resident extends React.Component {
 
-
-
     state = {
         listResidents: [
-            {
-                cccd: '012345678901',
-                hoVaTen: 'Nguyễn Văn An',
-                gioiTinh: 'Nam',
-                ngaySinh: '1990-01-15',
-                danToc: 'Kinh',
-                tonGiao: 'Không',
-                quocTich: 'Việt Nam',
-                diaChi: 'Số 10, ngõ 25, đường Xuân Thủy, Cầu Giấy, Hà Nội',
-                sdt: '0912345678',
-                email: 'nguyenvanan@example.com',
-                quanHe: 'Chủ hộ',
-                trangThai: 'Thường trú',
-                cccdChuHo: '012345678901'
-            },
-            {
-                cccd: '098765432102',
-                hoVaTen: 'Trần Thị Bình',
-                gioiTinh: 'Nữ',
-                ngaySinh: '1992-05-20',
-                danToc: 'Kinh',
-                tonGiao: 'Phật giáo',
-                quocTich: 'Việt Nam',
-                diaChi: 'Số 10, ngõ 25, đường Xuân Thủy, Cầu Giấy, Hà Nội',
-                sdt: '0987654321',
-                email: 'tranthibinh@example.com',
-                quanHe: 'Vợ',
-                trangThai: 'Thường trú',
-                cccdChuHo: '012345678901'
-            },
-            {
-                cccd: '023456789013',
-                hoVaTen: 'Lê Minh Cường',
-                gioiTinh: 'Nam',
-                ngaySinh: '1988-11-30',
-                danToc: 'Kinh',
-                tonGiao: 'Công giáo',
-                quocTich: 'Việt Nam',
-                diaChi: 'P.201, Tòa nhà A3, Chung cư Green Valley, Nam Từ Liêm, Hà Nội',
-                sdt: '0905123456',
-                email: 'leminhcuong@example.com',
-                quanHe: 'Chủ hộ',
-                trangThai: 'Thường trú',
-                cccdChuHo: '023456789013'
-            },
-            {
-                cccd: '034567890124',
-                hoVaTen: 'Phạm Thị Dung',
-                gioiTinh: 'Nữ',
-                ngaySinh: '2000-07-22',
-                danToc: 'Tày',
-                tonGiao: 'Không',
-                quocTich: 'Việt Nam',
-                diaChi: 'P.201, Tòa nhà A3, Chung cư Green Valley, Nam Từ Liêm, Hà Nội',
-                sdt: '0334567890',
-                email: 'phamthidung@example.com',
-                quanHe: 'Con',
-                trangThai: 'Tạm trú',
-                cccdChuHo: '023456789013'
-            },
-            {
-                cccd: '045678901235',
-                hoVaTen: 'Hoàng Văn Em',
-                gioiTinh: 'Nam',
-                ngaySinh: '1995-02-10',
-                danToc: 'Mường',
-                tonGiao: 'Không',
-                quocTich: 'Việt Nam',
-                diaChi: 'Số 55, đường Trần Duy Hưng, Trung Hòa, Hà Nội',
-                sdt: '0978111222',
-                email: 'hoangvanem@example.com',
-                quanHe: 'Chủ hộ',
-                trangThai: 'Thường trú',
-                cccdChuHo: '045678901235'
-            },
-            {
-                cccd: '056789012346',
-                hoVaTen: 'Vũ Thị Lan Hương',
-                gioiTinh: 'Nữ',
-                ngaySinh: '1998-09-03',
-                danToc: 'Kinh',
-                tonGiao: 'Phật giáo',
-                quocTich: 'Việt Nam',
-                diaChi: 'Số 1, đường Nguyễn Trãi, Thanh Xuân, Hà Nội',
-                sdt: '0945333444',
-                email: 'vuthilanhuong@example.com',
-                quanHe: 'Chủ hộ',
-                trangThai: 'Thường trú',
-                cccdChuHo: '056789012346'
-            },
-            {
-                cccd: '067890123457',
-                hoVaTen: 'Đặng Minh Khôi',
-                gioiTinh: 'Nam',
-                ngaySinh: '1975-12-12',
-                danToc: 'Kinh',
-                tonGiao: 'Không',
-                quocTich: 'Việt Nam',
-                diaChi: 'Số 1, đường Nguyễn Trãi, Thanh Xuân, Hà Nội',
-                sdt: '0868555666',
-                email: 'dangminhkhoi@example.com',
-                quanHe: 'Chồng',
-                trangThai: 'Thường trú',
-                cccdChuHo: '056789012346'
-            }
+
         ],
 
         isModalOpen: false,  //QUẢN LÝ MODAL
@@ -132,9 +25,20 @@ class Resident extends React.Component {
         isAddResident: false, // quản lí khi thêm nhân khẩu 
         isUpdateResident: false,  // quản lí khi update nhân khẩu
         isDropdownStatistic: false,
-        isDropdownQuery: false
+        isDropdownQuery: false,
+        // Thêm state để lưu trữ query tìm kiếm
+        searchQuery: {
+            text: '',
+            category: 'hoVaTen'
+        }
     }
 
+    // Hàm nhận query từ SearchBar và cập nhật state
+    handleSearch = (query) => {
+        this.setState({ searchQuery: query });
+    }
+
+    // hàm xóa 1 nhân khẩu
     deleteAResident = (cccd) => {
         let currentResident = this.state.listResidents;
         currentResident = currentResident.filter(item => item.cccd !== cccd);
@@ -172,6 +76,7 @@ class Resident extends React.Component {
         })
     }
 
+    // hàm thêm hoặc update nhân khẩu
     handleSaveResident = (residentData) => {
         // Nếu là thêm mới (không có cccd hoặc cccd chưa tồn tại)
         const isNew = !this.state.listResidents.some(item => item.cccd === residentData.cccd);
@@ -246,7 +151,57 @@ class Resident extends React.Component {
         })
     }
 
+    // hàm gọi api lấy thông tin nhân khẩu
+    getListResidents = async () => {
+        const token = getToken();
+        if (!token) {
+            alert(" Phiên đăng nhập hết hạn");
+            return;
+        }
+
+        const config = {
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
+        }
+        const apiUrl = `http://localhost:8080/qlcc/nhan-khau`;
+        try {
+            const response = await axios.get(apiUrl, config);
+            console.log("Lấy thông tin nhân khẩu thành công");
+            this.setState({
+                listResidents: response.data.result
+            })
+
+        } catch (error) {
+            console.log("Có lỗi khi lấy thông tin nhân khẩu", error.response ? error.response.data : error.message);
+        }
+    }
+
+    componentDidMount = () => {
+        this.getListResidents();
+    }
+
     render() {
+
+        const { listResidents, searchQuery } = this.state;
+
+        // --- LOGIC LỌC ---
+        // Lọc danh sách cư dân ngay trước khi render
+        const filteredResidents = listResidents.filter(resident => {
+            const searchText = searchQuery.text.toLowerCase();
+            const searchCategory = searchQuery.category;
+
+            if (!searchText) {
+                return true; // Nếu không có text tìm kiếm, hiển thị tất cả
+            }
+
+            const residentData = resident[searchCategory];
+            if (residentData) {
+                return residentData.toString().toLowerCase().includes(searchText);
+            }
+            return false;
+        });
+
 
         const currentPath = window.location.pathname;
         const isStatisticActive = currentPath.startsWith('/residents/statistic');
@@ -312,10 +267,11 @@ class Resident extends React.Component {
 
                 <Routes>
                     <Route index element={
-                        <ListResidents listResidents={this.state.listResidents}
+                        <ListResidents listResidents={filteredResidents}
                             deleteAResident={this.deleteAResident}
                             handleOpenEditModal={this.handleOpenEditModal}
                             handleAddResident={this.handleAddResident}
+                            onSearch={this.handleSearch}
                         />} />
                     {/* These are the routes for your statistic charts */}
                     <Route path="statistic/by-gender" element={<StatisticByGender />} />

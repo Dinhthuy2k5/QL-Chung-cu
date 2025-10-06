@@ -10,6 +10,8 @@ import {
 } from 'chart.js';
 import { Bar } from "react-chartjs-2";
 import '../../styles/resident-styles/StatisticByAge.scss'
+import axios from "axios";
+import { getToken } from "../../services/localStorageService";
 
 ChartJS.register(
     CategoryScale,
@@ -21,22 +23,29 @@ ChartJS.register(
 );
 
 // --- Giả lập hàm gọi API để lấy dữ liệu độ tuổi ---
-const fetchAgeDataFromAPI = () => {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            // Dữ liệu mẫu nhận được từ backend, đã được phân nhóm
-            const apiResponse = {
-                success: true,
-                data: {
-                    under18: 30,    // Dưới 18 tuổi
-                    from18to35: 95, // Từ 18 - 35 tuổi
-                    from36to60: 82, // Từ 36 - 60 tuổi
-                    over60: 18,     // Trên 60 tuổi
-                }
-            };
-            resolve(apiResponse.data);
-        }, 1000); // Giả lập độ trễ 1 giây
-    });
+const fetchAgeDataFromAPI = async () => {
+    const token = getToken();
+    if (!token) {
+        alert("Phiên đăng nhập hết hạn ");
+        return;
+    }
+
+    const config = {
+        headers: {
+            'Authorization': `bearer ${token}`
+        }
+    }
+
+    try {
+        const apiUrl = `http://localhost:8080/qlcc/thong-ke/do-tuoi`;
+        const response = await axios.get(apiUrl, config);
+        console.log("Thống kê độ tuổi thành công");
+        return response.data.result;
+
+    } catch (error) {
+        console.log("Có lỗi khi thống kê giới tính", error.response ? error.response.data : error.message);
+
+    }
 };
 
 // function component chính
@@ -49,11 +58,11 @@ const StatisticByAge = () => {
             const data = await fetchAgeDataFromAPI();
 
             setChartData({
-                labels: ['Dưới 18', '18 - 35', '36 - 60', 'Trên 60'],
+                labels: ['Dưới vị thành niên', 'Trong độ tuổi lao động', 'Trên tuổi lao động'],
                 datasets: [
                     {
                         label: 'Số lượng cư dân',
-                        data: [data.under18, data.from18to35, data.from36to60, data.over60],
+                        data: [data.duoiViThanhNien, data.trongDoTuoiLaoDong, data.trenTuoiLaoDong],
                         backgroundColor: 'rgba(54, 162, 235, 0.7)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1,
