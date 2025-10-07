@@ -6,9 +6,8 @@ import { getToken } from "../services/localStorageService";
 
 class Apartment extends React.Component {
     state = {
-        listApartments: [
-
-        ],
+        originalApartments: [],
+        filteredApartments: [],
         isEditFilter: false,
         activeFilters: {} // State mới để lưu các filter đang áp dụng
     }
@@ -24,6 +23,31 @@ class Apartment extends React.Component {
         this.setState({
             activeFilters: filters
         })
+        // Luôn bắt đầu lọc từ danh sách gốc
+        let filteredData = [...this.state.originalApartments];
+
+        // 1. Lọc theo Số nhà (nếu có)
+        if (filters.soNha) {
+            filteredData = filteredData.filter(item =>
+                item.soNha.toLowerCase().includes(filters.soNha.toLowerCase())
+            );
+        }
+
+        // 2. Lọc theo Loại căn hộ (nếu có chọn)
+        if (filters.loaiCanHo && filters.loaiCanHo.length > 0) {
+            filteredData = filteredData.filter(item =>
+                filters.loaiCanHo.includes(item.loaiCanHo)
+            );
+        }
+
+        // 3. Lọc theo Diện tích
+        // Giả sử filters.dienTich luôn là một mảng [min, max]
+        filteredData = filteredData.filter(item =>
+            item.dienTich >= filters.dienTich[0] && item.dienTich <= filters.dienTich[1]
+        );
+
+        // Cập nhật lại danh sách hiển thị
+        this.setState({ filteredApartments: filteredData });
         // logic loc danh sach o day
     }
 
@@ -53,7 +77,8 @@ class Apartment extends React.Component {
             console.log(" Lấy thông tin căn hộ thành công");
             console.log(response.data);
             this.setState({
-                listApartments: response.data.result
+                originalApartments: response.data.result,
+                filteredApartments: response.data.result
             })
 
         } catch (error) {
@@ -66,7 +91,7 @@ class Apartment extends React.Component {
     }
 
     render() {
-        let { listApartments } = this.state;
+        let { filteredApartments } = this.state;
 
         return (
             <div className="apartment-container">
@@ -93,8 +118,8 @@ class Apartment extends React.Component {
 
                     <div className="apartment-table-body">
                         {
-                            listApartments && listApartments.length > 0 &&
-                            listApartments.map((item) => {
+                            filteredApartments && filteredApartments.length > 0 &&
+                            filteredApartments.map((item) => {
                                 return (
                                     <div className="apartment-data-row" key={item.idCanHo}>
                                         <div>{item.idCanHo} </div>

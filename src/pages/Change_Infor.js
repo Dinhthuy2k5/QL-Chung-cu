@@ -12,7 +12,8 @@ class Change_Infor extends React.Component {
             newPassword: '',
             firstName: '', // Sẽ được lấy từ API
             lastName: '',  // Sẽ được lấy từ API
-            dob: ''  //
+            dob: '',
+            role: ''  //
         };
     }
 
@@ -45,7 +46,8 @@ class Change_Infor extends React.Component {
                 firstName: userInfo.firstName || '',
                 lastName: userInfo.lastName || '',
                 // Định dạng lại ngày tháng để input type="date" có thể hiển thị
-                dob: userInfo.dob ? userInfo.dob.split('T')[0] : ''
+                dob: userInfo.dob ? userInfo.dob.split('T')[0] : '',
+                role: userInfo.role
             });
 
         } catch (error) {
@@ -214,9 +216,19 @@ class Change_Infor extends React.Component {
                                 id="dob"
                                 name="dob"
                                 value={this.state.dob}
-
                             />
                         </div>
+
+                        <div className="form-group">
+                            <label htmlFor="role"> Vai trò</label>
+                            <input
+                                type="text"
+                                id="role"
+                                name="role"
+                                value={this.state.role}
+                            />
+                        </div>
+
 
                         <hr className="divider" />
 

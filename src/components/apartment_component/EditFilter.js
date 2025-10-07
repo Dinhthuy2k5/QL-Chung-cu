@@ -45,9 +45,11 @@ class EditFilter extends React.Component {
     // Hàm áp dụng bộ lọc
     handleApplyFilter = () => {
         // Gửi state hiện tại lên component cha (Apartments)
+        console.log("filters:", this.state.filters);
         this.props.onApplyFilter(this.state.filters);
         // Đóng modal
         this.props.onClose();
+        this.handleReset();
     }
     // Hàm reset bộ lọc
     handleReset = () => {
