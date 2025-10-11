@@ -8,8 +8,8 @@ class Home extends React.Component {
     render() {
         return (
             <div className="home-container">
-                <Apartment_Home />
-                <Resident_Home />
+                <Apartment_Home totalApartments={this.props.totalApartments} />
+                <Resident_Home totalResidents={this.props.totalResidents} />
                 <Receipt_Home />
             </div>
         )

@@ -1,92 +1,109 @@
-// Biến màu sắc để dễ dàng tùy chỉnh
-$card-bg: #ffffff;
-$border-color: #e0e0e0;
-$title-color: #333;
-$count-color: #0056b3;
-$button-bg: #007bff;
-$button-hover-bg: #0056b3;
+// --- BIẾN MÀU SẮC CHO THEME TỐI ---
+$card-bg: #353a42;           // Nền card màu xám tối
+$border-color: #495057;       // Viền card màu xám sáng hơn
+$title-color: #e9ecef;       // Chữ tiêu đề màu trắng nhạt
+$count-color: #ffffff;        // Chữ số màu trắng
+$label-color: #adb5bd;       // Chữ "Tổng số" màu xám nhạt
+$button-bg: #007bff;           // Nút màu xanh dương
+$button-hover-bg: #0056b3;    // Màu nút khi di chuột vào
 
-// Định dạng cho toàn bộ khung chữ nhật (card)
+// --- ĐỊNH DẠNG CHO TOÀN BỘ CARD ---
 .apartment-card {
     background-color: $card-bg;
     border: 1px solid $border-color;
-    border-radius: 8px;
-    padding: 20px;
-    width: 300px; // Chiều rộng của khung, bạn có thể thay đổi
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-radius: 12px; // Bo góc nhiều hơn cho mềm mại
+    padding: 25px;
+    width: 320px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); // Đổ bóng sâu hơn
     font-family: Arial, sans-serif;
-     // ✅ Thêm vào: Biến card thành flex container dạng cột
+    color: $title-color;
+    
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease; // Thêm hiệu ứng chuyển động khi hover
+
+    &:hover {
+        transform: translateY(-5px); // Nhấc card lên một chút
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
 }
 
-// Định dạng cho phần đầu của card (tiêu đề và nút)
+// --- HEADER CỦA CARD ---
 .card-header {
     display: flex;
-    justify-content: space-between; // Đẩy tiêu đề và nút ra 2 phía
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px; // Khoảng cách với phần body
+    margin-bottom: 25px;
 }
 
 .card-title {
     margin: 0;
-    font-size: 1.2rem;
-    color: $title-color;
+    font-size: 1.5rem; // Tăng kích thước tiêu đề
+    font-weight: 600;
 }
 
-// Định dạng cho nút "+"
+// Nút "+"
 .add-button {
-    background-color: $button-bg;
-    color: white;
-    border: none;
-    border-radius: 50%; // Bo tròn thành hình tròn
-    width: 30px;
-    height: 30px;
+    background-color: rgba(255, 255, 255, 0.1); // Nền trong mờ
+    color: $title-color;
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     font-size: 1.5rem;
-    font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    transition: background-color 0.2s ease;
+    line-height: 0; // Căn giữa dấu "+" tốt hơn
+    transition: all 0.2s ease;
 
     &:hover {
-        background-color: $button-hover-bg;
+        background-color: $button-bg;
+        color: white;
+        border-color: $button-bg;
+        transform: rotate(90deg); // Hiệu ứng xoay
     }
 }
 
-// Định dạng cho phần thân card (Tổng số)
+// --- BODY CỦA CARD ---
 .card-body {
-    // ✅ Thêm vào: Cho phép phần body co giãn để đẩy nút xuống dưới
     flex-grow: 1; 
+    text-align: center; // Căn giữa nội dung
+    margin-bottom: 25px;
+
     .label {
-        color: #666;
-        margin-right: 8px;
+        color: $label-color;
+        font-size: 1rem;
+        margin-bottom: 5px; // Thêm khoảng cách dưới
+        display: block; // Chuyển thành block để margin có tác dụng
     }
     
     .count {
-        font-size: 2.5rem;
-        font-weight: bold;
+        font-size: 3.5rem; // Làm cho số to và ấn tượng hơn
+        font-weight: 700;
         color: $count-color;
+        line-height: 1.1;
     }
 }
 
-// Thêm vào: Định dạng cho nút "Xem tất cả"
+// --- NÚT "XEM TẤT CẢ" ---
 .view-all-apartment {
-    width: 100%; // Nút rộng bằng card
-    padding: 12px;
-    background-color: $button-bg; // Sử dụng lại màu nút chính
+    width: 100%;
+    padding: 14px;
+    background-color: $button-bg;
     color: white;
     border: none;
-    border-radius: 6px; // Bo góc nhẹ
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
-        background-color: $button-hover-bg; // Hiệu ứng khi di chuột
+        background-color: $button-hover-bg;
+        box-shadow: 0 4px 15px rgba($button-bg, 0.4); // Thêm hiệu ứng đổ bóng cho nút
+        transform: translateY(-2px);
     }
 }

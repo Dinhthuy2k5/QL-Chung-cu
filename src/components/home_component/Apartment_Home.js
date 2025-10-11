@@ -26,11 +26,11 @@ class Apartment_Home extends React.Component {
                     <h4 className="card-title">
                         Căn hộ
                     </h4>
-                    <button className="add-button" onClick={() => this.handleAddApartment()}> +  </button>
+                    {/* <button className="add-button" onClick={() => this.handleAddApartment()}> +  </button> */}
                 </div>
                 <div className="card-body">
                     <span className="label"> Tổng số: </span>
-                    <span className="count">{this.state.number__apartments} </span>
+                    <span className="count">{this.props.totalApartments} </span>
                 </div>
                 <button className="view-all-apartment" onClick={() => this.handleViewAllApartment()}> Xem tất cả</button>
 

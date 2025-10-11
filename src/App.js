@@ -21,6 +21,9 @@ function AppContent() {
   const [isViewInfor, setIsViewInfor] = useState(false);
   const [isChangeInfor, setIsChangeInfor] = useState(false);
 
+  const [totalApartments, setTotalApartments] = useState(0);
+  const [totalResidents, setTotalResidents] = useState(0);
+
   const handleLoggedIn = () => {
     setIsLoggedIn(true);
   }
@@ -36,6 +39,7 @@ function AppContent() {
     setUserLoggedIn(username);
   }
 
+
   return (
     <div className="App">
       <header className="App-header">
@@ -44,10 +48,10 @@ function AppContent() {
           setIsViewInfor={setIsViewInfor} />
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home totalApartments={totalApartments} totalResidents={totalResidents} />} />
           <Route path="/log-in" element={<Login onLoggedIn={handleLoggedIn} setUserLoggedIn={handleUserLoggedIn} />} />
-          <Route path="/apartments" element={<Apartment />} />
-          <Route path="/residents/*" element={<Resident />} />
+          <Route path="/apartments" element={<Apartment setTotalApartments={setTotalApartments} />} />
+          <Route path="/residents/*" element={<Resident setTotalResidents={setTotalResidents} />} />
           <Route path="/change-infor" element={<Change_Infor username={userLoggedIn} isChangeInfor={isChangeInfor} />} />
           <Route path="/view-infor" element={<Change_Infor username={userLoggedIn} isViewInfor={isViewInfor} />} />
         </Routes>

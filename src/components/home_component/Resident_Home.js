@@ -21,7 +21,7 @@ class Resident_Home extends React.Component {
                 </h4>
                 <div className="card-body">
                     <span className="label"> Tổng số: </span>
-                    <span className="count">{this.state.number_resident} </span>
+                    <span className="count">{this.props.totalResidents} </span>
                 </div>
                 <button className="view-all-resident" onClick={() => this.handleViewAllResident()}> Xem tất cả</button>
             </div>

@@ -8,6 +8,7 @@ class Apartment extends React.Component {
     state = {
         originalApartments: [],
         filteredApartments: [],
+
         isEditFilter: false,
         activeFilters: {} // State mới để lưu các filter đang áp dụng
     }
@@ -80,6 +81,11 @@ class Apartment extends React.Component {
                 originalApartments: response.data.result,
                 filteredApartments: response.data.result
             })
+            this.setState({
+                totalApartments: response.data.result.length
+            })
+            this.props.setTotalApartments(response.data.result.length)
+            console.log("totalApartment", response.data.result.length)
 
         } catch (error) {
             console.log("Có lỗi khi lấy thông tin căn hộ", error.response ? error.response.data : error.message)
@@ -93,7 +99,10 @@ class Apartment extends React.Component {
     render() {
         let { filteredApartments } = this.state;
 
+
+
         return (
+
             <div className="apartment-container">
                 <div className="table-actions">
                     <button className="filter-btn" onClick={() => this.setIsEditFilter(true)}>

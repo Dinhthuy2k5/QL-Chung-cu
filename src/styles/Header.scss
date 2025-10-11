@@ -1,5 +1,5 @@
 // Biến màu sắc để dễ quản lý
-$top-bar-bg: #f9f2e7; // Màu vàng nhạt giống ảnh
+$top-bar-bg: #11100f; // Màu vàng nhạt giống ảnh
 $nav-bar-bg: #222222; // Màu đen/xám đậm
 $button-bg: #c0392b;  // Màu đỏ của nút
 $button-hover-bg: #a93226;
@@ -107,7 +107,7 @@ $active-link-color: #e74c3c; // Màu đỏ cho link active
     color: $primary-color;
     border: 2px solid $primary-color;
 
-    padding: 12px 24px;
+    padding: 12px 36px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: bold;
@@ -160,7 +160,7 @@ $active-link-color: #e74c3c; // Màu đỏ cho link active
     .welcome-message {
         margin-right: 15px; // Tạo khoảng cách với nút Đăng xuất
         font-weight: 600;
-        color: #333; // Màu chữ tối cho dễ đọc
+        color: #1fcb19; // Màu chữ tối cho dễ đọc
     }
 
     // Thêm vào: Style cho nút "Đăng xuất"

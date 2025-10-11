@@ -171,6 +171,7 @@ class Resident extends React.Component {
             this.setState({
                 listResidents: response.data.result
             })
+            this.props.setTotalResidents(response.data.result.length)
 
         } catch (error) {
             console.log("Có lỗi khi lấy thông tin nhân khẩu", error.response ? error.response.data : error.message);
