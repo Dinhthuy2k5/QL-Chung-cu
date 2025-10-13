@@ -10,6 +10,7 @@ import { NavLink, Routes, Route } from "react-router-dom";
 import StatisticByGender from "../components/resident_component/StatisticByGender";
 import StatisticByAge from "../components/resident_component/StatisticByAge";
 import StatisticByStatus from "../components/resident_component/StatisticByStatus";
+import Families from "../components/resident_component/Families";
 
 
 
@@ -216,6 +217,11 @@ class Resident extends React.Component {
                         to="/residents"
                         end // Thêm prop "end" để nó chỉ active khi URL là chính xác "/residents"
                         className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}><h4> Danh sách cư dân</h4></NavLink>
+                    <NavLink
+                        to="/residents/families" // Đặt một đường dẫn cho trang hộ gia đình
+                        className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}>
+                        <h4>Hộ gia đình</h4>
+                    </NavLink>
                     <div
                         className="menu-item"
                         onMouseEnter={() => this.setIsDropdownStatistic(true)}
@@ -273,7 +279,10 @@ class Resident extends React.Component {
                             handleOpenEditModal={this.handleOpenEditModal}
                             handleAddResident={this.handleAddResident}
                             onSearch={this.handleSearch}
-                        />} />
+                        />
+                    }
+                    />
+                    <Route path="families" element={<Families />} />
                     {/* These are the routes for your statistic charts */}
                     <Route path="statistic/by-gender" element={<StatisticByGender />} />
                     <Route path="statistic/by-age" element={<StatisticByAge />} />

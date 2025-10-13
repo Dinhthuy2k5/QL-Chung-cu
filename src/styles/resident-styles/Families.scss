@@ -1,0 +1,124 @@
+// This file is very similar to List_Resident.scss for consistency
+
+.family-list-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    // UPDATED: Reduced top padding to move the component up
+    padding: 5px 20px 20px 20px;
+}
+
+.family-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // UPDATED: Reduced bottom margin to move the table up
+    margin-bottom: 15px;
+}
+
+// Style for "Thêm hộ gia đình" button
+.add-family-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+// Table styling
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2c3038;
+    color: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #495057;
+        // UPDATED: Made font size slightly smaller
+        font-size: 0.9rem;
+    }
+
+    thead tr {
+        background-color: #353a42;
+        font-weight: bold;
+    }
+    
+    // UPDATED: Added rule for table headers
+    th {
+        // Ensures header text stays on a single line
+        white-space: nowrap;
+    }
+
+    tbody tr {
+        transition: background-color 0.2s ease;
+        &:hover {
+            background-color: #3e444c;
+        }
+    }
+
+    .actions-header {
+        text-align: center;
+    }
+
+    .action {
+        text-align: center;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+
+        .edit-btn, .delete-btn {
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .edit-btn {
+            background-color: #17a2b8; // Info color
+            &:hover {
+                background-color: darken(#17a2b8, 10%);
+            }
+        }
+
+        .delete-btn {
+            background-color: #dc3545; // Danger color
+            &:hover {
+                background-color: darken(#dc3545, 10%);
+            }
+        }
+    }
+}
+
+// ... các style cho .edit-btn, .delete-btn
+
+    // Style cho nút thay đổi chủ hộ
+    .change-owner-btn {
+        background-color: #ffc107; // Màu vàng (warning)
+        color: black;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s ease;
+        white-space: nowrap; // Giữ chữ trên một hàng
+
+        &:hover {
+            background-color: darken(#ffc107, 10%);
+        }
+    }
