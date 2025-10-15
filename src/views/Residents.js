@@ -11,6 +11,8 @@ import StatisticByGender from "../components/resident_component/StatisticByGende
 import StatisticByAge from "../components/resident_component/StatisticByAge";
 import StatisticByStatus from "../components/resident_component/StatisticByStatus";
 import Families from "../components/resident_component/Families";
+import ResidentQueryHistory from '../components/resident_component/ResidentQueryHistory';
+import StatisticByTime from "../components/resident_component/StatisticByTime";
 
 
 
@@ -233,15 +235,19 @@ class Resident extends React.Component {
                             <div className="dropdown-menu">
                                 <NavLink to="statistic/by-gender" className="dropdown-item"
                                     onClick={() => this.setIsDropdownStatistic(false)}>
-                                    Theo giới tính
+                                    <span>Theo giới tính</span>
                                 </NavLink>
                                 <NavLink to="statistic/by-age" className="dropdown-item"
                                     onClick={() => this.setIsDropdownStatistic(false)}>
-                                    Theo độ tuổi
+                                    <span>Theo độ tuổi</span>
                                 </NavLink>
                                 <NavLink to="statistic/by-status" className="dropdown-item"
                                     onClick={() => this.setIsDropdownStatistic(false)}>
-                                    Theo tinh trạng cư trú
+                                    <span>Theo tình trạng cư trú</span>
+                                </NavLink>
+                                <NavLink to="statistic/by-time" className="dropdown-item"
+                                    onClick={() => this.setIsDropdownStatistic(false)}>
+                                    <span>Theo thời gian</span>
                                 </NavLink>
 
                             </div>
@@ -258,11 +264,11 @@ class Resident extends React.Component {
                             <div className="dropdown-menu">
                                 <NavLink to="query/search" className="dropdown-item"
                                     onClick={() => this.setIsDropdownQuery(false)}>
-                                    Tìm kiếm thông tin
+                                    <span>Tìm kiếm thông tin</span>
                                 </NavLink>
                                 <NavLink to="query/history" className="dropdown-item"
                                     onClick={() => this.setIsDropdownQuery(false)}>
-                                    Xem lịch sử thay đổi nhân khẩu
+                                    <span>Xem lịch sử thay đổi nhân khẩu</span>
                                 </NavLink>
 
                             </div>
@@ -287,10 +293,12 @@ class Resident extends React.Component {
                     <Route path="statistic/by-gender" element={<StatisticByGender />} />
                     <Route path="statistic/by-age" element={<StatisticByAge />} />
                     <Route path="statistic/by-status" element={<StatisticByStatus />} />
+                    <Route path="statistic/by-time" element={<StatisticByTime />} />
+
 
                     {/* Add routes for the "Truy vấn" section as well */}
                     {/* <Route path="query/search" element={<YourSearchComponent />} /> */}
-                    {/* <Route path="query/history" element={<YourHistoryComponent />} /> */}
+                    <Route path="query/history" element={<ResidentQueryHistory />} />
                 </Routes>
                 <EditModal
                     show={this.state.isModalOpen}

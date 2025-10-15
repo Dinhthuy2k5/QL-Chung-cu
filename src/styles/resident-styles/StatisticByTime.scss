@@ -1,0 +1,111 @@
+// Biến màu cho theme
+$dark-bg: #2c3038;
+$text-color: #e9ecef;
+$label-color: #adb5bd;
+$border-color: #495057;
+$primary-blue: #007bff;
+$primary-blue-hover: #0056b3;
+$result-bg: #353a42;
+
+.time-statistic-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: $dark-bg;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    color: $text-color;
+
+    .title {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+    }
+}
+
+.time-statistic-controls {
+    display: flex;
+    align-items: flex-end; // Căn các mục xuống dưới cùng
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 40px;
+
+    .date-picker-group {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-size: 0.9rem;
+            color: $label-color;
+            margin-bottom: 8px;
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            font-size: 1rem;
+            background-color: $dark-bg; // Giả sử bạn có biến này
+            border: 1px solid $border-color;
+            color: $text-color;
+            border-radius: 6px;
+            color-scheme: dark;
+
+            &::-webkit-calendar-picker-indicator {
+                filter: invert(1);
+                cursor: pointer;
+            }
+        }
+    }
+
+    button {
+        background-color: $primary-blue;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: $primary-blue-hover;
+        }
+
+        &:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.time-statistic-results {
+    .error-message {
+        color: #dc3545;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .result-box {
+        background-color: $result-bg;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        border-left: 5px solid $primary-blue;
+
+        .result-label {
+            display: block;
+            font-size: 1.1rem;
+            color: $label-color;
+            margin-bottom: 15px;
+        }
+
+        .result-count {
+            display: block;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: white;
+        }
+    }
+}

@@ -51,23 +51,33 @@
 
 // Các mục con trong dropdown
 .dropdown-item {
-    display: block; // Mỗi mục chiếm một dòng
+    display: block;
     width: 100%;
-    padding: 12px 20px;
-    color: #f0f0f0; // Chữ màu trắng
+    // Bỏ padding ở đây
+    padding: 0 20px;
+    color: #f0f0f0;
     text-decoration: none;
-    white-space: nowrap; // Ngăn chữ xuống dòng
-    border-top: 1px solid #444; // Đường kẻ ngăn cách các mục
-    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    border-top: 1px solid #444;
 
     &:first-child {
-        border-top: none; // Bỏ đường kẻ cho mục đầu tiên
+        border-top: none;
+    }
+
+    // Áp dụng padding và hiệu ứng hover cho thẻ span bên trong
+    span {
+        display: inline-block; // Để có thể áp dụng padding
+        padding: 12px 0;
+        border-radius: 4px;
+        transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     &:hover {
-        background-color: #555; // Màu nền khi di chuột vào
+        span {
+            background-color: #555; // Nền chỉ áp dụng cho span
+            color: white; // Có thể làm chữ sáng hơn khi hover
+        }
     }
-  
 }
 
 /* Thêm vào cuối file Resident.scss */

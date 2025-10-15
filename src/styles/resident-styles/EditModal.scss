@@ -1,108 +1,130 @@
+// --- BIẾN MÀU SẮC CHO THEME TỐI ---
+$primary-red: #e74c3c;
+$secondary-gray: #6c757d;
+$dark-bg-main: #3a3f44;
+$dark-bg-header: #40454c;
+$dark-bg-input: #2c3038;
+$text-color-light: #e9ecef;
+$label-color-light: #adb5bd;
+$border-color-dark: #5a5f66;
+
+// --- LỚP PHỦ NỀN MỜ ---
 .modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    backdrop-filter: blur(4px);
 }
 
+// --- KHUNG NỘI DUNG CỦA MODAL ---
 .modal-content {
-   display: flex; // Dùng flexbox để sắp xếp
-  flex-direction: column; // Sắp xếp theo chiều dọc (tiêu đề -> body -> nút)
-  max-height: 85vh; // Giới hạn chiều cao tối đa là 85% chiều cao màn hình
-  background-color: #3a4049;
-  padding: 25px 30px;
-  border-radius: 8px;
-  width: 500px;
-  max-width: 90%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  color: #e6e6e6;
-
-  h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-align: center;
-     flex-shrink: 0; // Không cho tiêu đề bị co lại
-  }
-
-  .modal-body {
-    overflow-y: auto; // Thêm thanh cuộn dọc KHI CẦN THIẾT
-    flex-grow: 1; // Cho phép phần body co giãn để lấp đầy không gian
-    padding-right: 15px; // Thêm khoảng đệm bên phải để thanh cuộn không dính vào input
-
-    // --- (Tùy chọn) Làm đẹp thanh cuộn cho hợp với theme tối ---
-    &::-webkit-scrollbar {
-      width: 8px;
+    background-color: $dark-bg-main;
+    color: $text-color-light;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px; // Tăng chiều rộng để chứa 2 cột
+    box-shadow: 0 5px B20px rgba(0, 0, 0, 0.5);
+    border: 1px solid $border-color-dark;
+    
+    h3 {
+        text-align: center;
+        padding: 20px;
+        margin: 0;
+        font-size: 1.5rem;
+        background-color: $dark-bg-header;
+        border-bottom: 1px solid $border-color-dark;
+        border-radius: 12px 12px 0 0;
     }
+}
 
-    &::-webkit-scrollbar-track {
-      background: #2c313a;
-      border-radius: 4px;
+// --- FORM VÀ BODY ---
+.modal-body {
+    padding: 25px 30px;
+    
+    // Sử dụng CSS Grid để tạo layout 2 cột
+    display: grid;
+    grid-template-columns: 1fr 1fr; // Chia làm 2 cột bằng nhau
+    gap: 20px; // Khoảng cách giữa các ô
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: $label-color-light;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: $dark-bg-input;
+            border: 1px solid $border-color-dark;
+            color: $text-color-light;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-red;
+                box-shadow: 0 0 0 3px rgba($primary-red, 0.2);
+            }
+        }
+        
+        input[type="date"] {
+            color-scheme: dark;
+            &::-webkit-calendar-picker-indicator {
+                filter: invert(1);
+                cursor: pointer;
+            }
+        }
     }
+}
 
-    &::-webkit-scrollbar-thumb {
-      background-color: #6c757d;
-      border-radius: 4px;
-
-      &:hover {
-        background-color: #8a939c;
-      }
-    }
-  }
-  .form-group {
-    margin-bottom: 15px;
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-
-    input {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: 1px solid #555;
-      background-color: #2c313a;
-      color: #e6e6e6;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-  }
-
-  .modal-actions {
-    margin-top: 25px;
+// --- FOOTER VÀ CÁC NÚT BẤM ---
+.modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    flex-shrink: 0; // Không cho phần nút bị co lại
+    gap: 15px;
+    padding: 20px 30px;
+    border-top: 1px solid $border-color-dark;
+    background-color: $dark-bg-header;
+    border-radius: 0 0 12px 12px;
 
     button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: opacity 0.2s;
-
-      &:hover {
-        opacity: 0.85;
-      }
+        padding: 10px 25px;
+        border-radius: 6px;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
     .save-btn {
-      background-color: #4CAF50; // Màu xanh lá
-      color: white;
+        background-color: $primary-red;
+        color: white;
+        &:hover {
+            background-color: darken($primary-red, 10%);
+        }
     }
 
     .cancel-btn {
-      background-color: #f44336; // Màu đỏ
-      color: white;
+        background-color: $secondary-gray;
+        color: white;
+        &:hover {
+            background-color: darken($secondary-gray, 10%);
+        }
     }
-  }
 }

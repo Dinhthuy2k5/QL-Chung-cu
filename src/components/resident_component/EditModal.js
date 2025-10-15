@@ -61,7 +61,12 @@ class EditModal extends React.Component {
                         </div>
                         <div className="form-group">
                             <label>Giới tính:</label>
-                            <input type="text" name="gioiTinh" value={formData.gioiTinh || ''} onChange={this.handleInputChange} />
+                            <select name="gioiTinh" value={formData.gioiTinh || ''} onChange={this.handleInputChange}>
+                                {/* <option value="" disabled>-- Chọn giới tính --</option> */}
+                                <option value="NAM">NAM</option>
+                                <option value="NỮ">NỮ</option>
+                                <option value="KHÁC">KHÁC</option>
+                            </select>
                         </div>
                         <div className="form-group">
                             <label>Ngày Sinh:</label>

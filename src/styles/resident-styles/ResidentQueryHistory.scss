@@ -1,0 +1,106 @@
+// Biến màu cho theme
+$dark-bg: #2c3038;
+$header-bg: #353a42;
+$border-color: #495057;
+$text-color: #e9ecef;
+$row-hover-bg: #3e444c;
+$primary-blue: #007bff;
+$primary-blue-hover: #0056b3;
+$error-color: #dc3545;
+
+.history-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    color: $text-color;
+}
+
+.history-search-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+
+    input[type="text"] {
+        flex-grow: 1;
+        padding: 12px 15px;
+        font-size: 1rem;
+        background-color: $dark-bg; // Giả sử bạn có biến này
+        border: 1px solid $border-color;
+        color: $text-color;
+        border-radius: 6px;
+
+        &:focus {
+            outline: none;
+            border-color: $primary-blue;
+            box-shadow: 0 0 5px rgba($primary-blue, 0.5);
+        }
+    }
+
+    button {
+        background-color: $primary-blue;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: $primary-blue-hover;
+        }
+
+        &:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.history-results {
+    .error-message {
+        color: $error-color;
+        text-align: center;
+        font-weight: bold;
+        padding: 20px;
+    }
+
+    // Dùng lại style table từ FamilyList.scss để đồng bộ
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: $dark-bg;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid $border-color;
+            font-size: 0.9rem;
+        }
+
+        thead tr {
+            background-color: $header-bg;
+            font-weight: bold;
+        }
+        
+        th {
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+            &:hover {
+                background-color: $row-hover-bg;
+            }
+        }
+        
+        td {
+            word-break: break-word; // Cho phép chữ dài tự xuống dòng
+        }
+    }
+}
