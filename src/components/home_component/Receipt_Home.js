@@ -14,7 +14,7 @@ class Receipt_Home extends React.Component {
     render() {
         return (
             <div className="receipt-card">
-                <h4 className="receipt-title">
+                <h4 className="card-title">
                     Khoản thu
                 </h4>
                 <div className="card-body">

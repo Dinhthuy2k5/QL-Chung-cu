@@ -9,9 +9,11 @@ $button-hover-bg: #0056b3;    // Màu nút khi di chuột vào
 
 // --- ĐỊNH DẠNG CHO TOÀN BỘ CARD ---
 .apartment-card {
-    background-color: $card-bg;
-    border: 1px solid $border-color;
-    border-radius: 12px; // Bo góc nhiều hơn cho mềm mại
+    // Thay thế background-color cũ bằng đoạn này
+    background: rgba(53, 58, 66, 0.6); // Màu xám tối, trong suốt 60%
+    backdrop-filter: blur(10px); // Hiệu ứng làm mờ nền phía sau
+    border: 1px solid rgba(255, 255, 255, 0.1); // Viền trắng mờ
+    border-radius: 15px; // Bo góc nhiều hơn
     padding: 25px;
     width: 320px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); // Đổ bóng sâu hơn
@@ -81,7 +83,7 @@ $button-hover-bg: #0056b3;    // Màu nút khi di chuột vào
     
     .count {
         font-size: 3.5rem; // Làm cho số to và ấn tượng hơn
-        font-weight: 700;
+        font-weight: 400;
         color: $count-color;
         line-height: 1.1;
     }

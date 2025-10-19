@@ -1,65 +1,86 @@
-// Tái sử dụng các biến màu từ file Apartment_Home.scss cho đồng bộ
-$card-bg: #ffffff;
-$border-color: #e0e0e0;
-$title-color: #333;
-$count-color: #0056b3;
-$button-bg: #007bff;
-$button-hover-bg: #0056b3;
+// --- BIẾN MÀU SẮC CHO THEME TỐI ---
+$card-bg: #353a42;           // Nền card màu xám tối
+$border-color: #495057;       // Viền card màu xám sáng hơn
+$title-color: #e9ecef;       // Chữ tiêu đề màu trắng nhạt
+$count-color: #ffffff;        // Chữ số màu trắng
+$label-color: #adb5bd;       // Chữ "Tổng số" màu xám nhạt
+$button-bg: #007bff;           // Nút màu xanh dương
+$button-hover-bg: #0056b3;    // Màu nút khi di chuột vào
 
 // Định dạng cho card Cư dân
 .resident-card {
-    background-color: $card-bg;
-    border: 1px solid $border-color;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+   background: rgba(53, 58, 66, 0.6); // Màu xám tối, trong suốt 60%
+    backdrop-filter: blur(10px); // Hiệu ứng làm mờ nền phía sau
+    border: 1px solid rgba(255, 255, 255, 0.1); // Viền trắng mờ
+    border-radius: 15px; // Bo góc nhiều hơn
+    padding: 25px;
+    width: 320px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); // Đổ bóng sâu hơn
     font-family: Arial, sans-serif;
-     width: 300px; // Đồng bộ chiều rộng với card kia
-
-    // ✅ Thêm vào: Biến card thành flex container dạng cột
+    color: $title-color;
+    
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease; // Thêm hiệu ứng chuyển động khi hover
 
-    // Tiêu đề card
-    .resident-title {
-        margin: 0;
-        font-size: 1.2rem;
-        color: $title-color;
-        margin-bottom: 20px; // Tạo khoảng cách với phần body
-        text-align: center; // Căn giữa tiêu đề vì không có nút +
+    &:hover {
+        transform: translateY(-5px); // Nhấc card lên một chút
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
     }
+
+// --- HEADER CỦA CARD ---
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.5rem; // Tăng kích thước tiêu đề
+    font-weight: 600;
+}
 
     // Phần body (giữ nguyên style giống card Căn hộ)
-    .card-body {
-        flex-grow: 1;
-        margin-bottom: 20px;
-        .label {
-            color: #666;
-            margin-right: 8px;
-        }
-        
-        .count {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: $count-color;
-        }
+    // --- BODY CỦA CARD ---
+.card-body {
+    flex-grow: 1; 
+    text-align: center; // Căn giữa nội dung
+    margin-bottom: 25px;
+
+    .label {
+        color: $label-color;
+        font-size: 1rem;
+        margin-bottom: 5px; // Thêm khoảng cách dưới
+        display: block; // Chuyển thành block để margin có tác dụng
     }
+    
+    .count {
+        font-size: 3.5rem; // Làm cho số to và ấn tượng hơn
+        font-weight: 400;
+        color: $count-color;
+        line-height: 1.1;
+    }
+}
 
 .view-all-resident {
-    width: 100%; // Nút rộng bằng card
-    padding: 12px;
-    background-color: $button-bg; // Sử dụng lại màu nút chính
+    width: 100%;
+    padding: 14px;
+    background-color: $button-bg;
     color: white;
     border: none;
-    border-radius: 6px; // Bo góc nhẹ
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
-        background-color: $button-hover-bg; // Hiệu ứng khi di chuột
+        background-color: $button-hover-bg;
+        box-shadow: 0 4px 15px rgba($button-bg, 0.4); // Thêm hiệu ứng đổ bóng cho nút
+        transform: translateY(-2px);
     }
 }
 }

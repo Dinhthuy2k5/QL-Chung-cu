@@ -9,6 +9,7 @@ import Resident from './views/Residents.js';
 import { removeToken } from './services/localStorageService.js';
 import Change_Infor from './pages/Change_Infor.js';
 import VantaBackground from './views/VantaBackground.js';
+import Receipt from './views/Receipt.js';
 
 
 // Component AppContent sẽ chứa toàn bộ logic và giao diện của bạn
@@ -54,6 +55,7 @@ function AppContent() {
           <Route path="/residents/*" element={<Resident setTotalResidents={setTotalResidents} />} />
           <Route path="/change-infor" element={<Change_Infor username={userLoggedIn} isChangeInfor={isChangeInfor} />} />
           <Route path="/view-infor" element={<Change_Infor username={userLoggedIn} isViewInfor={isViewInfor} />} />
+          <Route path="/receipts" element={<Receipt />} />
         </Routes>
       </header>
     </div>

@@ -16,7 +16,7 @@ class Resident_Home extends React.Component {
     render() {
         return (
             <div className="resident-card">
-                <h4 className="resident-title">
+                <h4 className="card-title">
                     Cư dân
                 </h4>
                 <div className="card-body">
