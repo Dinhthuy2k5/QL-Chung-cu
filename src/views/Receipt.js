@@ -3,15 +3,23 @@ import '../styles/receipt-styles/Receipt.scss'
 import { getToken } from "../services/localStorageService";
 import axios from "axios";
 import MandatoryFeeList from "../components/receipt_component/MandatoryFeeList";
+import VoluntaryContribution from "../components/receipt_component/VoluntaryContribution";
+import ApartmentPaymentHistory from "../components/receipt_component/ApartmentPaymentHistory";
 
 class Receipt extends React.Component {
     state = {
 
-        activeView: 'main', // 'main', 'addFee', 'collectFee', 'mandatoryList'
-        // State cho các modal
-        isAddFeeModalOpen: false,
-        isCollectFeeModalOpen: false,
-        isResultModalOpen: false, // Modal mới để hiển thị kết quả thanh toán
+        activeTab: 'mandatory', // 'mandatory' hoặc 'voluntary'
+
+        // Modal cho Phí bắt buộc
+        isAddFeeModalOpen: false,       // Modal "Tạo khoản thu"
+        isCollectFeeModalOpen: false,   // Modal "Thu phí"
+        isResultModalOpen: false,       // Modal kết quả thanh toán
+        isMandatoryListModalOpen: false, // Modal "Lập danh sách bắt buộc"
+
+        // Modal cho Phí tự nguyện
+        isVoluntaryCreateModalOpen: false,
+        isVoluntaryUpdateModalOpen: false,
 
         loaiKhoanThu: '',
         // Một state duy nhất cho tất cả các trường của form "Tạo khoản thu"
@@ -36,8 +44,7 @@ class Receipt extends React.Component {
         paymentResult: null,
     };
 
-    // Hàm để thay đổi view
-    setView = (view) => this.setState({ activeView: view });
+    setActiveTab = (tab) => this.setState({ activeTab: tab });
 
     // Hàm reset state của form tạo khoản thu
     resetAddFeeForm = () => {
@@ -69,6 +76,9 @@ class Receipt extends React.Component {
     };
 
     toggleResultModal = (status) => this.setState({ isResultModalOpen: status });
+    toggleMandatoryListModal = (status) => this.setState({ isMandatoryListModalOpen: status });
+    toggleVoluntaryCreateModal = (status) => this.setState({ isVoluntaryCreateModalOpen: status });
+    toggleVoluntaryUpdateModal = (status) => this.setState({ isVoluntaryUpdateModalOpen: status });
 
     // --- CÁC HÀM XỬ LÝ FORM ---
 
@@ -272,12 +282,12 @@ class Receipt extends React.Component {
                     <div className="modal-header"><h3>Thu phí Bắt buộc</h3><button onClick={() => this.toggleCollectFeeModal(false)}>&times;</button></div>
                     <form onSubmit={this.handleCollectFeeSubmit}>
                         <div className="modal-body">
-                            <div className="form-group full-width">
-                                <label>ID Thời gian thu (VD: 102025 cho tháng 10/2025)</label>
-                                <input name="idThoiGianThu" value={collectFeeForm.idThoiGianThu} onChange={this.handleCollectFeeFormChange} type="text" required />
+                            <div className="form-group">
+                                <label>ID Thời gian thu </label>
+                                <textarea name="idThoiGianThu" value={collectFeeForm.idThoiGianThu} onChange={this.handleCollectFeeFormChange} rows="4" placeholder="Ví dụ: 102025" required />
                             </div>
-                            <div className="form-group full-width">
-                                <label>Danh sách ID Căn hộ đã nộp (cách nhau bởi dấu phẩy)</label>
+                            <div className="form-group">
+                                <label>Danh sách ID Căn hộ đã nộp</label>
                                 <textarea name="danhSachIdCanHo" value={collectFeeForm.danhSachIdCanHo} onChange={this.handleCollectFeeFormChange} rows="4" placeholder="Ví dụ: 1, 2, 5" required />
                             </div>
                         </div>
@@ -339,49 +349,81 @@ class Receipt extends React.Component {
         );
     }
 
+    // --- HÀM RENDER MỚI CHO MODAL "LẬP DANH SÁCH" ---
+    renderMandatoryListModal() {
+        return (
+            <div className="modal-overlay">
+                {/* Dùng class "extra-large" để modal rộng hơn */}
+                <div className="modal-content extra-large">
+                    <div className="modal-header">
+                        <h3>Danh sách Khoản thu Bắt buộc</h3>
+                        <button onClick={() => this.toggleMandatoryListModal(false)}>&times;</button>
+                    </div>
+                    <div className="modal-body full-width-body">
+                        {/* Component MandatoryFeeList giờ nằm trong modal */}
+                        <MandatoryFeeList />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     render() {
-        const { activeView } = this.state;
+        const { activeTab } = this.state;
         return (
             <div className="receipt-container">
-                {/* --- Thanh điều hướng phụ --- */}
-                <div className="receipt-actions sub-nav">
-                    <button
-                        className={activeView === 'main' ? 'active' : ''}
-                        onClick={() => this.setView('main')}
-                    >
-                        Bảng điều khiển
-                    </button>
-                    <button
-                        className={activeView === 'mandatoryList' ? 'active' : ''}
-                        onClick={() => this.setView('mandatoryList')}
-                    >
-                        Lập danh sách Bắt buộc
-                    </button>
-                    <button>Lập danh sách Tự nguyện</button>
-                </div>
-
-                {/* --- Render có điều kiện dựa trên activeView --- */}
-
-                {activeView === 'main' && (
-                    <>
-                        <div className="receipt-actions">
-                            <button onClick={this.toggleAddFeeModal}>Tạo khoản thu</button>
-                            <button onClick={this.toggleCollectFeeModal}>Thu phí</button>
-                            <button> Xuất báo cáo</button>
-                        </div>
-                        <div className="receipt-table-container">
-                            {/* Bảng chính của bạn sẽ ở đây */}
-                        </div>
-                    </>
-                )}
-
-                {activeView === 'mandatoryList' && <MandatoryFeeList />}
-
-                {/* --- Các modal vẫn hoạt động bình thường --- */}
+                {/* --- Render tất cả các modal ở đây --- */}
                 {this.state.isAddFeeModalOpen && this.renderAddFeeModal()}
                 {this.state.isCollectFeeModalOpen && this.renderCollectFeeModal()}
                 {this.state.isResultModalOpen && this.renderPaymentResultModal()}
+                {this.state.isMandatoryListModalOpen && this.renderMandatoryListModal()}
+
+                {/* --- GIAO DIỆN TAB --- */}
+                <div className="receipt-tabs">
+                    <button
+                        className={`tab-button ${activeTab === 'mandatory' ? 'active' : ''}`}
+                        onClick={() => this.setActiveTab('mandatory')}
+                    >
+                        Quản lý Khoản thu Bắt buộc
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === 'voluntary' ? 'active' : ''}`}
+                        onClick={() => this.setActiveTab('voluntary')}
+                    >
+                        Quản lý Đóng góp Tự nguyện
+                    </button>
+                    <button className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} onClick={() => this.setActiveTab('history')}>
+                        Tra cứu Lịch sử Căn hộ
+                    </button>
+                </div>
+
+                {/* --- NỘI DUNG CỦA TAB --- */}
+                <div className="tab-content">
+                    {activeTab === 'mandatory' && (
+                        <>
+                            <div className="section-header">
+                                <h2>Quản lý Khoản thu Bắt buộc</h2>
+                                <p>Tạo các khoản phí hàng tháng và ghi nhận thanh toán của cư dân.</p>
+                            </div>
+                            <div className="section-actions">
+                                <button onClick={() => this.toggleAddFeeModal(true)}>Tạo Khoản thu</button>
+                                <button onClick={() => this.toggleCollectFeeModal(true)}>Xác nhận Thanh toán</button>
+                                <button onClick={() => this.toggleMandatoryListModal(true)}>Xem Danh sách Khoản thu</button>
+                                <button className="secondary-btn">Xuất Báo cáo</button>
+                            </div>
+                        </>
+                    )}
+
+                    {activeTab === 'voluntary' && (
+                        <VoluntaryContribution />
+                    )}
+                    {activeTab === 'history' && <ApartmentPaymentHistory />}
+                </div>
+
             </div>
+
+
+
         );
     }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { error } from "three";
+
 import { getToken } from "../../services/localStorageService";
 import '../../styles/receipt-styles/MandatoryFeeList.scss'
 import axios from "axios";
@@ -49,6 +49,72 @@ class MandatoryFeeList extends React.Component {
         return (number || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
+    // --- HÀM MỚI ĐỂ XUẤT BÁO CÁO ---
+
+    handleExportReport = () => {
+        const { feeData, idThoiGianThu } = this.state;
+        if (!feeData) {
+            alert("Không có dữ liệu để xuất báo cáo.");
+            return;
+        }
+
+        // Helper function to escape commas in strings for CSV
+        const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+
+        // 1. Header của file báo cáo
+        let csvContent = "\uFEFF"; // BOM for Excel UTF-8 compatibility
+        csvContent += "BÁO CÁO TỔNG HỢP CÁC KHOẢN THU BẮT BUỘC\n";
+        csvContent += `Kỳ báo cáo: ${idThoiGianThu}\n`;
+        csvContent += `Ngày lập báo cáo: ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+
+        // 2. Phần tóm tắt
+        csvContent += "THÔNG TIN TÓM TẮT\n";
+        csvContent += `Ngày thu,${feeData.ngayThu}\n`;
+        csvContent += `Hạn thu,${feeData.hanThu}\n`;
+        csvContent += `Số căn hộ đã nộp,${feeData.successCount}/${feeData.totalCanHo}\n`;
+        csvContent += `Tổng tiền đã thu,${feeData.tongPhiAll || 0}\n\n`;
+
+        // 3. Phần bảng chi tiết
+        csvContent += "CHI TIẾT CÁC KHOẢN THU THEO CĂN HỘ\n";
+        const headers = [
+            "ID Căn hộ", "Trạng thái", "Tổng Phí", "Phí Chung cư", "Phí Gửi Xe",
+            "Phí Tiện ích", "Đã nộp", "Còn nợ"
+        ];
+        csvContent += headers.map(escapeCsv).join(',') + '\n';
+
+        feeData.danhSachTongThanhToan.forEach(item => {
+            const row = [
+                item.idCanHo,
+                item.trangThai.replace('_', ' '),
+                item.tongPhi,
+                item.tongPhiChungCu,
+                item.tongGuiXe,
+                item.tongTienIch,
+                item.soTienDaNop,
+                item.soDu
+            ];
+            csvContent += row.map(val => escapeCsv(val || 0)).join(',') + '\n';
+        });
+
+        // 4. Phần tổng kết
+        csvContent += "\n";
+        csvContent += "TỔNG KẾT\n";
+        csvContent += `Tổng Phí Chung Cư,${feeData.tongPhiChungCuAll || 0}\n`;
+        csvContent += `Tổng Phí Gửi Xe,${feeData.tongGuiXeAll || 0}\n`;
+        csvContent += `Tổng Phí Tiện Ích,${feeData.tongTienIchAll || 0}\n`;
+        csvContent += `TỔNG CỘNG,${feeData.tongPhiAll || 0}\n`;
+
+        // 5. Tạo và tải file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `BaoCao_PhiBatBuoc_${idThoiGianThu}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     render() {
         const { idThoiGianThu, feeData, isLoading, error } = this.state;
 
@@ -77,6 +143,7 @@ class MandatoryFeeList extends React.Component {
                             <div className="summary-item success"><span>Đã nộp</span><strong>{feeData.successCount} / {feeData.totalCanHo}</strong></div>
                             <div className="summary-item total"><span>Tổng thu</span><strong>{this.formatCurrency(feeData.tongPhiAll)}</strong></div>
                         </div>
+
 
                         {/* Bảng chi tiết */}
                         <div className="fee-list-table">
@@ -108,6 +175,13 @@ class MandatoryFeeList extends React.Component {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* 3. THÊM NÚT XUẤT BÁO CÁO Ở ĐÂY */}
+                        <div className="fee-list-footer">
+                            <button className="export-btn" onClick={this.handleExportReport}>
+                                Xuất báo cáo (CSV)
+                            </button>
                         </div>
                     </div>
                 )}

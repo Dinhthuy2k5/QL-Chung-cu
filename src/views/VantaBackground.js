@@ -31,7 +31,7 @@ const VantaBackground = () => {
                 separation: 25.00,
                 alignment: 20.00,
                 cohesion: 20.00,
-                quantity: 5.00
+                quantity: 4.50
             }));
         }
         return () => {

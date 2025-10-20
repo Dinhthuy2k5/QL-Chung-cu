@@ -1,0 +1,32 @@
+// Kế thừa các biến màu và style chung
+@import 'Receipt.scss';
+
+// --- Bảng hiển thị danh sách đóng góp ---
+.receipt-table-container {
+    margin-top: 15px; // Thêm khoảng cách với các nút
+    flex-grow: 1; // Cho phép bảng chiếm không gian còn lại
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #2c3038;
+        color: #e9ecef;
+        border-radius: 8px;
+        overflow: hidden;
+        
+        th, td {
+            padding: 12px 15px; // Giảm padding cho gọn hơn
+            text-align: left;
+            border-bottom: 1px solid #495057;
+            font-size: 0.9rem;
+        }
+
+        thead tr {
+            background-color: #353a42;
+        }
+
+        tbody tr:hover {
+            background-color: #3e444c;
+        }
+    }
+}
