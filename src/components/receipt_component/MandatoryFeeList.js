@@ -10,6 +10,7 @@ class MandatoryFeeList extends React.Component {
         feeData: null,     // Lưu toàn bộ kết quả từ API
         isLoading: false,
         error: null,
+
     };
 
     handleInputChange = (event) => {
@@ -36,7 +37,21 @@ class MandatoryFeeList extends React.Component {
         try {
             const response = await axios.get(apiUrl, config);
             console.log("Lập danh sách thành công:", response.data);
-            this.setState({ feeData: response.data.result, isLoading: false });
+
+            let paidCount = 0;
+            if (response.data.result && response.data.result.danhSachTongThanhToan) {
+                paidCount = response.data.result.danhSachTongThanhToan.filter(
+                    item => item.trangThai === 'DA_THANH_TOAN'
+                ).length;
+            }
+            // Lưu cả dữ liệu API và số lượng đã đếm được
+            this.setState({
+                feeData: {
+                    ...response.data.result,
+                    paidApartmentCount: paidCount // Lưu số lượng đã đếm vào state
+                },
+                isLoading: false
+            });
         } catch (error) {
             const errorMessage = error.response ? error.response.data.message : "Không thể kết nối đến server.";
             console.error("Lỗi khi lập danh sách:", errorMessage);
@@ -140,7 +155,8 @@ class MandatoryFeeList extends React.Component {
                         <div className="fee-list-summary">
                             <div className="summary-item"><span>Ngày thu</span><strong>{feeData.ngayThu}</strong></div>
                             <div className="summary-item"><span>Hạn thu</span><strong>{feeData.hanThu}</strong></div>
-                            <div className="summary-item success"><span>Đã nộp</span><strong>{feeData.successCount} / {feeData.totalCanHo}</strong></div>
+                            <div className="summary-item success"><span>Đã nộp</span>
+                                <strong>{feeData.paidApartmentCount} / {feeData.totalCanHo}</strong></div>
                             <div className="summary-item total"><span>Tổng thu</span><strong>{this.formatCurrency(feeData.tongPhiAll)}</strong></div>
                         </div>
 

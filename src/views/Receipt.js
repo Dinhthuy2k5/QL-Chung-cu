@@ -21,6 +21,12 @@ class Receipt extends React.Component {
         isVoluntaryCreateModalOpen: false,
         isVoluntaryUpdateModalOpen: false,
 
+        isCalculateFeeModalOpen: false, // State cho modal "Tính tổng thanh toán"
+        calculationForm: { // State cho form
+            idThoiGianThu: ''
+        },
+        calculationResult: null, // State lưu kết quả tính tổng
+
         loaiKhoanThu: '',
         // Một state duy nhất cho tất cả các trường của form "Tạo khoản thu"
         addFeeForm: {
@@ -80,6 +86,17 @@ class Receipt extends React.Component {
     toggleVoluntaryCreateModal = (status) => this.setState({ isVoluntaryCreateModalOpen: status });
     toggleVoluntaryUpdateModal = (status) => this.setState({ isVoluntaryUpdateModalOpen: status });
 
+    toggleCalculateFeeModal = (status) => {
+        // Reset form và kết quả khi đóng modal
+        if (!status) {
+            this.setState({
+                calculationForm: { idThoiGianThu: '' },
+                calculationResult: null
+            });
+        }
+        this.setState({ isCalculateFeeModalOpen: status });
+    };
+
     // --- CÁC HÀM XỬ LÝ FORM ---
 
     handleLoaiKhoanThuChange = (event) => {
@@ -101,6 +118,11 @@ class Receipt extends React.Component {
             collectFeeForm: { ...prevState.collectFeeForm, [name]: value }
         }));
     }
+
+    // Hàm xử lí input form tính tổng thanh toán
+    handleCalculationFormChange = (event) => {
+        this.setState({ calculationForm: { idThoiGianThu: event.target.value } });
+    };
 
     // --- CÁC HÀM GỌI API ---
     handleAddFeeSubmit = async (event) => {
@@ -212,6 +234,41 @@ class Receipt extends React.Component {
         }
     };
 
+    handleTotalFeeSubmit = async (event) => {
+        event.preventDefault();
+
+        const { idThoiGianThu } = this.state.calculationForm;
+        if (!idThoiGianThu) {
+            alert("Vui lòng nhập ID Thời gian thu.");
+            return;
+        }
+
+        const token = getToken();
+        if (!token) {
+            alert("Phiên đăng nhập đã hết hạn.");
+            return;
+        }
+
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        const data = { idThoiGianThu: idThoiGianThu };
+        const apiUrl = `http://localhost:8080/qlcc/phi/tong-thanh-toan/batch`;
+
+        try {
+            console.log(`Submitting to ${apiUrl} with data:`, data);
+            const response = await axios.post(apiUrl, data, config);
+            console.log("Tính tổng thanh toán thành công:", response.data);
+            // Lưu kết quả vào state để hiển thị
+            this.setState({ calculationResult: response.data.result });
+            alert("Đã tính tổng phí cho tất cả căn hộ thành công!");
+        } catch (error) {
+            const errorMessage = error.response ? error.response.data.message : "Lỗi không xác định.";
+            console.error("Lỗi khi tính tổng phí:", errorMessage);
+            alert(`Tính tổng phí thất bại: ${errorMessage}`);
+        }
+
+
+    }
+
     // Hàm render modal tạo khoản thu
     renderAddFeeModal() {
         const { addFeeForm, loaiKhoanThu } = this.state;
@@ -274,6 +331,7 @@ class Receipt extends React.Component {
         );
     };
 
+    // Hàm render xác nhận thanh toán
     renderCollectFeeModal() {
         const { collectFeeForm } = this.state;
         return (
@@ -368,6 +426,44 @@ class Receipt extends React.Component {
         );
     }
 
+    // --- HÀM RENDER MỚI CHO MODAL TÍNH TỔNG ---
+    renderCalculateFeeModal() {
+        const { calculationForm, calculationResult } = this.state;
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <div className="modal-header"><h3>Tính tổng phí hàng loạt</h3><button onClick={() => this.toggleCalculateFeeModal(false)}>&times;</button></div>
+                    <form onSubmit={this.handleTotalFeeSubmit}>
+                        <div className="modal-body">
+                            <div className="form-group full-width">
+                                <label>ID Thời gian thu (VD: 102025)</label>
+                                <p className="form-help-text">Nhập ID kỳ thu mà bạn muốn hệ thống tự động tính toán tổng phí (chung cư, xe, tiện ích) cho TẤT CẢ các căn hộ.</p>
+                                <input name="idThoiGianThu" value={calculationForm.idThoiGianThu} onChange={this.handleCalculationFormChange} type="text" required />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="submit" >Bắt đầu Tính toán</button>
+                        </div>
+
+                    </form>
+
+                    {/* Hiển thị kết quả sau khi gọi API */}
+                    {
+                        calculationResult && (
+                            <div className="modal-result-summary">
+                                <h4>Kết quả tính toán:</h4>
+                                <p><strong>Tổng số căn hộ:</strong> {calculationResult.totalCanHo}</p>
+                                <p className="success"><strong>Tính thành công:</strong> {calculationResult.successCount}</p>
+                                <p className="fail"><strong>Tính thất bại:</strong> {calculationResult.failCount}</p>
+                                <p><i>(Chi tiết các căn hộ thất bại đã được ghi lại ở backend)</i></p>
+                            </div>
+                        )
+                    }
+                </div >
+            </div >
+        );
+    }
+
     render() {
         const { activeTab } = this.state;
         return (
@@ -377,6 +473,7 @@ class Receipt extends React.Component {
                 {this.state.isCollectFeeModalOpen && this.renderCollectFeeModal()}
                 {this.state.isResultModalOpen && this.renderPaymentResultModal()}
                 {this.state.isMandatoryListModalOpen && this.renderMandatoryListModal()}
+                {this.state.isCalculateFeeModalOpen && this.renderCalculateFeeModal()}
 
                 {/* --- GIAO DIỆN TAB --- */}
                 <div className="receipt-tabs">
@@ -406,10 +503,11 @@ class Receipt extends React.Component {
                                 <p>Tạo các khoản phí hàng tháng và ghi nhận thanh toán của cư dân.</p>
                             </div>
                             <div className="section-actions">
-                                <button onClick={() => this.toggleAddFeeModal(true)}>Tạo Khoản thu</button>
-                                <button onClick={() => this.toggleCollectFeeModal(true)}>Xác nhận Thanh toán</button>
-                                <button onClick={() => this.toggleMandatoryListModal(true)}>Xem Danh sách Khoản thu</button>
-                                <button className="secondary-btn">Xuất Báo cáo</button>
+                                <button onClick={() => this.toggleAddFeeModal(true)}>1. Tạo Khoản thu</button>
+                                <button onClick={() => this.toggleCalculateFeeModal(true)}>2. Tính tổng thanh toán</button>
+                                <button onClick={() => this.toggleCollectFeeModal(true)}>3. Xác nhận Thanh toán</button>
+                                <button onClick={() => this.toggleMandatoryListModal(true)}>4. Xem Danh sách Khoản thu</button>
+                                {/* <button className="secondary-btn">Xuất Báo cáo</button> */}
                             </div>
                         </>
                     )}

@@ -298,3 +298,41 @@ $dark-bg-input: rgba(44, 48, 56, 0.7);
         box-sizing: border-box;
     }
 }
+
+
+// --- Style cho phần kết quả trong modal ---
+.modal-result-summary {
+    padding: 0 25px 25px 25px; // Thêm padding cho phần kết quả
+    border-top: 1px solid $border-color-subtle;
+    margin-top: 20px;
+
+    h4 {
+        color: $text-color;
+        margin-bottom: 15px;
+    }
+    p {
+        color: $label-color;
+        margin: 5px 0;
+        font-size: 0.9rem;
+    }
+    strong {
+        color: $text-color;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+    .success strong {
+        color: #28a745; // Màu xanh lá
+    }
+    .fail strong {
+        color: #dc3545; // Màu đỏ
+    }
+}
+
+// Style cho phần mô tả trong form
+.form-help-text {
+    font-size: 0.85rem;
+    color: $label-color;
+    margin-bottom: 15px;
+    font-style: italic;
+    line-height: 1.4;
+}
