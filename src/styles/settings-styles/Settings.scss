@@ -1,0 +1,113 @@
+// --- BIẾN MÀU SẮC ---
+$primary-color: #e74c3c; // Dùng màu đỏ nhấn của bạn
+$primary-hover: #c0392b;
+$text-color: #e9ecef;
+$label-color: #adb5bd;
+$border-color-subtle: rgba(255, 255, 255, 0.1);
+$glass-bg: rgba(53, 58, 66, 0.6);
+$dark-bg-input: rgba(44, 48, 56, 0.7);
+
+.settings-container {
+    padding: 30px 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+// Bảng điều khiển cài đặt
+.settings-panel {
+    background: $glass-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid $border-color-subtle;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 900px; // Cho khung rộng hơn
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: $text-color;
+    overflow: hidden;
+}
+
+// Header của Bảng
+.panel-header {
+    border-bottom: 1px solid $border-color-subtle;
+    padding: 25px 30px;
+    
+    h2 {
+        margin: 0 0 5px 0;
+        font-size: 1.6rem;
+    }
+    p {
+        margin: 0;
+        color: $label-color;
+        font-size: 0.9rem;
+    }
+}
+
+// Form cài đặt
+.settings-form {
+    padding: 30px;
+
+    .form-group-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: $label-color;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            background-color: $dark-bg-input;
+            border: 1px solid $border-color-subtle;
+            color: $text-color;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+            }
+        }
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+    
+    .save-btn {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: $primary-hover;
+            transform: translateY(-2px);
+        }
+
+        &:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+    }
+}

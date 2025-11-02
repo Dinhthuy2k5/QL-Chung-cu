@@ -1,9 +1,260 @@
-// src/styles/Home.scss
+// --- BIẾN MÀU SẮC ---
+$text-color: #e9ecef;
+$label-color: #adb5bd;
+$border-color-subtle: rgba(255, 255, 255, 0.1);
+$glass-bg: rgba(53, 58, 66, 0.6);
+$primary-blue: #007bff;
+$primary-blue-hover: #0056b3;
+$green-dot: #28a745;
+$red-dot: #dc3545;
 
+// --- CONTAINER CHÍNH CỦA TRANG CHỦ ---
 .home-container {
+    padding: 30px 40px;
     display: flex;
-    // ✅ Đây là thuộc tính quan trọng nhất để tạo layout trái - giữa - phải
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 40px;
+    flex-direction: column;
+    gap: 30px;
+}
+
+// --- KHU VỰC CÁC THẺ THỐNG KÊ NHANH ---
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // 3 cột bằng nhau
+    gap: 30px;
+}
+
+.stat-card {
+    background: $glass-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid $border-color-subtle;
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+
+        .card-icon {
+            font-size: 2rem;
+        }
+        .card-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+    }
+
+    .card-body {
+        flex-grow: 1;
+        text-align: center;
+        .label {
+            display: block;
+            color: $label-color;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        .count {
+            display: block;
+            font-size: 4rem;
+            font-weight: 300;
+            color: #fff;
+            line-height: 1.1;
+        }
+    }
+
+    .view-all-button {
+        width: 100%;
+        padding: 14px;
+        background-color: $primary-blue;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s ease;
+        margin-top: 25px;
+
+        &:hover {
+            background-color: $primary-blue-hover;
+        }
+    }
+}
+
+// --- KHU VỰC DASHBOARD CHÍNH ---
+.main-dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; // Cột trái (biểu đồ) rộng gấp đôi cột phải
+    gap: 30px;
+    min-height: 400px;
+}
+
+.dashboard-panel {
+    background: $glass-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid $border-color-subtle;
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // Ẩn nội dung bị tràn
+}
+
+.panel-header {
+    border-bottom: 1px solid $border-color-subtle;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+
+    h4 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: $text-color;
+    }
+}
+
+.panel-body {
+    flex-grow: 1;
+    min-height: 0; // Quan trọng để flex-grow hoạt động
+    position: relative;
+}
+
+// --- Style cho biểu đồ ---
+.chart-panel .panel-body {
+    padding-top: 10px;
+}
+
+// --- Style cho danh sách hoạt động ---
+.activity-panel .panel-body {
+    overflow-y: auto; // Thêm thanh cuộn nếu nội dung quá dài
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    .activity-item {
+        display: flex;
+        padding: 15px 5px;
+        border-bottom: 1px solid $border-color-subtle;
+        gap: 15px;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .activity-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 5px;
+            white-space: nowrap;
+            
+            &.tạm-trú { background-color: rgba($green-dot, 0.2); color: $green-dot; }
+            &.tạm-vắng { background-color: rgba(#ffc107, 0.2); color: #ffc107; }
+            &.thu-phí { background-color: rgba($primary-blue, 0.2); color: $primary-blue; }
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            color: $label-color;
+            line-height: 1.4;
+        }
+    }
+}
+// ... (Tất cả các style cũ của bạn từ .home-container đến .chart-panel giữ nguyên) ...
+
+// --- Style cho danh sách hoạt động ---
+.activity-panel {
+    .panel-header {
+        // Ghi đè style cũ để chứa các tab
+        padding: 0; // Bỏ padding
+        border-bottom: 1px solid $border-color-subtle;
+        margin-bottom: 0; // Bỏ margin
+    }
+
+    .panel-body {
+        overflow-y: auto;
+        padding: 0; // Bỏ padding của body
+    }
+}
+
+// --- GIAO DIỆN TAB MỚI ---
+.activity-tabs {
+    display: flex;
+
+    .tab-button {
+        flex: 1; // Chia 2 tab bằng nhau
+        background: transparent;
+        border: none;
+        color: $label-color;
+        padding: 15px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 3px solid transparent;
+
+        &.active {
+            color: $primary-blue; // Dùng màu xanh dương từ thẻ của bạn
+            border-bottom-color: $primary-blue;
+        }
+
+        &:not(.active):hover {
+            color: $text-color;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    }
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    .activity-item {
+        display: flex;
+        padding: 15px 20px; // Thêm padding cho các mục
+        border-bottom: 1px solid $border-color-subtle;
+        gap: 15px;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .activity-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 5px;
+            white-space: nowrap;
+            
+            // Cập nhật các class màu
+            &.tạm-trú { background-color: rgba($green-dot, 0.2); color: $green-dot; }
+            &.tạm-vắng { background-color: rgba(#ffc107, 0.2); color: #ffc107; }
+            &.thêm-mới { background-color: rgba(#17a2b8, 0.2); color: #17a2b8; }
+            &.thu-phí { background-color: rgba($primary-blue, 0.2); color: $primary-blue; }
+            &.đóng-góp { background-color: rgba(#6f42c1, 0.2); color: #6f42c1; }
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            color: $label-color;
+            line-height: 1.4;
+        }
+    }
 }

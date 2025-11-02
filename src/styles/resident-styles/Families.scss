@@ -33,40 +33,45 @@
 }
 
 // Table styling
+// ... (các style khác giữ nguyên)
+
+// Table styling
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #2c3038;
     color: #e9ecef;
-    border-radius: 8px;
+    
+    // --- Bắt đầu cập nhật ---
+    background: rgba(53, 58, 66, 0.6); // Nền kính mờ
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    // --- Kết thúc cập nhật ---
+    
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
     th, td {
         padding: 15px;
         text-align: left;
-        border-bottom: 1px solid #495057;
-        // UPDATED: Made font size slightly smaller
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); // Viền mờ
         font-size: 0.9rem;
     }
 
     thead tr {
-        background-color: #353a42;
+        // Nền cho hàng tiêu đề
+        background-color: rgba(255, 255, 255, 0.05); // Nền nổi bật nhẹ
         font-weight: bold;
-    }
-    
-    // UPDATED: Added rule for table headers
-    th {
-        // Ensures header text stays on a single line
-        white-space: nowrap;
     }
 
     tbody tr {
         transition: background-color 0.2s ease;
         &:hover {
-            background-color: #3e444c;
+            background-color: rgba(255, 255, 255, 0.1); // Hiệu ứng hover
         }
     }
+    
+    // ... (các style .action giữ nguyên)
 
     .actions-header {
         text-align: center;

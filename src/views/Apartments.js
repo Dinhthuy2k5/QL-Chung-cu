@@ -55,41 +55,41 @@ class Apartment extends React.Component {
     //Dùng async/await để xử lý bất đồng bộ
     //hàm gọi api lấy thông tin căn hộ
     getListApartment = async () => {
-        const token = getToken();
-        if (!token) {
-            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-            return;
-        }
+        this.setState({
+            originalApartments: this.props.listApartments,
+            filteredApartments: this.props.listApartments
+        })
+        // const token = getToken();
+        // if (!token) {
+        //     alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        //     return;
+        // }
 
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            // params: {
-            //     page: 0,  // Bắt đầu từ trang 0
-            //     size: 10  // Lấy 10 căn hộ mỗi trang
-            // }
-        }
-        try {
-            const apiUrl = `http://localhost:8080/qlcc/can-ho`;
-            // Chờ cho đến khi axios gọi API xong và nhận được kết quả
-            const response = await axios.get(apiUrl, config);
+        // const config = {
+        //     headers: {
+        //         'Authorization': `Bearer ${token}`
+        //     },
+        // }
+        // try {
+        //     const apiUrl = `http://localhost:8080/qlcc/can-ho`;
+        //     // Chờ cho đến khi axios gọi API xong và nhận được kết quả
+        //     const response = await axios.get(apiUrl, config);
 
-            console.log(" Lấy thông tin căn hộ thành công");
-            console.log(response.data);
-            this.setState({
-                originalApartments: response.data.result,
-                filteredApartments: response.data.result
-            })
-            this.setState({
-                totalApartments: response.data.result.length
-            })
-            this.props.setTotalApartments(response.data.result.length)
-            console.log("totalApartment", response.data.result.length)
+        //     console.log(" Lấy thông tin căn hộ thành công");
+        //     console.log(response.data);
+        //     this.setState({
+        //         originalApartments: response.data.result,
+        //         filteredApartments: response.data.result
+        //     })
+        //     this.setState({
+        //         totalApartments: response.data.result.length
+        //     })
+        //     this.props.setTotalApartments(response.data.result.length)
+        //     console.log("totalApartment", response.data.result.length)
 
-        } catch (error) {
-            console.log("Có lỗi khi lấy thông tin căn hộ", error.response ? error.response.data : error.message)
-        }
+        // } catch (error) {
+        //     console.log("Có lỗi khi lấy thông tin căn hộ", error.response ? error.response.data : error.message)
+        // }
     }
 
     componentDidMount = () => {

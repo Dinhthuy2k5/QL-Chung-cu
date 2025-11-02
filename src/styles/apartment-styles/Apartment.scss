@@ -1,21 +1,24 @@
-// Biến màu cho theme tối
-$dark-bg: #2c3038;
-$header-bg: #353a42;
-$border-color: #495057;
+// --- BIẾN MÀU SẮC ---
 $text-color: #e9ecef;
-$row-hover-bg: #3e444c;
-$primary-red: #e74c3c; // Màu đỏ nhấn
+$primary-red: #e74c3c;
+// Màu sắc cho hiệu ứng kính
+$glass-bg: rgba(53, 58, 66, 0.6);
+$glass-border: rgba(255, 255, 255, 0.1);
+$glass-header-bg: rgba(255, 255, 255, 0.05);
+$glass-row-hover: rgba(255, 255, 255, 0.1);
 
 // --- KHU VỰC CHÍNH CỦA TRANG CĂN HỘ ---
 .apartment-container {
-    padding: 0 40px; // Thêm padding cho cả trang thay vì cho bảng
+    padding: 0 40px;
+    width: 100%;
+    box-sizing: border-box; // Đảm bảo padding không làm tràn
 }
 
 // --- KHU VỰC CHỨA CÁC NÚT HÀNH ĐỘNG ---
 .table-actions {
     display: flex;
-    justify-content: flex-end; // Đẩy các nút về bên phải
-    padding: 15px 0;
+    justify-content: flex-end;
+    padding: 20px 0 15px 0;
 }
 
 // --- STYLE CHO NÚT LỌC ---
@@ -30,72 +33,80 @@ $primary-red: #e74c3c; // Màu đỏ nhấn
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px; // Khoảng cách giữa icon và chữ
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    gap: 8px;
+    transition: all 0.2s ease;
 
     &:hover {
         background-color: darken($primary-red, 10%);
-        transform: translateY(-2px); // Hiệu ứng nhấc lên khi hover
+        transform: translateY(-2px);
     }
-
-    .icon {
-        font-size: 1.1rem;
-    }
+    .icon { font-size: 1.1rem; }
 }
 
-// --- BẢNG DỮ LIỆU ---
+// --- BẢNG DỮ LIỆU (ĐÃ CẬP NHẬT) ---
 .apartment-table-container {
-    border: 1px solid $border-color;
-    border-radius: 8px;
+    background: $glass-bg;
+    backdrop-filter: blur(10px);
+    border: 1px solid $glass-border;
+    border-radius: 15px;
     overflow: hidden;
     font-family: Arial, sans-serif;
     color: $text-color;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-// Hàng tiêu đề của bảng
+// --- HÀNG TIÊU ĐỀ CỦA BẢNG ---
 .apartment-header-row {
     display: flex;
-    background-color: $header-bg;
+    background-color: $glass-header-bg;
     font-weight: bold;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 1px solid $glass-border;
 
     h4 {
-        flex: 1; // Chia đều 5 cột
-        padding: 15px;
+        padding: 18px 15px; // Tăng padding cho cao hơn
         margin: 0;
-        font-size: 1rem;
+        font-size: 1.05rem; // Tăng cỡ chữ tiêu đề
         text-align: left;
         
         &:not(:last-child) {
-            border-right: 1px solid $border-color;
+            border-right: 1px solid $glass-border;
         }
+
+        // --- Phân chia lại độ rộng cột ---
+        &:nth-child(1) { flex: 1; } // Id Căn hộ
+        &:nth-child(2) { flex: 1; } // Số nhà
+        &:nth-child(3) { flex: 1.5; } // Loại căn hộ
+        &:nth-child(4) { flex: 1; } // Diện tích
+        &:nth-child(5) { flex: 3; } // Địa chỉ (rộng nhất)
     }
 }
 
-// Phần thân bảng
+// --- PHẦN THÂN BẢNG ---
 .apartment-table-body {
-    background-color: $dark-bg;
+    background-color: transparent;
 
     .apartment-data-row {
         display: flex;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $glass-border;
         transition: background-color 0.2s ease;
 
-        &:last-child {
-            border-bottom: none;
-        }
-
-        &:hover {
-            background-color: $row-hover-bg;
-        }
+        &:last-child { border-bottom: none; }
+        &:hover { background-color: $glass-row-hover; }
 
         div {
-            flex: 1; // Chia đều 5 cột
-            padding: 15px;
+            padding: 18px 15px;
+            font-size: 1rem; // Tăng cỡ chữ nội dung
             
             &:not(:last-child) {
-                border-right: 1px solid $border-color;
+                border-right: 1px solid $glass-border;
             }
+
+            // --- Phân chia lại độ rộng cột (phải khớp với h4) ---
+            &:nth-child(1) { flex: 1; }
+            &:nth-child(2) { flex: 1; }
+            &:nth-child(3) { flex: 1.5; }
+            &:nth-child(4) { flex: 1; }
+            &:nth-child(5) { flex: 3; }
         }
     }
 }

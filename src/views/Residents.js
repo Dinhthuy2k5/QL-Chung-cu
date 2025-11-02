@@ -156,29 +156,32 @@ class Resident extends React.Component {
 
     // hàm gọi api lấy thông tin nhân khẩu
     getListResidents = async () => {
-        const token = getToken();
-        if (!token) {
-            alert(" Phiên đăng nhập hết hạn");
-            return;
-        }
+        this.setState({
+            listResidents: this.props.listResidents
+        })
+        // const token = getToken();
+        // if (!token) {
+        //     alert(" Phiên đăng nhập hết hạn");
+        //     return;
+        // }
 
-        const config = {
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        }
-        const apiUrl = `http://localhost:8080/qlcc/nhan-khau`;
-        try {
-            const response = await axios.get(apiUrl, config);
-            console.log("Lấy thông tin nhân khẩu thành công");
-            this.setState({
-                listResidents: response.data.result
-            })
-            this.props.setTotalResidents(response.data.result.length)
+        // const config = {
+        //     headers: {
+        //         'Authorization': `bearer ${token}`
+        //     }
+        // }
+        // const apiUrl = `http://localhost:8080/qlcc/nhan-khau`;
+        // try {
+        //     const response = await axios.get(apiUrl, config);
+        //     console.log("Lấy thông tin nhân khẩu thành công");
+        //     this.setState({
+        //         listResidents: response.data.result
+        //     })
+        //     this.props.setTotalResidents(response.data.result.length)
 
-        } catch (error) {
-            console.log("Có lỗi khi lấy thông tin nhân khẩu", error.response ? error.response.data : error.message);
-        }
+        // } catch (error) {
+        //     console.log("Có lỗi khi lấy thông tin nhân khẩu", error.response ? error.response.data : error.message);
+        // }
     }
 
     componentDidMount = () => {

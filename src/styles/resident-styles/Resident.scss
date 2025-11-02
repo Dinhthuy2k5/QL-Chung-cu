@@ -35,18 +35,25 @@
 }
 
 // Khung dropdown
+// Khung dropdown
 .dropdown-menu {
-    position: absolute; // Định vị tuyệt đối so với .menu-item
-    top: 100%; // Hiển thị ngay bên dưới thẻ cha
-    left: 50%; // Căn giữa dropdown so với mục menu
+    position: absolute;
+    top: 100%;
+    left: 50%;
     transform: translateX(-50%);
-    background-color: #333; // Màu nền tối
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    min-width: 200px; // Độ rộng tối thiểu
-    z-index: 1000; // Đảm bảo luôn nằm trên cùng
+    
+    // --- Bắt đầu cập nhật ---
+    background: rgba(53, 58, 66, 0.75); // Nền kính mờ
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px; // Bo góc mềm mại hơn
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    // --- Kết thúc cập nhật ---
+
+    min-width: 220px;
+    z-index: 1000;
     padding: 5px 0;
-    border-top: 3px solid #e70f30; // Thêm đường kẻ đỏ ở trên cùng cho giống mẫu
+    overflow: hidden; // Giúp bo góc cho các mục con
 }
 
 // Các mục con trong dropdown
