@@ -33,7 +33,9 @@ class Home extends React.Component {
     // Thêm state để quản lý tab hoạt động
     state = {
         activeActivityTab: 'resident', // 'resident' hoặc 'fee'
-        chartData: null // 2. Chuyển chartData vào state để cập nhật động
+        chartData: null, // 2. Chuyển chartData vào state để cập nhật động
+        residentActivities: [], // <-- để nhận dữ liệu API cho biến động dân cư
+        feeActivities: [],  // <-- để nhận dữ liệu API cho biến động thu phí
     };
 
     // 3. Hàm gọi API lấy dữ liệu biểu đồ
@@ -69,22 +71,59 @@ class Home extends React.Component {
         }
     }
 
+    // HÀM gọi API LẤY BIẾN ĐỘNG CƯ DÂN 
+    fetchResidentActivities = async () => {
+        const token = getToken();
+        if (!token) return;
+
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        const apiUrl = 'http://localhost:8080/qlcc/bien-dong-cu-dan';
+
+        try {
+            const response = await axios.get(apiUrl, config);
+            if (response.data && response.data.result) {
+                // Sắp xếp lại, giả sử API trả về mảng, lấy 5 mục mới nhất
+                const sortedActivities = response.data.result
+                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao)) // Sắp xếp theo ngayTao mới nhất
+                    .slice(0, 5); // Chỉ lấy 5 mục
+
+                this.setState({ residentActivities: sortedActivities });
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải biến động cư dân:", error);
+        }
+    }
+
+    // HÀM gọi API LẤY BIẾN ĐỘNG THU PHÍ
+    fetchFeeActivities = async () => {
+
+        const token = getToken();
+        if (!token) return;
+
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        const apiUrl = 'http://localhost:8080/qlcc/bien-dong-thu-phi';
+
+        try {
+            const response = await axios.get(apiUrl, config);
+            if (response.data && response.data.result) {
+                // Sắp xếp lại, giả sử API trả về mảng, lấy 5 mục mới nhất
+                const sortedActivities = response.data.result
+                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao)) // Sắp xếp theo ngayTao mới nhất
+                    .slice(0, 5); // Chỉ lấy 5 mục
+
+                this.setState({ feeActivities: sortedActivities });
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải biến động thu phí:", error);
+        }
+    }
+
     // 4. Gọi API khi component được tải
     componentDidMount() {
         this.fetchChartData();
+        this.fetchResidentActivities();
+        this.fetchFeeActivities();
     }
-
-    // Tách dữ liệu hoạt động thành 2 mảng riêng biệt
-    residentActivities = [
-        { id: 1, type: 'Tạm trú', text: 'Nguyễn Văn C (Căn hộ 101) vừa đăng ký tạm trú.' },
-        { id: 2, type: 'Tạm vắng', text: 'Trần Thị B (Căn hộ 205) vừa đăng ký tạm vắng.' },
-        { id: 4, type: 'Thêm mới', text: 'Gia đình ông D (Căn hộ 301) vừa thêm nhân khẩu mới.' }
-    ];
-
-    feeActivities = [
-        { id: 3, type: 'Thu phí', text: 'Hộ gia đình căn hộ 102 vừa thanh toán phí tháng 10.' },
-        { id: 5, type: 'Đóng góp', text: 'Bà E (Căn hộ 404) đã ủng hộ quỹ từ thiện 500.000 VNĐ.' }
-    ];
 
     // Hàm thay đổi tab
     setActivityTab = (tab) => {
@@ -93,10 +132,10 @@ class Home extends React.Component {
 
     render() {
         const { totalApartments, totalResidents } = this.props; // Nhận thêm totalResidents từ App.js
-        const { activeActivityTab, chartData } = this.state; // 5. Lấy chartData từ state
+        const { activeActivityTab, chartData, residentActivities, feeActivities } = this.state; // 5. Lấy chartData, residentActivities, feeActivities từ state
 
         // Chọn danh sách hoạt động dựa trên tab đang active
-        const activitiesToDisplay = activeActivityTab === 'resident' ? this.residentActivities : this.feeActivities;
+        const activitiesToDisplay = activeActivityTab === 'resident' ? residentActivities : feeActivities;
 
         return (
             <div className="home-container">
@@ -163,12 +202,16 @@ class Home extends React.Component {
                         </div>
                         <div className="panel-body">
                             <ul className="activity-list">
-                                {activitiesToDisplay.map(activity => (
-                                    <li key={activity.id} className={`activity-item ${activity.type.toLowerCase().replace(/ /g, '-')}`}>
-                                        <div className="activity-type">{activity.type}</div>
-                                        <div className="activity-text">{activity.text}</div>
-                                    </li>
-                                ))}
+                                {activitiesToDisplay.length > 0 ? (
+                                    activitiesToDisplay.map(activity => (
+                                        <li key={activity.id} className={`activity-item ${activity.loai.toLowerCase().replace(/ /g, '-')}`}>
+                                            <div className="activity-type">{activity.loai}</div>
+                                            <div className="activity-text">{activity.text}</div>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="activity-item-empty">Không có hoạt động nào.</li>
+                                )}
                             </ul>
                         </div>
                     </div>

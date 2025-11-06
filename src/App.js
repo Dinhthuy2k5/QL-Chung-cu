@@ -67,7 +67,13 @@ function AppContent() {
     removeToken();
     setIsLoggedIn(false);
     setUserLoggedIn("");
+
+    // Thêm 2 dòng này để xóa dữ liệu khi đăng xuất
+    setApartments([]);
+    setResidents([]);
     navigate("/"); // <-- Lệnh navigate này giờ đã hợp lệ
+
+
   }
 
   const handleUserLoggedIn = (username) => {
