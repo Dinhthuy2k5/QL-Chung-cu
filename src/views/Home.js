@@ -7,12 +7,15 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import axios from "axios";
 import { getToken } from "../services/localStorageService";
 
+import { withTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 // Đăng ký các thành phần cho Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Component con cho các thẻ thống kê
 function StatCard(props) {
     const navigate = props.navigate;
+    const { t } = useTranslation();
     return (
         <div className="stat-card" onClick={() => navigate(props.linkTo)}>
             <div className="card-header">
@@ -20,10 +23,10 @@ function StatCard(props) {
                 <h3 className="card-title">{props.title}</h3>
             </div>
             <div className="card-body">
-                <span className="label">Tổng số:</span>
+                <span className="label">{t('home_card.total_count')}</span>
                 <span className="count">{props.count}</span>
             </div>
-            <button className="view-all-button">Xem tất cả</button>
+            <button className="view-all-button">{t('home_card.view_all')}</button>
         </div>
     );
 }
@@ -131,7 +134,7 @@ class Home extends React.Component {
     }
 
     render() {
-        const { totalApartments, totalResidents } = this.props; // Nhận thêm totalResidents từ App.js
+        const { totalApartments, totalResidents, t } = this.props; // Nhận thêm totalResidents từ App.js
         const { activeActivityTab, chartData, residentActivities, feeActivities } = this.state; // 5. Lấy chartData, residentActivities, feeActivities từ state
 
         // Chọn danh sách hoạt động dựa trên tab đang active
@@ -144,21 +147,21 @@ class Home extends React.Component {
                     <StatCard
                         navigate={this.props.navigate}
                         icon="🏢"
-                        title="Căn hộ"
+                        title={t('home_card.title_apartment')}
                         count={totalApartments || 0}
                         linkTo="/apartments"
                     />
                     <StatCard
                         navigate={this.props.navigate}
                         icon="👥"
-                        title="Cư dân"
+                        title={t('home_card.title_resident')}
                         count={totalResidents || 0} // Bạn cần truyền prop này từ App.js
                         linkTo="/residents"
                     />
                     <StatCard
                         navigate={this.props.navigate}
                         icon="💰"
-                        title="Khoản thu"
+                        title={t('home_card.title_receipt')}
                         count={0} // Thay bằng state của bạn
                         linkTo="/receipts"
                     />
@@ -169,14 +172,14 @@ class Home extends React.Component {
                     {/* --- CỘT TRÁI: BIỂU ĐỒ --- */}
                     <div className="dashboard-panel chart-panel">
                         <div className="panel-header">
-                            <h4>Thống kê Thu phí 6 tháng gần nhất</h4>
+                            <h4>{t('dashboard.fee_stats_title')}</h4>
                         </div>
                         <div className="panel-body">
                             {/* 6. Kiểm tra chartData trước khi render */}
                             {chartData ? (
                                 <Bar data={chartData} options={{ maintainAspectRatio: false }} />
                             ) : (
-                                <p style={{ textAlign: 'center' }}>Đang tải dữ liệu biểu đồ...</p>
+                                <p style={{ textAlign: 'center' }}>{t('dashboard.loading')}</p>
                             )}
                         </div>
                     </div>
@@ -190,13 +193,13 @@ class Home extends React.Component {
                                     className={`tab-button ${activeActivityTab === 'resident' ? 'active' : ''}`}
                                     onClick={() => this.setActivityTab('resident')}
                                 >
-                                    Biến động Cư dân
+                                    {t('dashboard.resident_activity_tab')}
                                 </button>
                                 <button
                                     className={`tab-button ${activeActivityTab === 'fee' ? 'active' : ''}`}
                                     onClick={() => this.setActivityTab('fee')}
                                 >
-                                    Biến động Thu phí
+                                    {t('dashboard.fee_activity_tab')}
                                 </button>
                             </div>
                         </div>
@@ -210,7 +213,7 @@ class Home extends React.Component {
                                         </li>
                                     ))
                                 ) : (
-                                    <li className="activity-item-empty">Không có hoạt động nào.</li>
+                                    <li className="activity-item-empty">{t('dashboard.no_activity')}</li>
                                 )}
                             </ul>
                         </div>
@@ -221,4 +224,4 @@ class Home extends React.Component {
     }
 }
 
-export default withRouter(Home);
+export default withRouter(withTranslation()(Home));

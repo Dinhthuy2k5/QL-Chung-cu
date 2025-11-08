@@ -6,6 +6,8 @@ import axios from "axios";
 import { getToken } from "../../services/localStorageService";
 import TemporaryAddressModal from "./TemporaryAddressModal";
 
+import { withTranslation } from 'react-i18next';
+
 class ListResidents extends React.Component {
 
     state = {
@@ -27,11 +29,12 @@ class ListResidents extends React.Component {
 
     // 2. Thêm hàm xử lý khi form tạm vắng được submit
     handleGrantAbsence = async (formData) => {
+        const { t } = this.props;
         console.log("Dữ liệu tạm vắng:", formData);
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập hết hạn");
+            alert(t('alerts.session_expired'));
             return;
         }
 
@@ -54,7 +57,7 @@ class ListResidents extends React.Component {
             const response = await axios.post(apiUrl, data, config);
 
             console.log("Gửi thông tin tạm vắng thành công", response.data);
-            alert("Cấp giấy tạm vắng thành công!");
+            alert(t('resident_list.alerts.absence_success'));
 
 
         } catch (error) {
@@ -67,11 +70,12 @@ class ListResidents extends React.Component {
 
     // 2. Thêm hàm xử lý khi form tạm trú được submit
     handleGrantAddress = async (formData) => {
+        const { t } = this.props;
         console.log("Dữ liệu tạm trú:", formData);
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập hết hạn");
+            alert(t('alerts.session_expired'));
             return;
         }
 
@@ -95,11 +99,13 @@ class ListResidents extends React.Component {
             const response = await axios.post(apiUrl, data, config);
 
             console.log("Gửi thông tin tạm trú thành công", response.data);
-            alert("Cấp giấy tạm vắng thành công!");
+            alert(t('resident_list.alerts.address_success'));
 
 
         } catch (error) {
-            console.log("Có lỗi khi gửi thông tin tạm trú", error.response ? error.response.data : error.message);
+            const errorMsg = error.response ? error.response.data.message : "Error";
+            console.log("Có lỗi khi gửi thông tin tạm trú", errorMsg);
+            alert(`${t('resident_list.alerts.address_fail')}: ${errorMsg}`);
         }
 
         // Sau khi xử lý xong, đóng modal
@@ -108,20 +114,20 @@ class ListResidents extends React.Component {
 
     render() {
 
-        const { listResidents, deleteAResident, handleOpenEditModal, handleAddResident, onSearch } = this.props;
+        const { listResidents, deleteAResident, handleOpenEditModal, handleAddResident, onSearch, t } = this.props;
         console.log(listResidents);
         return (
             <div className="list-resident-container">
                 <div className="list-resident-header">
                     <SearchBar onSearch={onSearch} />
                     <button className="add-resident-btn" onClick={() => this.setIsTemporaryAbsence(true)} >
-                        Cấp tạm vắng
+                        {t('resident_list.temp_absence_button')}
                     </button>
                     <button className="add-resident-btn" onClick={() => this.setIsTemporaryAddress(true)}>
-                        Cấp tạm trú
+                        {t('resident_list.temp_residence_button')}
                     </button>
                     <button className="add-resident-btn" onClick={handleAddResident}>
-                        Thêm nhân khẩu
+                        {t('resident_list.add_resident_button')}
                     </button>
 
                     <TemporaryAbsenceModal
@@ -140,18 +146,18 @@ class ListResidents extends React.Component {
                     <thead><tr>
                         {/* <th onMouseEnter={()=> this.setIsFilter(true)}
                         onMouseLeave={()=>this.setIsFilter(false)}> Lọc </th> */}
-                        <th>CCCD</th>
-                        <th>CCCD Chủ hộ</th>
+                        <th>{t('resident_list.table_header.cccd')}</th>
+                        <th>{t('resident_list.table_header.head_cccd')}</th>
 
-                        <th>Họ và Tên</th>
-                        <th>Ngày Sinh</th>
-                        <th>Giới Tính</th>
-                        <th>Dân Tộc</th>
-                        <th>Tôn Giáo</th>
-                        <th>Số điện thoại</th>
-                        <th>Quan hệ</th>
+                        <th>{t('resident_list.table_header.name')}</th>
+                        <th>{t('resident_list.table_header.dob')}</th>
+                        <th>{t('resident_list.table_header.gender')}</th>
+                        <th>{t('resident_list.table_header.ethnicity')}</th>
+                        <th>{t('resident_list.table_header.religion')}</th>
+                        <th>{t('resident_list.table_header.phone')}</th>
+                        <th>{t('resident_list.table_header.relationship')}</th>
 
-                        <th className="actions-header">Hành động</th>
+                        <th className="actions-header">{t('resident_list.table_header.actions')}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -181,7 +187,7 @@ class ListResidents extends React.Component {
                                 })
                                 :
                                 <tr>
-                                    <td colSpan="8">Không có dữ liệu để hiển thị</td>
+                                    <td colSpan="8">{t('resident_list.no_data')}</td>
                                 </tr>
 
                         }
@@ -192,4 +198,4 @@ class ListResidents extends React.Component {
     }
 }
 
-export default ListResidents;
+export default withTranslation()(ListResidents);

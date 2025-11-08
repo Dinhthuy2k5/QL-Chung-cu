@@ -1,100 +1,106 @@
-import React from "react";
-import '../../styles/resident-styles/TemporaryAbsenceModal.scss'
+import React, { useState } from "react";
+import '../../styles/resident-styles/TemporaryAbsenceModal.scss';
+import { useTranslation } from "react-i18next"; // 1. Import hook
 
-class TemporaryAbsenceModal extends React.Component {
+// 2. Chuyển sang Function Component, nhận props
+function TemporaryAbsenceModal({ show, onClose, onSubmit }) {
 
-    state = {
-        cccd: '',
-        ngayBatDau: '',
-        ngayKetThuc: '',
-        lyDo: '',
-    };
+    // 3. Lấy hàm t
+    const { t } = useTranslation();
 
-    // Hàm chung để xử lý thay đổi trên các input
-    handleInputChange = (event) => {
+    // 4. Chuyển đổi state
+    const [cccd, setCccd] = useState('');
+    const [ngayBatDau, setNgayBatDau] = useState('');
+    const [ngayKetThuc, setNgayKetThuc] = useState('');
+    const [lyDo, setLyDo] = useState('');
+
+    // 5. Chuyển đổi hàm
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({ [name]: value });
+        if (name === 'cccd') setCccd(value);
+        if (name === 'ngayBatDau') setNgayBatDau(value);
+        if (name === 'ngayKetThuc') setNgayKetThuc(value);
+        if (name === 'lyDo') setLyDo(value);
     }
 
-    handleSubmit = (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault(); // Ngăn form reload lại trang
         // Gửi dữ liệu từ state lên component cha
-        this.props.onSubmit(this.state);
+        onSubmit({ cccd, ngayBatDau, ngayKetThuc, lyDo });
         // Reset form sau khi submit
-        this.setState({ cccd: '', ngayBatDau: '', ngayKetThuc: '', lyDo: '' });
+        setCccd('');
+        setNgayBatDau('');
+        setNgayKetThuc('');
+        setLyDo('');
     }
-    render() {
 
-        if (this.props.show === false) return null;
-        return (
-            <div className="modal-overlay">
-                <div className="modal-content" onClick={e => e.stopPropagation()}>
-                    <div className="modal-header">
-                        <h3> Cấp Giấy Tạm Vắng</h3>
-                        <button className="close-button" onClick={this.props.onClose}>&times;</button>
-                    </div>
+    if (!show) {
+        return null;
+    }
 
-                    <form className="absence-form" onSubmit={this.handleSubmit}>
-                        <div className="modal-body">
-                            <div className="form-group">
-                                <label htmlFor="cccd">CCCD Cư dân</label>
-                                <input
-                                    type="text"
-                                    id="cccd"
-                                    name="cccd"
-                                    value={this.state.cccd}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="ngayBatDau">Ngày bắt đầu</label>
-                                <input
-                                    type="date"
-                                    id="ngayBatDau"
-                                    name="ngayBatDau"
-                                    value={this.state.ngayBatDau}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="ngayKetThuc">Ngày kết thúc</label>
-                                <input
-                                    type="date"
-                                    id="ngayKetThuc"
-                                    name="ngayKetThuc"
-                                    value={this.state.ngayKetThuc}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="lyDo">Lý do tạm vắng</label>
-                                <textarea
-                                    id="lyDo"
-                                    name="lyDo"
-                                    rows="4"
-                                    value={this.state.lyDo}
-                                    onChange={this.handleInputChange}
-                                    required
-                                ></textarea>
-                            </div>
-
-                        </div>
-                        <div className="modal-footer">
-                            <button type="submit" className="submit-btn">Xác nhận</button>
-                        </div>
-
-                    </form>
-
+    // 6. Dịch toàn bộ văn bản trong JSX
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <h3>{t('temp_absence_modal.title')}</h3>
+                    <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
 
+                <form className="absence-form" onSubmit={handleSubmit}>
+                    <div className="modal-body">
+                        <div className="form-group">
+                            <label htmlFor="cccd">{t('temp_absence_modal.label_cccd')}</label>
+                            <input
+                                type="text"
+                                id="cccd"
+                                name="cccd"
+                                value={cccd}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ngayBatDau">{t('temp_absence_modal.label_start_date')}</label>
+                            <input
+                                type="date"
+                                id="ngayBatDau"
+                                name="ngayBatDau"
+                                value={ngayBatDau}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ngayKetThuc">{t('temp_absence_modal.label_end_date')}</label>
+                            <input
+                                type="date"
+                                id="ngayKetThuc"
+                                name="ngayKetThuc"
+                                value={ngayKetThuc}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="lyDo">{t('temp_absence_modal.label_reason')}</label>
+                            <textarea
+                                id="lyDo"
+                                name="lyDo"
+                                rows="4"
+                                value={lyDo}
+                                onChange={handleInputChange}
+                                required
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="submit" className="submit-btn">{t('temp_absence_modal.button_confirm')}</button>
+                    </div>
+                </form>
             </div>
-
-        )
-    }
-
+        </div>
+    );
 }
 
 export default TemporaryAbsenceModal;

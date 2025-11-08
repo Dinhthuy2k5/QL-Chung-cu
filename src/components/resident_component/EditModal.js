@@ -1,127 +1,116 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import '../../styles/resident-styles/EditModal.scss'; // Tạo file style cho modal
+import { useTranslation } from "react-i18next"; // Import hook
 
-class EditModal extends React.Component {
-    constructor(props) {
-        super(props);
-        // State nội bộ của modal để quản lý việc thay đổi input
-        this.state = {
-            formData: {}
-        };
-    }
+// Đã chuyển sang Function Component
+function EditModal({ show, onClose, onSave, isAddResident, resident }) {
 
-    componentDidUpdate(prevProps) {
-        // Khi props `resident` thay đổi, cập nhật lại state nội bộ `formData`
-        // Nếu `resident` là null (trường hợp thêm mới), `formData` sẽ là object rỗng
-        if (this.props.resident !== prevProps.resident) {
-            this.setState({ formData: { ...this.props.resident } });
-        }
-    }
+    // Lấy hàm dịch 't'
+    const { t } = useTranslation();
+
+    // State nội bộ của modal để quản lý việc thay đổi input
+    const [formData, setFormData] = useState({});
+
+    // Tương đương với componentDidUpdate
+    useEffect(() => {
+        // Khi props 'resident' thay đổi (mở modal), cập nhật lại formData
+        // Nếu là "Thêm mới", 'resident' sẽ là null, ta set formData là {}
+        setFormData(resident ? { ...resident } : {});
+    }, [resident, show]); // Chạy lại mỗi khi 'resident' hoặc 'show' thay đổi
 
     // Xử lý khi người dùng nhập liệu vào các ô input
-    handleInputChange = (event) => {
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState(prevState => ({
-            formData: {
-                ...prevState.formData,
-                [name]: value
-            }
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
         }));
     }
 
     // Xử lý khi nhấn nút Lưu
-    handleSave = () => {
-        this.props.onSave(this.state.formData);
+    const handleSave = () => {
+        onSave(formData);
     }
 
-    render() {
-        const { show, onClose, isAddResident } = this.props;
-        const { formData } = this.state;
+    // Nếu show là false, không render gì cả
+    if (!show) {
+        return null;
+    }
 
-        // Nếu show là false, không render gì cả
-        if (!show) {
-            return null;
-        }
-
-        return (
-            <div className="modal-backdrop">
-                <div className="modal-content">
-                    {/* 1. Thay đổi tiêu đề linh hoạt */}
-                    <h3>{isAddResident ? 'Thêm nhân khẩu mới' : 'Chỉnh sửa thông tin cư dân'}</h3>
-                    <div className="modal-body">
-                        {isAddResident && (
-                            <div className="form-group">
-                                <label>CCCD:</label>
-                                <input type="text" name="cccd" value={formData.cccd || ''} onChange={this.handleInputChange} />
-                            </div>
-                        )}
+    return (
+        <div className="modal-backdrop">
+            <div className="modal-content">
+                {/* Sử dụng hàm t() để dịch tiêu đề */}
+                <h3>{isAddResident ? t('edit_modal.title_add') : t('edit_modal.title_edit')}</h3>
+                <div className="modal-body">
+                    {isAddResident && (
                         <div className="form-group">
-                            <label>Họ và Tên:</label>
-                            <input type="text" name="hoVaTen" value={formData.hoVaTen || ''} onChange={this.handleInputChange} />
+                            <label>{t('edit_modal.label_cccd')}</label>
+                            <input type="text" name="cccd" value={formData.cccd || ''} onChange={handleInputChange} />
                         </div>
-                        <div className="form-group">
-                            <label>Giới tính:</label>
-                            <select name="gioiTinh" value={formData.gioiTinh || ''} onChange={this.handleInputChange}>
-                                {/* <option value="" disabled>-- Chọn giới tính --</option> */}
-                                <option value="NAM">NAM</option>
-                                <option value="NỮ">NỮ</option>
-                                <option value="KHÁC">KHÁC</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Ngày Sinh:</label>
-                            <input type="date" name="ngaySinh" value={formData.ngaySinh || ''} onChange={this.handleInputChange} />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Dân tộc:</label>
-                            <input type="text" name="danToc" value={formData.danToc || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Tôn giáo:</label>
-                            <input type="text" name="tonGiao" value={formData.tonGiao || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label> Quốc tịch:</label>
-                            <input type="text" name="quocTich" value={formData.quocTich || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Địa chỉ:</label>
-                            <input type="text" name="diaChi" value={formData.diaChi || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Số điện thoại:</label>
-                            <input type="text" name="sdt" value={formData.sdt || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label> Email:</label>
-                            <input type="text" name="email" value={formData.email || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Quan hệ :</label>
-                            <input type="text" name="quanHe" value={formData.quanHe || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Trạng thái :</label>
-                            <input type="text" name="trangThai" value={formData.trangThai || ''} onChange={this.handleInputChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>CCCD Chủ hộ:</label>
-                            <input type="text" name="cccdChuHo" value={formData.cccdChuHo || ''} onChange={this.handleInputChange} />
-                        </div>
+                    )}
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_name')}</label>
+                        <input type="text" name="hoVaTen" value={formData.hoVaTen || ''} onChange={handleInputChange} />
                     </div>
-
-
-                    {/* Thêm các trường khác tương tự nếu bạn muốn sửa */}
-
-                    <div className="modal-actions">
-                        <button className="save-btn" onClick={this.handleSave}>Lưu thay đổi</button>
-                        <button className="cancel-btn" onClick={onClose}>Hủy</button>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_gender')}</label>
+                        <select name="gioiTinh" value={formData.gioiTinh || ''} onChange={handleInputChange}>
+                            <option value="" disabled>{t('edit_modal.gender_placeholder')}</option>
+                            <option value="NAM">{t('edit_modal.gender_male')}</option>
+                            <option value="NỮ">{t('edit_modal.gender_female')}</option>
+                            <option value="KHÁC">{t('edit_modal.gender_other')}</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_dob')}</label>
+                        <input type="date" name="ngaySinh" value={formData.ngaySinh || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_ethnicity')}</label>
+                        <input type="text" name="danToc" value={formData.danToc || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_religion')}</label>
+                        <input type="text" name="tonGiao" value={formData.tonGiao || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_nationality')}</label>
+                        <input type="text" name="quocTich" value={formData.quocTich || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_address')}</label>
+                        <input type="text" name="diaChi" value={formData.diaChi || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_phone')}</label>
+                        <input type="text" name="sdt" value={formData.sdt || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_email')}</label>
+                        <input type="text" name="email" value={formData.email || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_relationship')}</label>
+                        <input type="text" name="quanHe" value={formData.quanHe || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_status')}</label>
+                        <input type="text" name="trangThai" value={formData.trangThai || ''} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('edit_modal.label_household_head_cccd')}</label>
+                        <input type="text" name="cccdChuHo" value={formData.cccdChuHo || ''} onChange={handleInputChange} />
                     </div>
                 </div>
+
+                <div className="modal-actions">
+                    <button className="save-btn" onClick={handleSave}>{t('edit_modal.save_button')}</button>
+                    <button className="cancel-btn" onClick={onClose}>{t('edit_modal.cancel_button')}</button>
+                </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default EditModal;

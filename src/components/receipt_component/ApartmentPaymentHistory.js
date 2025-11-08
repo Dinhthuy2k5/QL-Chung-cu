@@ -1,137 +1,146 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { getToken } from "../../services/localStorageService";
 import axios from "axios";
-import '../../styles/receipt-styles/ApartmentPaymentHistory.scss'
+import '../../styles/receipt-styles/ApartmentPaymentHistory.scss';
+// 1. Import hook
+import { useTranslation } from "react-i18next";
 
-class ApartmentPaymentHistory extends React.Component {
-    state = {
-        idCanHo: '',            // Lưu ID Căn hộ nhập vào
-        historyData: null,     // Lưu kết quả từ API
-        isLoading: false,
-        error: null,
+// 2. Chuyển sang Function Component
+function ApartmentPaymentHistory() {
+
+    // 3. Lấy hàm 't'
+    const { t } = useTranslation();
+
+    // 4. Chuyển đổi state
+    const [idCanHo, setIdCanHo] = useState('');
+    const [historyData, setHistoryData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // 5. Chuyển đổi các hàm
+    const handleInputChange = (e) => {
+        setIdCanHo(e.target.value);
     }
 
-    handleInputChange = (e) => {
-        this.setState({ idCanHo: e.target.value });
-    }
-
-    handleSearch = async () => {
-        const { idCanHo } = this.state;
+    const handleSearch = async () => {
         if (!idCanHo) {
-            alert("Vui lòng nhập ID Căn hộ.");
+            alert(t('apt_history_page.alert_id_required'));
             return;
         }
 
-        this.setState({
-            isLoading: true,
-            error: null,
-            historyData: null,
-        })
+        setIsLoading(true);
+        setError(null);
+        setHistoryData(null);
 
         const token = getToken();
         if (!token) {
-            this.setState({ isLoading: false, error: "Phiên đăng nhập đã hết hạn." });
+            setIsLoading(false);
+            setError(t('alerts.session_expired'));
             return;
         }
 
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = `http://localhost:8080/qlcc/thong-ke-thu-phi/can-ho/${idCanHo}`;
+
         try {
             const response = await axios.get(apiUrl, config);
             console.log("Lấy lịch sử thanh toán thành công:", response.data);
-            this.setState({ historyData: response.data.result, isLoading: false });
+            setHistoryData(response.data.result);
+            setIsLoading(false);
         } catch (error) {
-            const errorMessage = error.response ? error.response.data.message : "Không tìm thấy thông tin hoặc có lỗi xảy ra.";
-            this.setState({ error: `Lỗi: ${errorMessage}`, isLoading: false });
+            const errorMessage = error.response ? error.response.data.message : t('apt_history_page.error_generic');
+            setError(`${t('apt_history_page.error_prefix')}: ${errorMessage}`);
+            setIsLoading(false);
         }
     }
 
-    formatCurrency = (number) => (number || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    // Dùng useCallback để hàm không bị tạo lại mỗi lần render, trừ khi 't' thay đổi
+    const formatCurrency = useCallback((number) => {
+        return (number || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    }, []);
 
-    render() {
-        const { idCanHo, historyData, isLoading, error } = this.state;
-
-        return (
-            <div className="history-container">
-                <div className="history-search-controls">
-                    <input
-                        type="number"
-                        placeholder="Nhập id căn hộ cần tra cứu ..."
-                        value={idCanHo}
-                        onChange={this.handleInputChange}
-                    />
-                    <button onClick={this.handleSearch} disabled={isLoading}>
-                        {isLoading ? "Đang tìm ..." : "Tra cứu"}
-                    </button>
-                </div>
-
-                {error && <p className="error-message">{error}</p>}
-
-                {historyData && (
-                    <div className="history-results">
-                        {/* --- Phần Tóm tắt --- */}
-                        <div className="history-summary">
-                            <div className="summary-item"><span>Phải nộp (Bắt buộc)</span><strong>{this.formatCurrency(historyData.tongPhiBatBuocPhaiNop)}</strong></div>
-                            <div className="summary-item success"><span>Đã nộp (Bắt buộc)</span><strong>{this.formatCurrency(historyData.tongPhiBatBuocDaNop)}</strong></div>
-                            <div className="summary-item fail"><span>Còn thiếu (Bắt buộc)</span><strong>{this.formatCurrency(historyData.tongPhiBatBuocConThieu)}</strong></div>
-                            <div className="summary-item voluntary"><span>Đã đóng góp (Tự nguyện)</span><strong>{this.formatCurrency(historyData.tongDongGopTuNguyen)}</strong></div>
-                        </div>
-
-                        {/* --- Bảng Phí Bắt buộc --- */}
-                        <h4>Lịch sử Phí Bắt buộc</h4>
-                        <div className="history-table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Kỳ thu</th><th>Tổng phí</th><th>Đã nộp</th><th>Còn nợ</th><th>Trạng thái</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {historyData.danhSachPhiBatBuoc.map(item => (
-                                        <tr key={item.idThoiGianThu}>
-                                            <td>{item.idThoiGianThu}</td>
-                                            <td>{this.formatCurrency(item.tongPhi)}</td>
-                                            <td>{this.formatCurrency(item.soTienDaNop)}</td>
-                                            <td>{this.formatCurrency(item.soDu)}</td>
-                                            <td><span className={`status ${item.trangThai.toLowerCase()}`}>{item.trangThai.replace('_', ' ')}</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* --- Bảng Đóng góp Tự nguyện --- */}
-                        <h4>Lịch sử Đóng góp Tự nguyện</h4>
-                        <div className="history-table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tên khoản đóng góp</th><th>Ngày đóng góp</th><th>Số tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {historyData.danhSachDongGop.map(item => (
-                                        <tr key={item.idKhoanDongGop}>
-                                            <td>{item.tenKhoanDongGop}</td>
-                                            <td>{item.ngayDongGop}</td>
-                                            <td>{this.formatCurrency(item.soTienDongGop)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-
-
+    // 6. Trả về JSX (đã dịch)
+    return (
+        <div className="history-container">
+            <div className="history-search-controls">
+                <input
+                    type="number"
+                    placeholder={t('apt_history_page.placeholder')}
+                    value={idCanHo}
+                    onChange={handleInputChange}
+                />
+                <button onClick={handleSearch} disabled={isLoading}>
+                    {isLoading ? t('apt_history_page.searching_button') : t('apt_history_page.search_button')}
+                </button>
             </div>
-        )
-    }
 
+            {error && <p className="error-message">{error}</p>}
+
+            {historyData && (
+                <div className="history-results">
+                    {/* --- Phần Tóm tắt --- */}
+                    <div className="history-summary">
+                        <div className="summary-item"><span>{t('apt_history_page.summary_must_pay')}</span><strong>{formatCurrency(historyData.tongPhiBatBuocPhaiNop)}</strong></div>
+                        <div className="summary-item success"><span>{t('apt_history_page.summary_paid')}</span><strong>{formatCurrency(historyData.tongPhiBatBuocDaNop)}</strong></div>
+                        <div className="summary-item fail"><span>{t('apt_history_page.summary_debt')}</span><strong>{formatCurrency(historyData.tongPhiBatBuocConThieu)}</strong></div>
+                        <div className="summary-item voluntary"><span>{t('apt_history_page.summary_voluntary')}</span><strong>{formatCurrency(historyData.tongDongGopTuNguyen)}</strong></div>
+                    </div>
+
+                    {/* --- Bảng Phí Bắt buộc --- */}
+                    <h4>{t('apt_history_page.mandatory_title')}</h4>
+                    <div className="history-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{t('apt_history_page.table_mandatory.period')}</th>
+                                    <th>{t('apt_history_page.table_mandatory.total_fee')}</th>
+                                    <th>{t('apt_history_page.table_mandatory.paid_amount')}</th>
+                                    <th>{t('apt_history_page.table_mandatory.debt')}</th>
+                                    <th>{t('apt_history_page.table_mandatory.status')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {historyData.danhSachPhiBatBuoc.map(item => (
+                                    <tr key={item.idThoiGianThu}>
+                                        <td>{item.idThoiGianThu}</td>
+                                        <td>{formatCurrency(item.tongPhi)}</td>
+                                        <td>{formatCurrency(item.soTienDaNop)}</td>
+                                        <td>{formatCurrency(item.soDu)}</td>
+                                        <td><span className={`status ${item.trangThai.toLowerCase()}`}>
+                                            {item.trangThai === 'DA_THANH_TOAN' ? t('apt_history_page.status_paid') : t('apt_history_page.status_unpaid')}
+                                        </span></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* --- Bảng Đóng góp Tự nguyện --- */}
+                    <h4>{t('apt_history_page.voluntary_title')}</h4>
+                    <div className="history-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{t('apt_history_page.table_voluntary.name')}</th>
+                                    <th>{t('apt_history_page.table_voluntary.date')}</th>
+                                    <th>{t('apt_history_page.table_voluntary.amount')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {historyData.danhSachDongGop.map(item => (
+                                    <tr key={item.idKhoanDongGop}>
+                                        <td>{item.tenKhoanDongGop}</td>
+                                        <td>{item.ngayDongGop}</td>
+                                        <td>{formatCurrency(item.soTienDongGop)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
 }
 
 export default ApartmentPaymentHistory;

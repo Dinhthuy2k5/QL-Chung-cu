@@ -1,154 +1,97 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // 1. Import useState và useEffect
 import '../styles/apartment-styles/Apartment.scss'
 import EditFilter from "../components/apartment_component/EditFilter";
-import axios from 'axios';
-import { getToken } from "../services/localStorageService";
+// 2. Import hook 'useTranslation'
+import { useTranslation } from 'react-i18next';
 
-class Apartment extends React.Component {
-    state = {
-        originalApartments: [],
-        filteredApartments: [],
+// Ghi chú: Bạn không cần 'axios' hay 'getToken' ở đây nữa
+// vì 'listApartments' đã được truyền từ App.js qua props
 
-        isEditFilter: false,
-        activeFilters: {} // State mới để lưu các filter đang áp dụng
-    }
+function Apartment(props) {
+    // 3. Lấy hàm 't' (translate) từ hook
+    const { t } = useTranslation();
 
-    setIsEditFilter = (temp) => {
-        this.setState({
-            isEditFilter: temp
-        })
-    }
+    // 4. Quản lý state bằng hook 'useState'
+    const [originalApartments, setOriginalApartments] = useState([]);
+    const [filteredApartments, setFilteredApartments] = useState([]);
+    const [isEditFilter, setIsEditFilter] = useState(false);
 
-    // hàm lọc filter
-    handleApplyFilter = (filters) => {
-        this.setState({
-            activeFilters: filters
-        })
+    // 5. Dùng 'useEffect' để cập nhật state khi props thay đổi
+    // (Đây là cách thay thế cho componentDidUpdate)
+    useEffect(() => {
+        setOriginalApartments(props.listApartments);
+        setFilteredApartments(props.listApartments);
+    }, [props.listApartments]); // Chỉ chạy lại khi listApartments từ props thay đổi
+
+    // 6. Chuyển đổi các hàm của class thành hàm bình thường
+    const handleApplyFilter = (filters) => {
         // Luôn bắt đầu lọc từ danh sách gốc
-        let filteredData = [...this.state.originalApartments];
+        let filteredData = [...originalApartments];
 
-        // 1. Lọc theo Số nhà (nếu có)
+        // 1. Lọc theo Số nhà
         if (filters.soNha) {
             filteredData = filteredData.filter(item =>
                 item.soNha.toLowerCase().includes(filters.soNha.toLowerCase())
             );
         }
-
-        // 2. Lọc theo Loại căn hộ (nếu có chọn)
+        // 2. Lọc theo Loại căn hộ
         if (filters.loaiCanHo && filters.loaiCanHo.length > 0) {
             filteredData = filteredData.filter(item =>
                 filters.loaiCanHo.includes(item.loaiCanHo)
             );
         }
-
         // 3. Lọc theo Diện tích
-        // Giả sử filters.dienTich luôn là một mảng [min, max]
         filteredData = filteredData.filter(item =>
             item.dienTich >= filters.dienTich[0] && item.dienTich <= filters.dienTich[1]
         );
 
         // Cập nhật lại danh sách hiển thị
-        this.setState({ filteredApartments: filteredData });
-        // logic loc danh sach o day
+        setFilteredApartments(filteredData);
     }
 
-    //Dùng async/await để xử lý bất đồng bộ
-    //hàm gọi api lấy thông tin căn hộ
-    getListApartment = async () => {
-        this.setState({
-            originalApartments: this.props.listApartments,
-            filteredApartments: this.props.listApartments
-        })
-        // const token = getToken();
-        // if (!token) {
-        //     alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-        //     return;
-        // }
-
-        // const config = {
-        //     headers: {
-        //         'Authorization': `Bearer ${token}`
-        //     },
-        // }
-        // try {
-        //     const apiUrl = `http://localhost:8080/qlcc/can-ho`;
-        //     // Chờ cho đến khi axios gọi API xong và nhận được kết quả
-        //     const response = await axios.get(apiUrl, config);
-
-        //     console.log(" Lấy thông tin căn hộ thành công");
-        //     console.log(response.data);
-        //     this.setState({
-        //         originalApartments: response.data.result,
-        //         filteredApartments: response.data.result
-        //     })
-        //     this.setState({
-        //         totalApartments: response.data.result.length
-        //     })
-        //     this.props.setTotalApartments(response.data.result.length)
-        //     console.log("totalApartment", response.data.result.length)
-
-        // } catch (error) {
-        //     console.log("Có lỗi khi lấy thông tin căn hộ", error.response ? error.response.data : error.message)
-        // }
-    }
-
-    componentDidMount = () => {
-        this.getListApartment()
-    }
-
-    render() {
-        let { filteredApartments } = this.state;
-
-
-
-        return (
-
-            <div className="apartment-container">
-                <div className="table-actions">
-                    <button className="filter-btn" onClick={() => this.setIsEditFilter(true)}>
-                        <span className="icon">&#128269;</span> Lọc
-                    </button>
-                    <EditFilter show={this.state.isEditFilter}
-                        onClose={() => { this.setIsEditFilter(false) }}
-                        onApplyFilter={this.handleApplyFilter} />
+    // 7. Render component
+    return (
+        <div className="apartment-container">
+            <div className="table-actions">
+                <button className="filter-btn" onClick={() => setIsEditFilter(true)}>
+                    <span className="icon">&#128269;</span> {t('apartment_table.filter')} {/* Bạn có thể thêm key 'Lọc' vào file json */}
+                </button>
+                <EditFilter
+                    show={isEditFilter}
+                    onClose={() => setIsEditFilter(false)}
+                    onApplyFilter={handleApplyFilter}
+                />
+            </div>
+            <div className="apartment-table-container">
+                <div className="apartment-header-row">
+                    {/* 8. Sử dụng hàm t() để dịch tiêu đề */}
+                    <h4>{t('apartment_table.id')}</h4>
+                    <h4>{t('apartment_table.unit_number')}</h4>
+                    <h4>{t('apartment_table.type')}</h4>
+                    <h4>{t('apartment_table.area')}</h4>
+                    <h4>{t('apartment_table.address')}</h4>
                 </div>
-                <div className="apartment-table-container">
-                    <div className="apartment-header-row">
 
-
-
-
-                        <h4>Id Căn hộ</h4>
-                        <h4>Số nhà</h4>
-                        <h4>Loại căn hộ</h4>
-                        <h4>Diện tích</h4>
-                        <h4>Địa chỉ</h4>
-                    </div>
-
-                    <div className="apartment-table-body">
-                        {
-                            filteredApartments && filteredApartments.length > 0 &&
-                            filteredApartments.map((item) => {
-                                return (
-                                    <div className="apartment-data-row" key={item.idCanHo}>
-                                        <div>{item.idCanHo} </div>
-                                        <div> {item.soNha} </div>
-                                        <div>  {item.loaiCanHo} </div>
-                                        <div> {item.dienTich} </div>
-                                        <div> {item.diaChi}</div>
-
-                                    </div>
-                                )
-
-                            })
-                        }
-                    </div>
+                <div className="apartment-table-body">
+                    {
+                        filteredApartments && filteredApartments.length > 0 &&
+                        filteredApartments.map((item) => {
+                            return (
+                                <div className="apartment-data-row" key={item.idCanHo}>
+                                    <div>{item.idCanHo}</div>
+                                    <div>{item.soNha}</div>
+                                    <div>{item.loaiCanHo}</div>
+                                    <div>{item.dienTich}</div>
+                                    <div>{item.diaChi}</div>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
             </div>
-        )
-
-
-    }
+        </div>
+    );
 }
 
+// 9. Export component (không cần HOC 'withTranslation' nữa)
 export default Apartment;

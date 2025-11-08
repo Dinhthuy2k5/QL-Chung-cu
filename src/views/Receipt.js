@@ -6,6 +6,8 @@ import MandatoryFeeList from "../components/receipt_component/MandatoryFeeList";
 import VoluntaryContribution from "../components/receipt_component/VoluntaryContribution";
 import ApartmentPaymentHistory from "../components/receipt_component/ApartmentPaymentHistory";
 
+import { withTranslation } from "react-i18next";
+
 class Receipt extends React.Component {
     state = {
 
@@ -128,10 +130,11 @@ class Receipt extends React.Component {
     handleAddFeeSubmit = async (event) => {
 
         event.preventDefault();
+        const { t } = this.props; // Lấy t
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
+            alert(t('alerts.session_expired'));
             return;
         }
 
@@ -142,7 +145,7 @@ class Receipt extends React.Component {
 
         // Xây dựng URL và data dựa trên loại khoản thu được chọn
         switch (loaiKhoanThu) {
-            case "Phí tiện ích":
+            case "fee_type_utility":
                 apiUrl = `http://localhost:8080/qlcc/phi/tien-ich`;
                 data = {
                     idCanHo: addFeeForm.idCanHo,
@@ -152,7 +155,7 @@ class Receipt extends React.Component {
                     tienInternet: addFeeForm.tienInternet,
                 };
                 break;
-            case "Phí chung cư":
+            case "fee_type_apartment":
                 apiUrl = `http://localhost:8080/qlcc/phi/phi-chung-cu/batch`;
                 data = {
                     idThoiGianThu: addFeeForm.idThoiGianThu,
@@ -160,7 +163,7 @@ class Receipt extends React.Component {
                     phiQuanLyPerM2: addFeeForm.phiQuanLyPerM2,
                 };
                 break;
-            case "Phí gửi xe":
+            case "fee_type_parking":
                 apiUrl = `http://localhost:8080/qlcc/phi/phi-gui-xe/batch`;
                 data = {
                     idThoiGianThu: addFeeForm.idThoiGianThu,
@@ -169,7 +172,7 @@ class Receipt extends React.Component {
                 };
                 break;
             default:
-                alert("Vui lòng chọn một loại khoản thu hợp lệ.");
+                alert(t('receipt_page.alerts.invalid_fee_type'));
                 return;
         }
 
@@ -177,22 +180,22 @@ class Receipt extends React.Component {
             console.log(`Submitting to ${apiUrl} with data:`, data);
             const response = await axios.post(apiUrl, data, config);
             console.log("Tạo khoản thu thành công:", response.data);
-            alert("Tạo khoản thu thành công!");
+            alert(t('receipt_page.alerts.create_success'));
             this.toggleAddFeeModal(false);
         } catch (error) {
             const errorMessage = error.response ? error.response.data.message : "Lỗi không xác định.";
             console.error("Lỗi khi tạo khoản thu:", errorMessage);
-            alert(`Tạo khoản thu thất bại: ${errorMessage}`);
+            alert(t('receipt_page.alerts.create_fail', { error: errorMessage }));
         }
     }
 
 
     handleCollectFeeSubmit = async (event) => {
         event.preventDefault();
-
+        const { t } = this.props;
         const { idThoiGianThu, danhSachIdCanHo } = this.state.collectFeeForm;
         if (!idThoiGianThu || !danhSachIdCanHo) {
-            alert("Vui lòng nhập đầy đủ thông tin.");
+            alert(t('receipt_page.alerts.collect_missing_info'));
             return;
         }
 
@@ -202,13 +205,13 @@ class Receipt extends React.Component {
             .filter(id => !isNaN(id) && id > 0);
 
         if (idArray.length === 0) {
-            alert("Danh sách ID căn hộ không hợp lệ.");
+            alert(t('receipt_page.alerts.collect_invalid_ids'));
             return;
         }
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
+            alert(t('alerts.session_expired'));
             return;
         }
 
@@ -230,22 +233,23 @@ class Receipt extends React.Component {
         } catch (error) {
             const errorMessage = error.response ? error.response.data.message : "Lỗi không xác định.";
             console.error("Lỗi khi thu phí:", errorMessage);
-            alert(`Thu phí thất bại: ${errorMessage}`);
+            alert(t('receipt_page.alerts.collect_fail', { error: errorMessage }));
         }
     };
 
     handleTotalFeeSubmit = async (event) => {
         event.preventDefault();
+        const { t } = this.props;
 
         const { idThoiGianThu } = this.state.calculationForm;
         if (!idThoiGianThu) {
-            alert("Vui lòng nhập ID Thời gian thu.");
+            alert(t('receipt_page.alerts.calculate_missing_id'));
             return;
         }
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
+            alert(t('alerts.session_expired'));
             return;
         }
 
@@ -259,11 +263,11 @@ class Receipt extends React.Component {
             console.log("Tính tổng thanh toán thành công:", response.data);
             // Lưu kết quả vào state để hiển thị
             this.setState({ calculationResult: response.data.result });
-            alert("Đã tính tổng phí cho tất cả căn hộ thành công!");
+            alert(t('receipt_page.alerts.calculate_success'));
         } catch (error) {
             const errorMessage = error.response ? error.response.data.message : "Lỗi không xác định.";
             console.error("Lỗi khi tính tổng phí:", errorMessage);
-            alert(`Tính tổng phí thất bại: ${errorMessage}`);
+            alert(t('receipt_page.alerts.calculate_fail', { error: errorMessage }));
         }
 
 
@@ -272,59 +276,61 @@ class Receipt extends React.Component {
     // Hàm render modal tạo khoản thu
     renderAddFeeModal() {
         const { addFeeForm, loaiKhoanThu } = this.state;
-        const feeTypes = [
-            "Phí chung cư",
-            "Phí gửi xe",
-            "Phí tiện ích"
-        ];
+        const { t } = this.props;
+        // Tạo đối tượng feeTypes để lưu cả key và giá trị dịch
+        const feeTypes = {
+            "fee_type_apartment": t('receipt_page.modal_create_fee.fee_type_apartment'),
+            "fee_type_parking": t('receipt_page.modal_create_fee.fee_type_parking'),
+            "fee_type_utility": t('receipt_page.modal_create_fee.fee_type_utility')
+        };
 
         return (
             <div className="modal-overlay">
                 <div className="modal-content">
-                    <div className="modal-header"><h3>Tạo khoản thu</h3><button onClick={() => this.toggleAddFeeModal(false)}>&times;</button></div>
+                    <div className="modal-header"><h3>{t('receipt_page.modal_create_fee.title')}</h3><button onClick={() => this.toggleAddFeeModal(false)}>&times;</button></div>
                     <form onSubmit={this.handleAddFeeSubmit}>
                         <div className="modal-body">
                             <div className="form-group full-width">
-                                <label>Loại khoản thu</label>
+                                <label>{t('receipt_page.modal_create_fee.label_fee_type')}</label>
                                 <select name="loaiKhoanThu" value={loaiKhoanThu} onChange={this.handleLoaiKhoanThuChange} required>
-                                    <option value="" disabled>-- Chọn loại khoản thu --</option>
-                                    {feeTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                                    <option value="" disabled>{t('receipt_page.modal_create_fee.placeholder_fee_type')}</option>
+                                    {/* Lặp qua Object.keys để dùng key cho value và value cho hiển thị */}
+                                    {Object.keys(feeTypes).map(key => <option key={key} value={key}>{feeTypes[key]}</option>)}
                                 </select>
 
                             </div>
                             {/* --- Render có điều kiện cho Phí tiện ích --- */}
-                            {loaiKhoanThu === "Phí tiện ích" && (
+                            {loaiKhoanThu === "fee_type_utility" && (
                                 <>
-                                    <div className="form-group"><label>Id Căn hộ</label><input name="idCanHo" value={addFeeForm.idCanHo} onChange={this.handleAddFeeFormChange} type="text" required /></div>
-                                    <div className="form-group"><label>Id Thời gian thu</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
-                                    <div className="form-group"><label>Tiền điện</label><input name="tienDien" value={addFeeForm.tienDien} onChange={this.handleAddFeeFormChange} type="number" required /></div>
-                                    <div className="form-group"><label>Tiền nước</label><input name="tienNuoc" value={addFeeForm.tienNuoc} onChange={this.handleAddFeeFormChange} type="number" required /></div>
-                                    <div className="form-group"><label>Tiền Internet</label><input name="tienInternet" value={addFeeForm.tienInternet} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_apartment_id')}</label><input name="idCanHo" value={addFeeForm.idCanHo} onChange={this.handleAddFeeFormChange} type="text" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_time_id')}</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_electricity')}</label><input name="tienDien" value={addFeeForm.tienDien} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_water')}</label><input name="tienNuoc" value={addFeeForm.tienNuoc} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_internet')}</label><input name="tienInternet" value={addFeeForm.tienInternet} onChange={this.handleAddFeeFormChange} type="number" required /></div>
                                 </>
                             )}
 
                             {/* --- Render có điều kiện cho Phí chung cư --- */}
-                            {loaiKhoanThu === "Phí chung cư" && (
+                            {loaiKhoanThu === "fee_type_apartment" && (
                                 <>
-                                    <div className="form-group"><label>Id Thời gian thu</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
-                                    <div className="form-group"><label>Phí dịch vụ trên 1m2</label><input name="phiDichVuPerM2" value={addFeeForm.phiDichVuPerM2} onChange={this.handleAddFeeFormChange} type="number" required /></div>
-                                    <div className="form-group"><label>Phí quản lý trên 1m2</label><input name="phiQuanLyPerM2" value={addFeeForm.phiQuanLyPerM2} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_time_id')}</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_service_fee')}</label><input name="phiDichVuPerM2" value={addFeeForm.phiDichVuPerM2} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_management_fee')}</label><input name="phiQuanLyPerM2" value={addFeeForm.phiQuanLyPerM2} onChange={this.handleAddFeeFormChange} type="number" required /></div>
                                 </>
                             )}
                             {/* --- Render có điều kiện cho Phí gửi xe --- */}
-                            {loaiKhoanThu === "Phí gửi xe" && (
+                            {loaiKhoanThu === "fee_type_parking" && (
                                 <>
-                                    <div className="form-group"><label>Id Thời gian thu</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
-                                    <div className="form-group"><label>Phí gửi 1 xe máy</label><input name="tienXeMayPerXe" value={addFeeForm.tienXeMayPerXe} onChange={this.handleAddFeeFormChange} type="number" required /></div>
-                                    <div className="form-group"><label>Phí gửi 1 ô tô</label><input name="tienXeOtoPerXe" value={addFeeForm.tienXeOtoPerXe} onChange={this.handleAddFeeFormChange} type="number" required /></div>
-
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_time_id')}</label><input name="idThoiGianThu" value={addFeeForm.idThoiGianThu} onChange={this.handleAddFeeFormChange} type="text" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_motorcycle_fee')}</label><input name="tienXeMayPerXe" value={addFeeForm.tienXeMayPerXe} onChange={this.handleAddFeeFormChange} type="number" required /></div>
+                                    <div className="form-group"><label>{t('receipt_page.modal_create_fee.label_car_fee')}</label><input name="tienXeOtoPerXe" value={addFeeForm.tienXeOtoPerXe} onChange={this.handleAddFeeFormChange} type="number" required /></div>
                                 </>
                             )}
 
                         </div>
 
 
-                        <div className="modal-footer"><button type="submit">Tạo</button></div>
+                        <div className="modal-footer"><button type="submit">{t('receipt_page.modal_create_fee.create_button')}</button></div>
                     </form>
                 </div>
             </div>
@@ -334,22 +340,23 @@ class Receipt extends React.Component {
     // Hàm render xác nhận thanh toán
     renderCollectFeeModal() {
         const { collectFeeForm } = this.state;
+        const { t } = this.props;
         return (
             <div className="modal-overlay">
                 <div className="modal-content">
-                    <div className="modal-header"><h3>Thu phí Bắt buộc</h3><button onClick={() => this.toggleCollectFeeModal(false)}>&times;</button></div>
+                    <div className="modal-header"><h3>{t('receipt_page.modal_collect_fee.title')}</h3><button onClick={() => this.toggleCollectFeeModal(false)}>&times;</button></div>
                     <form onSubmit={this.handleCollectFeeSubmit}>
                         <div className="modal-body">
                             <div className="form-group">
-                                <label>ID Thời gian thu </label>
+                                <label>{t('receipt_page.modal_collect_fee.label_time_id')} </label>
                                 <textarea name="idThoiGianThu" value={collectFeeForm.idThoiGianThu} onChange={this.handleCollectFeeFormChange} rows="4" placeholder="Ví dụ: 102025" required />
                             </div>
                             <div className="form-group">
-                                <label>Danh sách ID Căn hộ đã nộp</label>
+                                <label>{t('receipt_page.modal_collect_fee.label_apartment_ids')}</label>
                                 <textarea name="danhSachIdCanHo" value={collectFeeForm.danhSachIdCanHo} onChange={this.handleCollectFeeFormChange} rows="4" placeholder="Ví dụ: 1, 2, 5" required />
                             </div>
                         </div>
-                        <div className="modal-footer"><button type="submit">Xác nhận Thanh toán</button></div>
+                        <div className="modal-footer"><button type="submit">{t('receipt_page.modal_collect_fee.confirm_button')}</button></div>
                     </form>
                 </div>
             </div>
@@ -360,29 +367,30 @@ class Receipt extends React.Component {
     // --- HÀM MỚI ĐỂ RENDER MODAL KẾT QUẢ ---
     renderPaymentResultModal() {
         const { paymentResult } = this.state;
+        const { t } = this.props;
         if (!paymentResult) return null;
 
         return (
             <div className="modal-overlay">
                 <div className="modal-content large">
-                    <div className="modal-header"><h3>Kết quả Thanh toán</h3><button onClick={() => this.toggleResultModal(false)}>&times;</button></div>
+                    <div className="modal-header"><h3>{t('receipt_page.modal_payment_result.title')}</h3><button onClick={() => this.toggleResultModal(false)}>&times;</button></div>
                     <div className="modal-body">
                         <div className="result-summary">
-                            <div className="summary-item"><span>Tổng Căn hộ</span><strong>{paymentResult.totalCanHo}</strong></div>
-                            <div className="summary-item success"><span>Thành công</span><strong>{paymentResult.successCount}</strong></div>
-                            <div className="summary-item fail"><span>Thất bại</span><strong>{paymentResult.failCount}</strong></div>
-                            <div className="summary-item total"><span>Tổng Phí Thu</span><strong>{paymentResult.tongPhiAll.toLocaleString('vi-VN')} VNĐ</strong></div>
+                            <div className="summary-item"><span>{t('receipt_page.modal_payment_result.total_apartments')}</span><strong>{paymentResult.totalCanHo}</strong></div>
+                            <div className="summary-item success"><span>{t('receipt_page.modal_payment_result.success')}</span><strong>{paymentResult.successCount}</strong></div>
+                            <div className="summary-item fail"><span>{t('receipt_page.modal_payment_result.failed')}</span><strong>{paymentResult.failCount}</strong></div>
+                            <div className="summary-item total"><span>{t('receipt_page.modal_payment_result.total_collected')}</span><strong>{paymentResult.tongPhiAll.toLocaleString('vi-VN')} VNĐ</strong></div>
                         </div>
                         <div className="result-table-container">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>ID Căn hộ</th>
-                                        <th>Tổng Phí Chung cư</th>
-                                        <th>Phí Dịch vụ</th>
-                                        <th>Phí Gửi xe</th>
-                                        <th>Phí Tiện ích</th>
-                                        <th>Trạng thái</th>
+                                        <th>{t('receipt_page.modal_payment_result.header_apartment_id')}</th>
+                                        <th>{t('receipt_page.modal_payment_result.header_total_apartment_fee')}</th>
+                                        <th>{t('receipt_page.modal_payment_result.header_service_fee')}</th>
+                                        <th>{t('receipt_page.modal_payment_result.header_management_fee')}</th> {/* Sửa: phiQuanLy */}
+                                        <th>{t('receipt_page.modal_payment_result.header_utility_fee')}</th>
+                                        <th>{t('receipt_page.modal_payment_result.header_status')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -401,7 +409,7 @@ class Receipt extends React.Component {
                             </table>
                         </div>
                     </div>
-                    <div className="modal-footer"><button onClick={() => this.toggleResultModal(false)}>Đóng</button></div>
+                    <div className="modal-footer"><button onClick={() => this.toggleResultModal(false)}>{t('receipt_page.modal_payment_result.close_button')}</button></div>
                 </div>
             </div>
         );
@@ -409,12 +417,13 @@ class Receipt extends React.Component {
 
     // --- HÀM RENDER MỚI CHO MODAL "LẬP DANH SÁCH" ---
     renderMandatoryListModal() {
+        const { t } = this.props;
         return (
             <div className="modal-overlay">
                 {/* Dùng class "extra-large" để modal rộng hơn */}
                 <div className="modal-content extra-large">
                     <div className="modal-header">
-                        <h3>Danh sách Khoản thu Bắt buộc</h3>
+                        <h3>{t('receipt_page.modal_mandatory_list.title')}</h3>
                         <button onClick={() => this.toggleMandatoryListModal(false)}>&times;</button>
                     </div>
                     <div className="modal-body full-width-body">
@@ -429,20 +438,21 @@ class Receipt extends React.Component {
     // --- HÀM RENDER MỚI CHO MODAL TÍNH TỔNG ---
     renderCalculateFeeModal() {
         const { calculationForm, calculationResult } = this.state;
+        const { t } = this.props;
         return (
             <div className="modal-overlay">
                 <div className="modal-content">
-                    <div className="modal-header"><h3>Tính tổng phí hàng loạt</h3><button onClick={() => this.toggleCalculateFeeModal(false)}>&times;</button></div>
+                    <div className="modal-header"><h3>{t('receipt_page.modal_calculate_fee.title')}</h3><button onClick={() => this.toggleCalculateFeeModal(false)}>&times;</button></div>
                     <form onSubmit={this.handleTotalFeeSubmit}>
                         <div className="modal-body">
                             <div className="form-group full-width">
-                                <label>ID Thời gian thu (VD: 102025)</label>
-                                <p className="form-help-text">Nhập ID kỳ thu mà bạn muốn hệ thống tự động tính toán tổng phí (chung cư, xe, tiện ích) cho TẤT CẢ các căn hộ.</p>
+                                <label>{t('receipt_page.modal_calculate_fee.label_time_id')}</label>
+                                <p className="form-help-text">{t('receipt_page.modal_calculate_fee.help_text')}</p>
                                 <input name="idThoiGianThu" value={calculationForm.idThoiGianThu} onChange={this.handleCalculationFormChange} type="text" required />
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="submit" >Bắt đầu Tính toán</button>
+                            <button type="submit" >{t('receipt_page.modal_calculate_fee.start_button')}</button>
                         </div>
 
                     </form>
@@ -451,11 +461,11 @@ class Receipt extends React.Component {
                     {
                         calculationResult && (
                             <div className="modal-result-summary">
-                                <h4>Kết quả tính toán:</h4>
-                                <p><strong>Tổng số căn hộ:</strong> {calculationResult.totalCanHo}</p>
-                                <p className="success"><strong>Tính thành công:</strong> {calculationResult.successCount}</p>
-                                <p className="fail"><strong>Tính thất bại:</strong> {calculationResult.failCount}</p>
-                                <p><i>(Chi tiết các căn hộ thất bại đã được ghi lại ở backend)</i></p>
+                                <h4>{t('receipt_page.modal_calculate_fee.result_title')}</h4>
+                                <p><strong>{t('receipt_page.modal_calculate_fee.result_total')}</strong> {calculationResult.totalCanHo}</p>
+                                <p className="success"><strong>{t('receipt_page.modal_calculate_fee.result_success')}</strong> {calculationResult.successCount}</p>
+                                <p className="fail"><strong>{t('receipt_page.modal_calculate_fee.result_failed')}</strong> {calculationResult.failCount}</p>
+                                <p><i>{t('receipt_page.modal_calculate_fee.result_note')}</i></p>
                             </div>
                         )
                     }
@@ -466,6 +476,7 @@ class Receipt extends React.Component {
 
     render() {
         const { activeTab } = this.state;
+        const { t } = this.props;
         return (
             <div className="receipt-container">
                 {/* --- Render tất cả các modal ở đây --- */}
@@ -481,16 +492,16 @@ class Receipt extends React.Component {
                         className={`tab-button ${activeTab === 'mandatory' ? 'active' : ''}`}
                         onClick={() => this.setActiveTab('mandatory')}
                     >
-                        Quản lý Khoản thu Bắt buộc
+                        {t('receipt_page.tab_mandatory')}
                     </button>
                     <button
                         className={`tab-button ${activeTab === 'voluntary' ? 'active' : ''}`}
                         onClick={() => this.setActiveTab('voluntary')}
                     >
-                        Quản lý Đóng góp Tự nguyện
+                        {t('receipt_page.tab_voluntary')}
                     </button>
                     <button className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} onClick={() => this.setActiveTab('history')}>
-                        Tra cứu Lịch sử Căn hộ
+                        {t('receipt_page.tab_history')}
                     </button>
                 </div>
 
@@ -499,14 +510,14 @@ class Receipt extends React.Component {
                     {activeTab === 'mandatory' && (
                         <>
                             <div className="section-header">
-                                <h2>Quản lý Khoản thu Bắt buộc</h2>
-                                <p>Tạo các khoản phí hàng tháng và ghi nhận thanh toán của cư dân.</p>
+                                <h2>{t('receipt_page.mandatory_title')}</h2>
+                                <p>{t('receipt_page.mandatory_desc')}</p>
                             </div>
                             <div className="section-actions">
-                                <button onClick={() => this.toggleAddFeeModal(true)}>1. Tạo Khoản thu</button>
-                                <button onClick={() => this.toggleCalculateFeeModal(true)}>2. Tính tổng thanh toán</button>
-                                <button onClick={() => this.toggleCollectFeeModal(true)}>3. Xác nhận Thanh toán</button>
-                                <button onClick={() => this.toggleMandatoryListModal(true)}>4. Xem Danh sách Khoản thu</button>
+                                <button onClick={() => this.toggleAddFeeModal(true)}>{t('receipt_page.mandatory_btn_create')}</button>
+                                <button onClick={() => this.toggleCalculateFeeModal(true)}>{t('receipt_page.mandatory_btn_calculate')}</button>
+                                <button onClick={() => this.toggleCollectFeeModal(true)}>{t('receipt_page.mandatory_btn_collect')}</button>
+                                <button onClick={() => this.toggleMandatoryListModal(true)}>{t('receipt_page.mandatory_btn_list')}</button>
                                 {/* <button className="secondary-btn">Xuất Báo cáo</button> */}
                             </div>
                         </>
@@ -525,4 +536,4 @@ class Receipt extends React.Component {
         );
     }
 }
-export default Receipt;
+export default withTranslation()(Receipt);

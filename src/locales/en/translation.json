@@ -1,0 +1,445 @@
+{
+    "nav": {
+        "home": "Home",
+        "apartment": "Apartments",
+        "resident": "Residents",
+        "receipt": "Receipts",
+        "statistic": "Statistics",
+        "setting": "Settings"
+    },
+    "home_card": {
+        "title_apartment": "Apartments",
+        "title_resident": "Residents",
+        "title_receipt": "Receipts",
+        "total_count": "Total:",
+        "view_all": "View all"
+    },
+    "header": {
+        "change_information": "Edit Information",
+        "view_information": "View Information",
+        "log_out": "Logout"
+    },
+    "login": "Login",
+    "welcome": "Welcome",
+    "dashboard": {
+        "fee_stats_title": "Fee Statistics (Last 6 Months)",
+        "resident_activity_tab": "Resident Activity",
+        "fee_activity_tab": "Fee Activity",
+        "loading": "Loading chart data...",
+        "no_activity": "No activity to display."
+    },
+    "apartment_table": {
+        "filter": "Filter",
+        "id": "Apartment ID",
+        "unit_number": "Unit No.",
+        "type": "Apartment Type",
+        "area": "Area",
+        "address": "Address"
+    },
+    "filter_button": "Filter",
+    "apartment_filter": {
+        "title": "Filters",
+        "unit_number": "Unit Number",
+        "unit_number_placeholder": "Enter unit number...",
+        "area": "Area",
+        "area_range": "From {{min}}m² - {{max}}m²",
+        "apartment_type": "Apartment Type",
+        "reset": "Reset",
+        "apply": "Apply",
+        "area_select_title": "Select Area",
+        "from": "From",
+        "to": "To",
+        "confirm": "Confirm"
+    },
+    "alerts": {
+        "session_expired": "Session expired. Please log in again."
+    },
+    "resident_page": {
+        "menu_list": "Resident List",
+        "menu_families": "Families",
+        "menu_statistics": "Statistics",
+        "menu_query": "Query",
+        "stats_by_gender": "By Gender",
+        "stats_by_age": "By Age",
+        "stats_by_status": "By Residency Status",
+        "stats_by_time": "By Time",
+        "query_search": "Search Information",
+        "query_history": "View Resident History"
+    },
+    "edit_modal": {
+        "title_add": "Add New Resident",
+        "title_edit": "Edit Resident Information",
+        "label_cccd": "ID Card No.:",
+        "label_name": "Full Name:",
+        "label_gender": "Gender:",
+        "gender_placeholder": "-- Select Gender --",
+        "gender_male": "MALE",
+        "gender_female": "FEMALE",
+        "gender_other": "OTHER",
+        "label_dob": "Date of Birth:",
+        "label_ethnicity": "Ethnicity:",
+        "label_religion": "Religion:",
+        "label_nationality": "Nationality:",
+        "label_address": "Address:",
+        "label_phone": "Phone Number:",
+        "label_email": "Email:",
+        "label_relationship": "Relationship:",
+        "label_status": "Status:",
+        "label_household_head_cccd": "Household Head ID:",
+        "save_button": "Save Changes",
+        "cancel_button": "Cancel"
+    },
+    "families_page": {
+        "add_button": "Add Family",
+        "table_headers": {
+            "head_cccd": "Head's ID Card No.",
+            "head_name": "Head's Full Name",
+            "apartment_id": "Apartment ID",
+            "member_count": "Members",
+            "phone": "Phone",
+            "motorbikes": "Motorbikes",
+            "cars": "Cars",
+            "address": "Address",
+            "status": "Status",
+            "actions": "Actions"
+        },
+        "actions": {
+            "change_owner_button": "Change Head"
+        },
+        "no_data": "No data to display",
+        "prompts": {
+            "enter_new_owner_cccd": "Enter the ID Card No. of the new household head:"
+        },
+        "alerts": {
+            "action_cancelled": "Action cancelled.",
+            "owner_change_success": "Household head changed successfully!"
+        }
+    },
+    "resident_list": {
+        "temp_absence_button": "Register Absence",
+        "temp_residence_button": "Register Residence",
+        "add_resident_button": "Add Resident",
+        "table_header": {
+            "cccd": "ID Card No.",
+            "head_cccd": "Head's ID No.",
+            "name": "Full Name",
+            "dob": "Date of Birth",
+            "gender": "Gender",
+            "ethnicity": "Ethnicity",
+            "religion": "Religion",
+            "phone": "Phone",
+            "relationship": "Relationship",
+            "actions": "Actions"
+        },
+        "actions": {
+            "edit": "Edit",
+            "delete": "Delete"
+        },
+        "no_data": "No data to display",
+        "alerts": {
+            "absence_success": "Absence registered successfully!",
+            "absence_fail": "Error registering absence",
+            "address_success": "Residence registered successfully!",
+            "address_fail": "Error registering residence"
+        }
+    },
+    "resident_history_page": {
+        "placeholder": "Enter resident's ID Card No....",
+        "alert_cccd_required": "Please enter an ID Card No. to query.",
+        "search_button": "Search",
+        "searching_button": "Searching...",
+        "error_prefix": "Error",
+        "error_generic": "Cannot connect to server.",
+        "loading_data": "Loading data...",
+        "no_data": "No data to display.",
+        "header_id": "ID",
+        "header_cccd": "Resident's ID No.",
+        "header_change_info": "Change Information",
+        "header_change_date": "Date of Change",
+        "header_executor": "Performed By"
+    },
+    "search_bar": {
+        "placeholder_prefix": "Search by",
+        "dropdown_title": "SEARCH BY",
+        "option_cccd": "ID Card No.",
+        "option_head_cccd": "Head's ID No.",
+        "option_name": "Full Name",
+        "option_gender": "Gender"
+    },
+    "stats_age_chart": {
+        "title": "Resident Statistics by Age Chart",
+        "dataset_label": "Number of Residents",
+        "loading": "Loading statistics data...",
+        "error": "Error loading age statistics",
+        "labels": {
+            "underage": "Underage",
+            "working_age": "Working Age",
+            "over_working_age": "Over Working Age"
+        }
+    },
+    "stats_gender_chart": {
+        "title": "Resident Statistics by Gender Chart",
+        "dataset_label": "Count",
+        "loading": "Loading statistics data...",
+        "error": "Error loading gender statistics",
+        "labels": {
+            "male": "Male",
+            "female": "Female",
+            "other": "Other"
+        }
+    },
+    "stats_time_chart": {
+        "title": "Resident Statistics by Time",
+        "alert_date_required": "Please select both a start and end date.",
+        "error_prefix": "Error",
+        "error_generic": "Cannot connect to server.",
+        "label_from_date": "From date:",
+        "label_to_date": "To date:",
+        "button_stats": "Generate",
+        "button_loading": "Processing...",
+        "result_label": "Number of new residents in the selected time period:"
+    },
+    "temp_absence_modal": {
+        "title": "Register Temporary Absence",
+        "label_cccd": "Resident's ID Card No.",
+        "label_start_date": "Start Date",
+        "label_end_date": "End Date",
+        "label_reason": "Reason for Absence",
+        "button_confirm": "Confirm"
+    },
+    "temp_address_modal": {
+        "title": "Register Temporary Residence",
+        "label_cccd": "Resident's ID Card No.",
+        "label_name": "Full Name",
+        "label_apartment_id": "Apartment ID",
+        "label_start_date": "Start Date",
+        "label_end_date": "End Date",
+        "label_reason": "Reason for Residence",
+        "button_confirm": "Confirm"
+    },
+    "user_profile": {
+        "title_edit": "Update Personal Information",
+        "title_view": "Personal Information",
+        "label_firstname": "First Name",
+        "placeholder_firstname": "Enter your first name",
+        "label_lastname": "Last Name",
+        "placeholder_lastname": "Enter your last name",
+        "label_dob": "Date of Birth",
+        "label_role": "Role",
+        "label_current_password": "Current Password",
+        "placeholder_current_password": "Enter to confirm changes",
+        "label_new_password": "New Password",
+        "placeholder_new_password": "Leave blank to keep unchanged",
+        "save_button": "Save Changes",
+        "alert_load_fail": "Could not load user information. Please try again.",
+        "alert_update_success": "Information updated successfully!",
+        "alert_update_fail": "Update failed"
+    },
+    "login_page": {
+        "username_placeholder": "Username...",
+        "password_placeholder": "Password...",
+        "forgot_password": "Forgot password?",
+        "login_fail_generic": "Incorrect login details",
+        "login_fail_alert_prefix": "Login failed"
+    },
+    "receipt_page": {
+        "tab_mandatory": "Mandatory Fee Management",
+        "tab_voluntary": "Voluntary Contribution",
+        "tab_history": "Apartment History Lookup",
+        "mandatory_title": "Mandatory Fee Management",
+        "mandatory_desc": "Create monthly fees and record resident payments.",
+        "mandatory_btn_create": "1. Create Fee",
+        "mandatory_btn_calculate": "2. Calculate Totals",
+        "mandatory_btn_collect": "3. Confirm Payment",
+        "mandatory_btn_list": "4. View Fee List",
+        "alerts": {
+            "invalid_fee_type": "Please select a valid fee type.",
+            "create_success": "Fee created successfully!",
+            "create_fail": "Failed to create fee: {{error}}",
+            "collect_missing_info": "Please fill in all fields.",
+            "collect_invalid_ids": "Invalid Apartment ID list.",
+            "collect_fail": "Fee collection failed: {{error}}",
+            "calculate_missing_id": "Please enter the Collection Time ID.",
+            "calculate_success": "Successfully calculated total fees for all apartments!",
+            "calculate_fail": "Failed to calculate total fees: {{error}}"
+        },
+        "modal_create_fee": {
+            "title": "Create Fee",
+            "label_fee_type": "Fee Type",
+            "placeholder_fee_type": "-- Select fee type --",
+            "fee_type_utility": "Utility Fee",
+            "fee_type_apartment": "Apartment Fee",
+            "fee_type_parking": "Parking Fee",
+            "label_apartment_id": "Apartment ID",
+            "label_time_id": "Collection Time ID",
+            "label_electricity": "Electricity Bill",
+            "label_water": "Water Bill",
+            "label_internet": "Internet Bill",
+            "label_service_fee": "Service Fee per m2",
+            "label_management_fee": "Management Fee per m2",
+            "label_motorcycle_fee": "Fee per Motorcycle",
+            "label_car_fee": "Fee per Car",
+            "create_button": "Create"
+        },
+        "modal_collect_fee": {
+            "title": "Collect Mandatory Fees",
+            "label_time_id": "Collection Time ID",
+            "placeholder_time_id": "Example: 102025",
+            "label_apartment_ids": "List of Paid Apartment IDs (comma-separated)",
+            "placeholder_apartment_ids": "Example: 1, 2, 5",
+            "confirm_button": "Confirm Payment"
+        },
+        "modal_payment_result": {
+            "title": "Payment Results",
+            "total_apartments": "Total Apartments",
+            "success": "Success",
+            "failed": "Failed",
+            "total_collected": "Total Fees Collected",
+            "header_apartment_id": "Apt ID",
+            "header_total_apartment_fee": "Total Apt. Fee",
+            "header_service_fee": "Service Fee",
+            "header_management_fee": "Mngmt. Fee",
+            "header_parking_fee": "Parking Fee",
+            "header_utility_fee": "Utility Fee",
+            "header_status": "Status",
+            "close_button": "Close"
+        },
+        "modal_mandatory_list": {
+            "title": "Mandatory Fee List"
+        },
+        "modal_calculate_fee": {
+            "title": "Batch Fee Calculation",
+            "label_time_id": "Collection Time ID (e.g., 102025)",
+            "help_text": "Enter the collection ID to automatically calculate total fees (apartment, parking, utilities) for ALL apartments.",
+            "start_button": "Start Calculation",
+            "result_title": "Calculation Results:",
+            "result_total": "Total Apartments:",
+            "result_success": "Success:",
+            "result_failed": "Failed:",
+            "result_note": "(Details for failed apartments are logged in the backend)"
+        }
+    },
+    "mandatory_fee_list": {
+        "placeholder_time_id": "Enter Collection Time ID (e.g., 102025)",
+        "alert_time_id_required": "Please enter a Collection Time ID.",
+        "error_loading_prefix": "Error",
+        "error_loading_generic": "Cannot connect to server.",
+        "generate_button": "Generate List",
+        "loading_button": "Processing...",
+        "summary_collection_date": "Collection Date",
+        "summary_due_date": "Due Date",
+        "summary_paid": "Paid",
+        "summary_total": "Total Revenue",
+        "table_header": {
+            "apartment_id": "Apt ID",
+            "status": "Status",
+            "total_fee": "Total Fee",
+            "apartment_fee": "Apt. Fee",
+            "parking_fee": "Parking Fee",
+            "utility_fee": "Utility Fee",
+            "paid_amount": "Paid",
+            "debt_amount": "Debt"
+        },
+        "status_paid": "PAID",
+        "status_unpaid": "UNPAID",
+        "export_button": "Export Report (CSV)",
+        "export_alert_no_data": "No data to export.",
+        "csv": {
+            "title": "MANDATORY FEES SUMMARY REPORT",
+            "report_period": "Report Period:",
+            "report_date": "Report Date:",
+            "summary_title": "SUMMARY INFORMATION",
+            "summary_collection_date": "Collection Date",
+            "summary_due_date": "Due Date",
+            "summary_paid_count": "Apartments Paid",
+            "summary_total_collected": "Total Revenue",
+            "details_title": "DETAILED FEES BY APARTMENT",
+            "summary_footer_title": "TOTALS",
+            "summary_footer_apartment": "Total Apartment Fees",
+            "summary_footer_parking": "Total Parking Fees",
+            "summary_footer_utility": "Total Utility Fees",
+            "summary_footer_total": "GRAND TOTAL"
+        }
+    },
+    "voluntary_contribution": {
+        "title": "Voluntary Contribution Management",
+        "description": "Create contribution drives and record detailed information.",
+        "create_campaign_button": "Create Contribution Drive",
+        "update_contribution_button": "Update Contribution",
+        "table_header": {
+            "id": "ID",
+            "name": "Contribution Name",
+            "created_date": "Created Date",
+            "due_date": "Due Date",
+            "household_count": "Contributing Households",
+            "total_amount": "Total Amount"
+        },
+        "no_data": "No contribution drives yet.",
+        "modal_create": {
+            "title": "Create Contribution Drive",
+            "label_name": "Contribution Name",
+            "label_start_date": "Collection Start Date",
+            "label_due_date": "Contribution Deadline",
+            "create_button": "Create"
+        },
+        "modal_update": {
+            "title": "Update Contribution Details",
+            "label_contribution_id": "Contribution ID",
+            "label_apartment_id": "Apartment ID",
+            "label_amount": "Contribution Amount",
+            "label_date": "Date of Contribution",
+            "label_payment_method": "Payment Method",
+            "label_receiver": "Receiver",
+            "label_notes": "Notes",
+            "update_button": "Update"
+        },
+        "alerts": {
+            "load_fail": "Could not retrieve contribution information.",
+            "create_success": "Contribution drive created successfully!",
+            "create_fail": "Could not create contribution drive.",
+            "update_success": "Contribution details updated successfully!",
+            "update_fail": "Could not update contribution details."
+        }
+    },
+    "apt_history_page": {
+        "placeholder": "Enter Apartment ID to look up...",
+        "alert_id_required": "Please enter an Apartment ID.",
+        "search_button": "Search",
+        "searching_button": "Searching...",
+        "error_prefix": "Error",
+        "error_generic": "Information not found or an error occurred.",
+        "summary_must_pay": "To Pay (Mandatory)",
+        "summary_paid": "Paid (Mandatory)",
+        "summary_debt": "Debt (Mandatory)",
+        "summary_voluntary": "Contributed (Voluntary)",
+        "mandatory_title": "Mandatory Fee History",
+        "voluntary_title": "Voluntary Contribution History",
+        "table_mandatory": {
+            "period": "Period",
+            "total_fee": "Total Fee",
+            "paid_amount": "Paid",
+            "debt": "Debt",
+            "status": "Status"
+        },
+        "table_voluntary": {
+            "name": "Contribution Name",
+            "date": "Contribution Date",
+            "amount": "Amount"
+        },
+        "status_paid": "PAID",
+        "status_unpaid": "UNPAID"
+    },
+    "settings_page": {
+        "title": "General Settings",
+        "description": "Manage basic information for the apartment complex. This info will be used in reports and invoices.",
+        "label_name": "Apartment Complex Name",
+        "label_address": "Address",
+        "label_phone": "Management Phone",
+        "label_email": "Contact Email",
+        "save_button": "Save Changes",
+        "saving_button": "Saving...",
+        "alert_load_fail": "Error loading settings:",
+        "alert_save_success": "Settings updated successfully!",
+        "alert_save_fail": "Could not save settings."
+    }
+}

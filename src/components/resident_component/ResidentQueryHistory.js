@@ -1,115 +1,112 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { getToken } from "../../services/localStorageService";
-import '../../styles/resident-styles/ResidentQueryHistory.scss'
+import '../../styles/resident-styles/ResidentQueryHistory.scss';
+import { useTranslation } from "react-i18next"; // 1. Import hook
 
-class ResidentQueryHistory extends React.Component {
-    state = {
-        cccdToQuery: '', // Lưu CCCD nhập vào
-        historyList: [],  // Lưu kết quả từ API
-        isLoading: false, // Quản lý trạng thái loading
-        error: null  // Quản lý lỗi
-    };
+// 2. Chuyển đổi sang Function Component
+function ResidentQueryHistory() {
 
-    handleInputChange = (event) => {
-        this.setState({
-            cccdToQuery: event.target.value
-        });
+    // 3. Lấy hàm dịch 't'
+    const { t } = useTranslation();
+
+    // 4. Chuyển đổi state sang hooks
+    const [cccdToQuery, setCccdToQuery] = useState('');
+    const [historyList, setHistoryList] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // 5. Chuyển đổi các hàm của class thành const functions
+    const handleInputChange = (event) => {
+        setCccdToQuery(event.target.value);
     }
 
-    handleSearch = async () => {
-        const { cccdToQuery } = this.state;
+    const handleSearch = async () => {
         if (!cccdToQuery) {
-            alert("Vui lòng nhập CCCD cần truy vấn.");
+            alert(t('resident_history_page.alert_cccd_required'));
             return;
         }
-        this.setState({ isLoading: true, error: null, historyList: [] });
+        setIsLoading(true);
+        setError(null);
+        setHistoryList([]);
+
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
-            this.setState({ isLoading: false });
+            alert(t('alerts.session_expired'));
+            setIsLoading(false);
             return;
         }
 
-        const config = {
-            headers: { 'Authorization': `Bearer ${token}` }
-        };
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
         try {
             const apiUrl = `http://localhost:8080/qlcc/nhan-khau/history/${cccdToQuery}`;
             const response = await axios.get(apiUrl, config);
 
             console.log("Lấy lịch sử thay đổi thành công");
-            this.setState({
-                historyList: response.data.result,
-                isLoading: false
-            });
+            setHistoryList(response.data.result || []); // Đảm bảo là mảng
+            setIsLoading(false);
 
         } catch (error) {
-            const errorMessage = error.response ? error.response.data.message : "Không thể kết nối đến server.";
+            const errorMessage = error.response ? error.response.data.message : t('resident_history_page.error_generic');
             console.error("Có lỗi khi lấy lịch sử thay đổi:", errorMessage);
-            this.setState({
-                error: `Lỗi: ${errorMessage}`,
-                isLoading: false
-            });
+            setError(`${t('resident_history_page.error_prefix')}: ${errorMessage}`);
+            setIsLoading(false);
         }
     }
 
-    render() {
-        const { cccdToQuery, historyList, isLoading, error } = this.state;
-
-        return (
-            <div className="history-container">
-                <div className="history-search-bar">
-                    <input
-                        type="text"
-                        placeholder="Nhập CCCD của nhân khẩu..."
-                        value={cccdToQuery}
-                        onChange={this.handleInputChange}
-                    />
-                    <button onClick={this.handleSearch} disabled={isLoading}>
-                        {isLoading ? 'Đang tìm...' : 'Tìm kiếm'}
-                    </button>
-                </div>
-
-                <div className="history-results">
-                    {error && <p className="error-message">{error}</p>}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>CCCD Nhân khẩu</th>
-                                <th>Thông tin thay đổi</th>
-                                <th>Ngày thay đổi</th>
-                                <th>Người thực hiện</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isLoading ? (
-                                <tr>
-                                    <td colSpan="5">Đang tải dữ liệu...</td>
-                                </tr>
-                            ) : historyList && historyList.length > 0 ? (
-                                historyList.map((item) => (
-                                    <tr key={item.id}>
-                                        <td>{item.id}</td>
-                                        <td>{item.cccdNhanKhau}</td>
-                                        <td>{item.thongTinThayDoi}</td>
-                                        <td>{item.ngayThayDoi}</td>
-                                        <td>{item.nguoiThucHien}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="5">Không có dữ liệu để hiển thị.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+    // 6. Trả về JSX (không cần hàm render() riêng)
+    return (
+        <div className="history-container">
+            <div className="history-search-bar">
+                <input
+                    type="text"
+                    placeholder={t('resident_history_page.placeholder')}
+                    value={cccdToQuery}
+                    onChange={handleInputChange}
+                />
+                <button onClick={handleSearch} disabled={isLoading}>
+                    {isLoading ? t('resident_history_page.searching_button') : t('resident_history_page.search_button')}
+                </button>
             </div>
-        )
-    }
+
+            <div className="history-results">
+                {error && <p className="error-message">{error}</p>}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{t('resident_history_page.header_id')}</th>
+                            <th>{t('resident_history_page.header_cccd')}</th>
+                            <th>{t('resident_history_page.header_change_info')}</th>
+                            <th>{t('resident_history_page.header_change_date')}</th>
+                            <th>{t('resident_history_page.header_executor')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan="5">{t('resident_history_page.loading_data')}</td>
+                            </tr>
+                        ) : historyList && historyList.length > 0 ? (
+                            historyList.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td>{item.cccdNhanKhau}</td>
+                                    <td>{item.thongTinThayDoi}</td>
+                                    <td>{item.ngayThayDoi}</td>
+                                    <td>{item.nguoiThucHien}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5">{t('resident_history_page.no_data')}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    )
 }
 
 export default ResidentQueryHistory;

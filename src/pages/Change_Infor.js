@@ -1,7 +1,9 @@
-import React, { use } from "react";
+import React from "react";
 import axios from "axios";
-import '../styles/Change_Infor.scss'
+import '../styles/Change_Infor.scss';
 import { getToken } from "../services/localStorageService";
+// 1. Import HOC "withTranslation"
+import { withTranslation } from "react-i18next";
 
 class Change_Infor extends React.Component {
 
@@ -10,140 +12,120 @@ class Change_Infor extends React.Component {
         this.state = {
             currentPassword: '',
             newPassword: '',
-            firstName: '', // Sẽ được lấy từ API
-            lastName: '',  // Sẽ được lấy từ API
+            firstName: '',
+            lastName: '',
             dob: '',
-            role: ''  //
+            role: ''
         };
     }
 
     async componentDidMount() {
-        // 2. Lấy token từ Local Storage
+        // 2. Lấy hàm 't' từ props
+        const { t } = this.props;
         const token = getToken();
         if (!token) {
             console.error("Không tìm thấy token, không thể lấy thông tin người dùng.");
-            // Có thể thêm logic điều hướng về trang đăng nhập ở đây
             return;
         }
 
-        // 3. Tạo header chứa token
-        const headers = {
-            'Authorization': `Bearer ${token}`
-        };
-
+        const headers = { 'Authorization': `Bearer ${token}` };
         const apiUrl = `http://localhost:8080/qlcc/users/myInfo`;
+
         try {
-            // 4. Gọi API với header và chờ kết quả
             const response = await axios.get(apiUrl, { headers: headers });
-
-            // Lấy dữ liệu từ response.data.result (dựa theo cấu trúc API của bạn)
             const userInfo = response.data.result;
-
             console.log('Lấy thông tin thành công!', userInfo);
 
-            // 5. Cập nhật state SAU KHI đã có dữ liệu
             this.setState({
                 firstName: userInfo.firstName || '',
                 lastName: userInfo.lastName || '',
-                // Định dạng lại ngày tháng để input type="date" có thể hiển thị
                 dob: userInfo.dob ? userInfo.dob.split('T')[0] : '',
                 role: userInfo.role
             });
 
         } catch (error) {
             console.error('Có lỗi xảy ra khi lấy thông tin:', error.response ? error.response.data : error.message);
-            alert("Không thể tải thông tin người dùng. Vui lòng thử lại.");
+            // 3. Dịch alert
+            alert(t('user_profile.alert_load_fail'));
         }
     }
 
     handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({
-            [name]: value
-        });
+        this.setState({ [name]: value });
     }
 
-    // Hàm xử lý khi form được submit
     handleSubmit = async (event) => {
-        event.preventDefault(); // Ngăn trang reload
-
+        event.preventDefault();
+        // 4. Lấy hàm 't' từ props
+        const { t } = this.props;
         const { firstName, lastName, dob, currentPassword, newPassword } = this.state;
 
-        // 1. TẠO ĐỐI TƯỢNG DATA CHỈ CHỨA CÁC TRƯỜNG CẦN GỬI
         const updateData = {
             password: newPassword,
             firstName: firstName,
             lastName: lastName,
             dob: dob
-
         };
-
-        console.log("Dữ liệu sẽ được gửi lên server:", updateData);
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            alert(t('alerts.session_expired'));
             return;
         }
 
-        // Tạo đối tượng config chứa header
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        };
-
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = `http://localhost:8080/qlcc/users/update`;
 
         try {
-            // 3. SỬA LẠI CÚ PHÁP AXIOS.PUT CHO ĐÚNG
-            // axios.put(url, data, config)
             const response = await axios.put(apiUrl, updateData, config);
-
-            alert('Cập nhật thông tin thành công!');
+            // 5. Dịch các alert
+            alert(t('user_profile.alert_update_success'));
             console.log("Server response:", response.data);
-
         } catch (error) {
             console.error('Lỗi khi cập nhật:', error.response ? error.response.data : error.message);
-            // Hiển thị thông báo lỗi cụ thể từ server nếu có
             const errorMessage = error.response?.data?.message || "Có lỗi không xác định xảy ra.";
-            alert('Cập nhật thất bại: ' + errorMessage);
+            alert(t('user_profile.alert_update_fail') + ': ' + errorMessage);
         }
     }
+
     render() {
+        // 6. Lấy hàm 't' từ props để dùng trong render
+        const { t } = this.props;
+
         return (
             <div className="change-info-container">
                 {this.props.isChangeInfor === true &&
                     <form className="change-info-form" onSubmit={this.handleSubmit}>
-                        <h2>Cập nhật thông tin cá nhân</h2>
+                        <h2>{t('user_profile.title_edit')}</h2>
 
                         {/* Các trường thông tin cá nhân */}
                         <div className="form-group">
-                            <label htmlFor="firstName">Họ</label>
+                            <label htmlFor="firstName">{t('user_profile.label_firstname')}</label>
                             <input
                                 type="text"
                                 id="firstName"
                                 name="firstName"
                                 value={this.state.firstName}
                                 onChange={this.handleInputChange}
-                                placeholder="Nhập họ của bạn"
+                                placeholder={t('user_profile.placeholder_firstname')}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="lastName">Tên</label>
+                            <label htmlFor="lastName">{t('user_profile.label_lastname')}</label>
                             <input
                                 type="text"
                                 id="lastName"
                                 name="lastName"
                                 value={this.state.lastName}
                                 onChange={this.handleInputChange}
-                                placeholder="Nhập tên của bạn"
+                                placeholder={t('user_profile.placeholder_lastname')}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="dob">Ngày sinh</label>
+                            <label htmlFor="dob">{t('user_profile.label_dob')}</label>
                             <input
                                 type="date"
                                 id="dob"
@@ -157,84 +139,82 @@ class Change_Infor extends React.Component {
 
                         {/* Các trường đổi mật khẩu */}
                         <div className="form-group">
-                            <label htmlFor="currentPassword">Mật khẩu hiện tại</label>
+                            <label htmlFor="currentPassword">{t('user_profile.label_current_password')}</label>
                             <input
                                 type="password"
                                 id="currentPassword"
                                 name="currentPassword"
                                 value={this.state.currentPassword}
                                 onChange={this.handleInputChange}
-                                placeholder="Nhập để xác nhận thay đổi"
+                                placeholder={t('user_profile.placeholder_current_password')}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="newPassword">Mật khẩu mới</label>
+                            <label htmlFor="newPassword">{t('user_profile.label_new_password')}</label>
                             <input
                                 type="password"
                                 id="newPassword"
                                 name="newPassword"
                                 value={this.state.newPassword}
                                 onChange={this.handleInputChange}
-                                placeholder="Bỏ trống nếu không muốn đổi"
+                                placeholder={t('user_profile.placeholder_new_password')}
                             />
                         </div>
 
-                        <button type="submit" className="submit-btn">Lưu thay đổi</button>
+                        <button type="submit" className="submit-btn">{t('user_profile.save_button')}</button>
                     </form>
                 }
                 {
                     this.props.isViewInfor === true &&
-                    <form className="change-info-form" onSubmit={this.handleSubmit}>
-                        <h2>Thông tin cá nhân</h2>
+                    <form className="change-info-form" onSubmit={(e) => e.preventDefault()}>
+                        <h2>{t('user_profile.title_view')}</h2>
 
-                        {/* Các trường thông tin cá nhân */}
+                        {/* Các trường thông tin cá nhân (chỉ xem) */}
                         <div className="form-group">
-                            <label htmlFor="firstName">Họ</label>
+                            <label htmlFor="firstName">{t('user_profile.label_firstname')}</label>
                             <input
                                 type="text"
                                 id="firstName"
                                 name="firstName"
                                 value={this.state.firstName}
+                                readOnly // Thêm readOnly
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="lastName">Tên</label>
+                            <label htmlFor="lastName">{t('user_profile.label_lastname')}</label>
                             <input
                                 type="text"
                                 id="lastName"
                                 name="lastName"
                                 value={this.state.lastName}
+                                readOnly
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="dob">Ngày sinh</label>
+                            <label htmlFor="dob">{t('user_profile.label_dob')}</label>
                             <input
                                 type="date"
                                 id="dob"
                                 name="dob"
                                 value={this.state.dob}
+                                readOnly
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="role"> Vai trò</label>
+                            <label htmlFor="role">{t('user_profile.label_role')}</label>
                             <input
                                 type="text"
                                 id="role"
                                 name="role"
                                 value={this.state.role}
+                                readOnly
                             />
                         </div>
-
-
                         <hr className="divider" />
-
-
-
-
                     </form>
                 }
             </div>
@@ -242,4 +222,5 @@ class Change_Infor extends React.Component {
     }
 }
 
-export default Change_Infor;
+// 7. Bọc component với HOC "withTranslation"
+export default withTranslation()(Change_Infor);

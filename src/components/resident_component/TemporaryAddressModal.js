@@ -1,9 +1,16 @@
-import React from "react";
-import '../../styles/resident-styles/TemporaryAddressModal.scss'
+import React, { useState } from "react";
+import '../../styles/resident-styles/TemporaryAddressModal.scss';
+import { useTranslation } from "react-i18next"; // 1. Import hook
 
-class TemporaryAddressModal extends React.Component {
+// 2. Chuyển sang Function Component, nhận props
+function TemporaryAddressModal({ show, onClose, onSubmit }) {
 
-    state = {
+    // 3. Lấy hàm t
+    const { t } = useTranslation();
+
+    // 4. Chuyển đổi state
+    // Sử dụng một state object duy nhất để dễ quản lý
+    const initialState = {
         cccd: '',
         hoVaTen: '',
         idCanHo: '',
@@ -11,121 +18,113 @@ class TemporaryAddressModal extends React.Component {
         ngayKetThuc: '',
         lyDo: ''
     };
+    const [formData, setFormData] = useState(initialState);
 
-    // Hàm chung để xử lý thay đổi trên các input
-    handleInputChange = (event) => {
+    // 5. Chuyển đổi hàm
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
-        this.setState({ [name]: value });
+        setFormData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
     }
 
-    handleSubmit = (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault(); // Ngăn form reload lại trang
-        // Gửi dữ liệu từ state lên component cha
-        this.props.onSubmit(this.state);
-        // Reset form sau khi submit
-        this.setState({
-            cccd: '',
-            hoVaTen: '',
-            idCanHo: '',
-            ngayBatDau: '',
-            ngayKetThuc: '',
-            lyDo: ''
-        });
+        onSubmit(formData);     // Gửi dữ liệu từ state lên component cha
+        setFormData(initialState); // Reset form sau khi submit
     }
 
-    render() {
+    if (!show) {
+        return null;
+    }
 
-        if (this.props.show === false) return null;
-        return (
-            <div className="modal-overlay">
-                <div className="modal-content" onClick={e => e.stopPropagation()}>
-                    <div className="modal-header">
-                        <h3> Cấp Giấy Tạm Trú</h3>
-                        <button className="close-button" onClick={this.props.onClose}>&times;</button>
-                    </div>
-
-                    <form className="absence-form" onSubmit={this.handleSubmit}>
-                        <div className="modal-body">
-                            <div className="form-group">
-                                <label htmlFor="cccd">CCCD Cư dân</label>
-                                <input
-                                    type="text"
-                                    id="cccd"
-                                    name="cccd"
-                                    value={this.state.cccd}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="hoVaTen">Họ và tên</label>
-                                <input
-                                    type="text"
-                                    id="hoVaTen"
-                                    name="hoVaTen"
-                                    value={this.state.hoVaTen}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="idCanHo">ID Căn hộ</label>
-                                <input
-                                    type="text"
-                                    id="idCanHo"
-                                    name="idCanHo"
-                                    value={this.state.idCanHo}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="ngayBatDau">Ngày bắt đầu</label>
-                                <input
-                                    type="date"
-                                    id="ngayBatDau"
-                                    name="ngayBatDau"
-                                    value={this.state.ngayBatDau}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="ngayKetThuc">Ngày kết thúc</label>
-                                <input
-                                    type="date"
-                                    id="ngayKetThuc"
-                                    name="ngayKetThuc"
-                                    value={this.state.ngayKetThuc}
-                                    onChange={this.handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="lyDo">Lý do tạm trú</label>
-                                <textarea
-                                    id="lyDo"
-                                    name="lyDo"
-                                    rows="4"
-                                    value={this.state.lyDo}
-                                    onChange={this.handleInputChange}
-                                    required
-                                ></textarea>
-                            </div>
-
-                        </div>
-                        <div className="modal-footer">
-                            <button type="submit" className="submit-btn">Xác nhận</button>
-                        </div>
-
-                    </form>
-
+    // 6. Dịch toàn bộ văn bản trong JSX
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <h3>{t('temp_address_modal.title')}</h3>
+                    <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
 
-            </div>
+                <form className="absence-form" onSubmit={handleSubmit}>
+                    <div className="modal-body">
+                        <div className="form-group">
+                            <label htmlFor="cccd">{t('temp_address_modal.label_cccd')}</label>
+                            <input
+                                type="text"
+                                id="cccd"
+                                name="cccd"
+                                value={formData.cccd}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="hoVaTen">{t('temp_address_modal.label_name')}</label>
+                            <input
+                                type="text"
+                                id="hoVaTen"
+                                name="hoVaTen"
+                                value={formData.hoVaTen}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="idCanHo">{t('temp_address_modal.label_apartment_id')}</label>
+                            <input
+                                type="text"
+                                id="idCanHo"
+                                name="idCanHo"
+                                value={formData.idCanHo}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ngayBatDau">{t('temp_address_modal.label_start_date')}</label>
+                            <input
+                                type="date"
+                                id="ngayBatDau"
+                                name="ngayBatDau"
+                                value={formData.ngayBatDau}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ngayKetThuc">{t('temp_address_modal.label_end_date')}</label>
+                            <input
+                                type="date"
+                                id="ngayKetThuc"
+                                name="ngayKetThuc"
+                                value={formData.ngayKetThuc}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="lyDo">{t('temp_address_modal.label_reason')}</label>
+                            <textarea
+                                id="lyDo"
+                                name="lyDo"
+                                rows="4"
+                                value={formData.lyDo}
+                                onChange={handleInputChange}
+                                required
+                            ></textarea>
+                        </div>
 
-        )
-    }
+                    </div>
+                    <div className="modal-footer">
+                        <button type="submit" className="submit-btn">{t('temp_address_modal.button_confirm')}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
 }
 
 export default TemporaryAddressModal;

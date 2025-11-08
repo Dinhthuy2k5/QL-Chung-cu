@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // Import hooks
 import '../styles/resident-styles/Resident.scss'
 import '../styles/resident-styles/List_Resident.scss'
 import ListResidents from "../components/resident_component/ListResident";
 import EditModal from "../components/resident_component/EditModal";
 import axios from "axios";
 import { getToken } from "../services/localStorageService";
-// import { NavLink } from "react-router-dom";
-import { NavLink, Routes, Route } from "react-router-dom";
+import { NavLink, Routes, Route, useLocation } from "react-router-dom"; // Import useLocation
 import StatisticByGender from "../components/resident_component/StatisticByGender";
 import StatisticByAge from "../components/resident_component/StatisticByAge";
 import StatisticByStatus from "../components/resident_component/StatisticByStatus";
@@ -14,120 +13,93 @@ import Families from "../components/resident_component/Families";
 import ResidentQueryHistory from '../components/resident_component/ResidentQueryHistory';
 import StatisticByTime from "../components/resident_component/StatisticByTime";
 
+// 1. Import hook useTranslation
+import { useTranslation } from "react-i18next";
 
+// 2. Chuyển đổi sang Function Component
+function Resident(props) {
 
-class Resident extends React.Component {
+    // 3. Lấy hàm t và hook location
+    const { t } = useTranslation();
+    const location = useLocation(); // Hook để thay thế window.location.pathname
 
-    state = {
-        listResidents: [
+    // 4. Chuyển đổi state sang hooks
+    const [listResidents, setListResidents] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingResident, setEditingResident] = useState(null);
+    const [isAddResident, setIsAddResident] = useState(false);
+    const [isUpdateResident, setIsUpdateResident] = useState(false);
+    const [isDropdownStatistic, setIsDropdownStatistic] = useState(false);
+    const [isDropdownQuery, setIsDropdownQuery] = useState(false);
+    const [searchQuery, setSearchQuery] = useState({ text: '', category: 'hoVaTen' });
 
-        ],
+    // 5. Sử dụng useEffect để đồng bộ props với state (thay cho getListResidents)
+    useEffect(() => {
+        setListResidents(props.listResidents || []);
+    }, [props.listResidents]);
 
-        isModalOpen: false,  //QUẢN LÝ MODAL
-        editingResident: null,      //Lưu thông tin người đang được sửa
-        isAddResident: false, // quản lí khi thêm nhân khẩu 
-        isUpdateResident: false,  // quản lí khi update nhân khẩu
-        isDropdownStatistic: false,
-        isDropdownQuery: false,
-        // Thêm state để lưu trữ query tìm kiếm
-        searchQuery: {
-            text: '',
-            category: 'hoVaTen'
-        }
+    // --- Chuyển đổi các hàm của class thành const functions ---
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
     }
 
-    // Hàm nhận query từ SearchBar và cập nhật state
-    handleSearch = (query) => {
-        this.setState({ searchQuery: query });
+    const deleteAResident = (cccd) => {
+        setListResidents(prevList => prevList.filter(item => item.cccd !== cccd));
+        // Bạn cũng nên gọi API DELETE ở đây
     }
 
-    // hàm xóa 1 nhân khẩu
-    deleteAResident = (cccd) => {
-        let currentResident = this.state.listResidents;
-        currentResident = currentResident.filter(item => item.cccd !== cccd);
-        this.setState({
-            listResidents: currentResident
-        })
+    const handleOpenEditModal = (resident) => {
+        setIsModalOpen(true);
+        setEditingResident(resident);
+        setIsAddResident(false);
+        setIsUpdateResident(true);
     }
 
-    // HÀM MỞ MODAL
-    handleOpenEditModal = (resident) => {
-        this.setState({
-            isModalOpen: true,
-            editingResident: resident,
-            isAddResident: false,
-            isUpdateResident: true
-        })
+    const handleCloseEditModal = () => {
+        setIsModalOpen(false);
+        setEditingResident(null);
+        setIsAddResident(false);
+        setIsUpdateResident(false);
     }
 
-    // HÀM ĐÓNG MODAL
-    handleClodeEditModal = () => {
-        this.setState({
-            isModalOpen: false,
-            editingResident: null,
-            isAddResident: false,
-            isUpdateResident: false
-        })
+    const handleAddResident = () => {
+        setIsModalOpen(true);
+        setEditingResident(null);
+        setIsAddResident(true);
+        setIsUpdateResident(false);
     }
 
-    handleAddResident = () => {
-        this.setState({
-            isModalOpen: true,
-            editingResident: null,
-            isAddResident: true,
-            isUpdateResident: false
-        })
-    }
-
-    // hàm thêm hoặc update nhân khẩu
-    handleSaveResident = (residentData) => {
-        // Nếu là thêm mới (không có cccd hoặc cccd chưa tồn tại)
-        const isNew = !this.state.listResidents.some(item => item.cccd === residentData.cccd);
+    const handleSaveResident = (residentData) => {
+        const isNew = !listResidents.some(item => item.cccd === residentData.cccd);
 
         if (isNew) {
-
-            this.setState(prevState => ({
-                listResidents: [...prevState.listResidents, residentData],
-                isModalOpen: false,
-                editingResident: null,
-                isAddResident: false
-            }))
+            setListResidents(prevList => [...prevList, residentData]);
+            setIsModalOpen(false);
+            setEditingResident(null);
+            setIsAddResident(false);
 
             const token = getToken();
             if (!token) {
-                alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                alert(t('alerts.session_expired')); // Dịch alert
                 return;
             }
-            const config = {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            };
-
-
+            const config = { headers: { 'Authorization': `Bearer ${token}` } };
             const apiUrl = `http://localhost:8080/qlcc/nhan-khau`;
+
             axios.post(apiUrl, residentData, config)
-                .then(response => {
-                    console.log('Cập nhật thành công!', response.data);
-                })
-                .catch(error => {
-                    console.error('Có lỗi xảy ra khi thêm nhân khẩu:', error.response ? error.response.data : error.message);
-                });
-            //Gọi API POST để thêm mới ở đây
-        }
-        else {
-            // Logic cập nhật
-            let currentResidents = [...this.state.listResidents];
+                .then(response => console.log('Thêm nhân khẩu thành công!', response.data))
+                .catch(error => console.error('Lỗi khi thêm nhân khẩu:', error.response ? error.response.data : error.message));
+        } else {
+            let currentResidents = [...listResidents];
             let index = currentResidents.findIndex(item => item.cccd === residentData.cccd);
 
             if (index !== -1) {
-                currentResidents[index] = residentData; //cập nhật thông tin
-                this.setState({
-                    listResidents: currentResidents,
-                    isModalOpen: false,
-                    editingResident: null,
-                    isUpdateResident: false
-                })
+                currentResidents[index] = residentData;
+                setListResidents(currentResidents);
+                setIsModalOpen(false);
+                setEditingResident(null);
+                setIsUpdateResident(false);
 
                 const apiUrl = `http://localhost:8080/qlcc/nhan-khau/${residentData.cccd}`;
                 axios.put(apiUrl, residentData)
@@ -138,183 +110,110 @@ class Resident extends React.Component {
                         console.error('Có lỗi xảy ra khi update nhân khẩu:', error.response ? error.response.data : error.message);
                     });
             }
-
         }
     }
 
-    setIsDropdownStatistic = (temp) => {
-        this.setState({
-            isDropdownStatistic: temp
-        })
-    }
+    // --- Bắt đầu phần Render ---
+    const filteredResidents = listResidents.filter(resident => {
+        const searchText = searchQuery.text.toLowerCase();
+        const searchCategory = searchQuery.category;
+        if (!searchText) return true;
+        const residentData = resident[searchCategory];
+        if (residentData) {
+            return residentData.toString().toLowerCase().includes(searchText);
+        }
+        return false;
+    });
 
-    setIsDropdownQuery = (temp) => {
-        this.setState({
-            isDropdownQuery: temp
-        })
-    }
+    const currentPath = location.pathname;
+    const isStatisticActive = currentPath.startsWith('/residents/statistic');
+    const isQueryActive = currentPath.startsWith('/residents/query');
 
-    // hàm gọi api lấy thông tin nhân khẩu
-    getListResidents = async () => {
-        this.setState({
-            listResidents: this.props.listResidents
-        })
-        // const token = getToken();
-        // if (!token) {
-        //     alert(" Phiên đăng nhập hết hạn");
-        //     return;
-        // }
+    return (
+        <div className="page-container">
+            <div className="resident-menu">
+                {/* 6. Dịch toàn bộ văn bản bằng hàm t() */}
+                <NavLink
+                    to="/residents"
+                    end
+                    className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}>
+                    <h4>{t('resident_page.menu_list')}</h4>
+                </NavLink>
+                <NavLink
+                    to="/residents/families"
+                    className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}>
+                    <h4>{t('resident_page.menu_families')}</h4>
+                </NavLink>
 
-        // const config = {
-        //     headers: {
-        //         'Authorization': `bearer ${token}`
-        //     }
-        // }
-        // const apiUrl = `http://localhost:8080/qlcc/nhan-khau`;
-        // try {
-        //     const response = await axios.get(apiUrl, config);
-        //     console.log("Lấy thông tin nhân khẩu thành công");
-        //     this.setState({
-        //         listResidents: response.data.result
-        //     })
-        //     this.props.setTotalResidents(response.data.result.length)
-
-        // } catch (error) {
-        //     console.log("Có lỗi khi lấy thông tin nhân khẩu", error.response ? error.response.data : error.message);
-        // }
-    }
-
-    componentDidMount = () => {
-        this.getListResidents();
-    }
-
-    render() {
-
-        const { listResidents, searchQuery } = this.state;
-
-        // --- LOGIC LỌC ---
-        // Lọc danh sách cư dân ngay trước khi render
-        const filteredResidents = listResidents.filter(resident => {
-            const searchText = searchQuery.text.toLowerCase();
-            const searchCategory = searchQuery.category;
-
-            if (!searchText) {
-                return true; // Nếu không có text tìm kiếm, hiển thị tất cả
-            }
-
-            const residentData = resident[searchCategory];
-            if (residentData) {
-                return residentData.toString().toLowerCase().includes(searchText);
-            }
-            return false;
-        });
-
-
-        const currentPath = window.location.pathname;
-        const isStatisticActive = currentPath.startsWith('/residents/statistic');
-        const isQueryActive = currentPath.startsWith('/residents/query');
-
-        return (
-            <div className="page-container">
-
-                <div className="resident-menu">
-                    <NavLink
-                        to="/residents"
-                        end // Thêm prop "end" để nó chỉ active khi URL là chính xác "/residents"
-                        className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}><h4> Danh sách cư dân</h4></NavLink>
-                    <NavLink
-                        to="/residents/families" // Đặt một đường dẫn cho trang hộ gia đình
-                        className={({ isActive }) => isActive ? "h4-navlink active-link" : "h4-navlink"}>
-                        <h4>Hộ gia đình</h4>
-                    </NavLink>
-                    <div
-                        className="menu-item"
-                        onMouseEnter={() => this.setIsDropdownStatistic(true)}
-                        onMouseLeave={() => this.setIsDropdownStatistic(false)}
-                    >
-                        <h4 className={isStatisticActive ? "active-link" : ""}> Thống kê</h4>
-                        {
-                            this.state.isDropdownStatistic &&
-                            <div className="dropdown-menu">
-                                <NavLink to="statistic/by-gender" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownStatistic(false)}>
-                                    <span>Theo giới tính</span>
-                                </NavLink>
-                                <NavLink to="statistic/by-age" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownStatistic(false)}>
-                                    <span>Theo độ tuổi</span>
-                                </NavLink>
-                                <NavLink to="statistic/by-status" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownStatistic(false)}>
-                                    <span>Theo tình trạng cư trú</span>
-                                </NavLink>
-                                <NavLink to="statistic/by-time" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownStatistic(false)}>
-                                    <span>Theo thời gian</span>
-                                </NavLink>
-
-                            </div>
-                        }
-                    </div>
-
-
-                    <div className="menu-item"
-                        onMouseEnter={() => this.setIsDropdownQuery(true)}
-                        onMouseLeave={() => this.setIsDropdownQuery(false)}>
-                        <h4 className={isQueryActive ? "active-link" : ""}> Truy vấn</h4>
-                        {
-                            this.state.isDropdownQuery &&
-                            <div className="dropdown-menu">
-                                <NavLink to="query/search" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownQuery(false)}>
-                                    <span>Tìm kiếm thông tin</span>
-                                </NavLink>
-                                <NavLink to="query/history" className="dropdown-item"
-                                    onClick={() => this.setIsDropdownQuery(false)}>
-                                    <span>Xem lịch sử thay đổi nhân khẩu</span>
-                                </NavLink>
-
-                            </div>
-                        }
-
-                    </div>
-
+                <div
+                    className="menu-item"
+                    onMouseEnter={() => setIsDropdownStatistic(true)}
+                    onMouseLeave={() => setIsDropdownStatistic(false)}
+                >
+                    <h4 className={isStatisticActive ? "active-link" : ""}>{t('resident_page.menu_statistics')}</h4>
+                    {isDropdownStatistic && (
+                        <div className="dropdown-menu">
+                            <NavLink to="statistic/by-gender" className="dropdown-item" onClick={() => setIsDropdownStatistic(false)}>
+                                <span>{t('resident_page.stats_by_gender')}</span>
+                            </NavLink>
+                            <NavLink to="statistic/by-age" className="dropdown-item" onClick={() => setIsDropdownStatistic(false)}>
+                                <span>{t('resident_page.stats_by_age')}</span>
+                            </NavLink>
+                            <NavLink to="statistic/by-status" className="dropdown-item" onClick={() => setIsDropdownStatistic(false)}>
+                                <span>{t('resident_page.stats_by_status')}</span>
+                            </NavLink>
+                            <NavLink to="statistic/by-time" className="dropdown-item" onClick={() => setIsDropdownStatistic(false)}>
+                                <span>{t('resident_page.stats_by_time')}</span>
+                            </NavLink>
+                        </div>
+                    )}
                 </div>
 
-                <Routes>
-                    <Route index element={
-                        <ListResidents listResidents={filteredResidents}
-                            deleteAResident={this.deleteAResident}
-                            handleOpenEditModal={this.handleOpenEditModal}
-                            handleAddResident={this.handleAddResident}
-                            onSearch={this.handleSearch}
-                        />
-                    }
-                    />
-                    <Route path="families" element={<Families />} />
-                    {/* These are the routes for your statistic charts */}
-                    <Route path="statistic/by-gender" element={<StatisticByGender />} />
-                    <Route path="statistic/by-age" element={<StatisticByAge />} />
-                    <Route path="statistic/by-status" element={<StatisticByStatus />} />
-                    <Route path="statistic/by-time" element={<StatisticByTime />} />
-
-
-                    {/* Add routes for the "Truy vấn" section as well */}
-                    {/* <Route path="query/search" element={<YourSearchComponent />} /> */}
-                    <Route path="query/history" element={<ResidentQueryHistory />} />
-                </Routes>
-                <EditModal
-                    show={this.state.isModalOpen}
-                    resident={this.state.editingResident}
-                    onClose={this.handleClodeEditModal}
-                    onSave={this.handleSaveResident}
-                    isAddResident={this.state.isAddResident}
-                    isUpdateResident={this.state.isUpdateResident}
-                />
-
+                <div className="menu-item"
+                    onMouseEnter={() => setIsDropdownQuery(true)}
+                    onMouseLeave={() => setIsDropdownQuery(false)}>
+                    <h4 className={isQueryActive ? "active-link" : ""}>{t('resident_page.menu_query')}</h4>
+                    {isDropdownQuery && (
+                        <div className="dropdown-menu">
+                            <NavLink to="query/search" className="dropdown-item" onClick={() => setIsDropdownQuery(false)}>
+                                <span>{t('resident_page.query_search')}</span>
+                            </NavLink>
+                            <NavLink to="query/history" className="dropdown-item" onClick={() => setIsDropdownQuery(false)}>
+                                <span>{t('resident_page.query_history')}</span>
+                            </NavLink>
+                        </div>
+                    )}
+                </div>
             </div>
-        )
-    }
+
+            <Routes>
+                <Route index element={
+                    <ListResidents
+                        listResidents={filteredResidents}
+                        deleteAResident={deleteAResident}
+                        handleOpenEditModal={handleOpenEditModal}
+                        handleAddResident={handleAddResident}
+                        onSearch={handleSearch}
+                    />}
+                />
+                <Route path="families" element={<Families />} />
+                <Route path="statistic/by-gender" element={<StatisticByGender />} />
+                <Route path="statistic/by-age" element={<StatisticByAge />} />
+                <Route path="statistic/by-status" element={<StatisticByStatus />} />
+                <Route path="statistic/by-time" element={<StatisticByTime />} />
+                <Route path="query/history" element={<ResidentQueryHistory />} />
+            </Routes>
+
+            <EditModal
+                show={isModalOpen}
+                resident={editingResident}
+                onClose={handleCloseEditModal}
+                onSave={handleSaveResident}
+                isAddResident={isAddResident}
+                isUpdateResident={isUpdateResident}
+            />
+        </div>
+    );
 }
 
 export default Resident;

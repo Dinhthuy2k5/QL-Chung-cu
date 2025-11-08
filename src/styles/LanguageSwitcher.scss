@@ -1,0 +1,41 @@
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 15px; // Tạo khoảng cách với nút "Đăng nhập"
+  
+  button {
+    background: transparent;
+    border: 1px solid #adb5bd;
+    color: #adb5bd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+
+    &.active {
+      color: #fff;
+      border-color: #fff;
+    }
+
+    &:not(.active):hover {
+      color: #fff;
+      border-color: #777;
+    }
+  }
+}
+
+.language-switcher {
+  // ... (style cũ của bạn cho button)
+
+  // THÊM ĐOẠN NÀY VÀO:
+  // Style cho nút đang được chọn
+  button.active {
+    background-color: #e9ecef; // Nền trắng
+    color: #2c3038;         // Chữ đen
+    border-color: #e9ecef;
+    font-weight: bold;
+  }
+}

@@ -1,136 +1,150 @@
-import React from "react";
-import '../styles/settings-styles/Settings.scss'; // Sẽ tạo ở bước 2
+import React, { useState, useEffect } from "react";
+import '../styles/settings-styles/Settings.scss';
 import axios from "axios";
 import { getToken } from "../services/localStorageService";
+// 1. Import hook
+import { useTranslation } from "react-i18next";
 
-class Settings extends React.Component {
-    state = {
+// 2. Chuyển sang Function Component
+function Settings() {
+
+    // 3. Lấy hàm 't'
+    const { t } = useTranslation();
+
+    // 4. Chuyển đổi state
+    const [formData, setFormData] = useState({
         tenChungCu: 'Chung cư BlueMoon',
         diaChi: '123 Đường Văn Phú, Hà Đông, Hà Nội',
         sdt: '024 1234 5678',
-        email: 'bql.bluemoon@example.com',
-        isLoading: false
-    };
+        email: 'bql.bluemoon@example.com'
+    });
+    const [isLoading, setIsLoading] = useState(false);
 
-    // (Giả lập) Lấy thông tin cài đặt hiện tại khi tải trang
-    componentDidMount() {
-        // const token = getToken();
-        // const config = { headers: { 'Authorization': `Bearer ${token}` } };
-        // axios.get('http://localhost:8080/qlcc/settings', config)
-        //     .then(response => {
-        //         this.setState({
-        //             tenChungCu: response.data.result.tenChungCu,
-        //             diaChi: response.data.result.diaChi,
-        //             sdt: response.data.result.sdt,
-        //             email: response.data.result.email,
+    // 5. Chuyển đổi componentDidMount sang useEffect
+    useEffect(() => {
+        // (Bạn có thể bỏ comment phần này khi API của bạn sẵn sàng)
+        // const fetchSettings = async () => {
+        //     const token = getToken();
+        //     if (!token) {
+        //         console.error("Không tìm thấy token");
+        //         return;
+        //     }
+        //     const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        //     try {
+        //         const response = await axios.get('http://localhost:8080/qlcc/settings', config);
+        //         const settings = response.data.result;
+        //         setFormData({
+        //             tenChungCu: settings.tenChungCu,
+        //             diaChi: settings.diaChi,
+        //             sdt: settings.sdt,
+        //             email: settings.email,
         //         });
-        //     })
-        //     .catch(error => console.error("Lỗi khi tải cài đặt:", error));
+        //     } catch (error) {
+        //         console.error(t('settings_page.alert_load_fail'), error);
+        //     }
+        // };
+        // fetchSettings();
+    }, [t]); // Thêm 't' vào dependency array
+
+    // 6. Chuyển đổi các hàm class
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     }
 
-    handleInputChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-
-    handleSaveSettings = async (event) => {
+    const handleSaveSettings = async (event) => {
         event.preventDefault();
-        this.setState({ isLoading: true });
+        setIsLoading(true);
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
-            this.setState({ isLoading: false });
+            alert(t('alerts.session_expired'));
+            setIsLoading(false);
             return;
         }
 
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
-        const data = {
-            tenChungCu: this.state.tenChungCu,
-            diaChi: this.state.diaChi,
-            sdt: this.state.sdt,
-            email: this.state.email
-        };
-        const apiUrl = `http://localhost:8080/qlcc/settings/update`; // API giả định
+        const data = formData; // Dữ liệu đã có trong state formData
+        const apiUrl = `http://localhost:8080/qlcc/settings/update`;
 
         try {
-            // const response = await axios.post(apiUrl, data, config);
             console.log("Saving settings:", data);
-            // Giả lập độ trễ
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Giả lập gọi API
 
-            alert("Cập nhật thông tin thành công!");
-            this.setState({ isLoading: false });
+            alert(t('settings_page.alert_save_success'));
+            setIsLoading(false);
         } catch (error) {
-            alert(`Lỗi: ${error.response?.data?.message || 'Không thể lưu cài đặt.'}`);
-            this.setState({ isLoading: false });
+            const errorMsg = error.response?.data?.message || t('settings_page.alert_save_fail');
+            alert(`${t('user_profile.alert_update_fail')}: ${errorMsg}`);
+            setIsLoading(false);
         }
     }
 
-    render() {
-        const { tenChungCu, diaChi, sdt, email, isLoading } = this.state;
+    // 7. Trả về JSX (đã dịch)
+    return (
+        <div className="settings-container">
+            <div className="settings-panel">
+                <div className="panel-header">
+                    <h2>{t('settings_page.title')}</h2>
+                    <p>{t('settings_page.description')}</p>
+                </div>
 
-        return (
-            <div className="settings-container">
-                <div className="settings-panel">
-                    <div className="panel-header">
-                        <h2>Cài đặt Chung</h2>
-                        <p>Quản lý thông tin cơ bản của chung cư. Thông tin này sẽ được sử dụng trong các báo cáo và hóa đơn.</p>
+                <form className="settings-form" onSubmit={handleSaveSettings}>
+                    <div className="form-group">
+                        <label htmlFor="tenChungCu">{t('settings_page.label_name')}</label>
+                        <input
+                            type="text"
+                            name="tenChungCu"
+                            id="tenChungCu"
+                            value={formData.tenChungCu}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="diaChi">{t('settings_page.label_address')}</label>
+                        <input
+                            type="text"
+                            name="diaChi"
+                            id="diaChi"
+                            value={formData.diaChi}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className="form-group-row">
+                        <div className="form-group">
+                            <label htmlFor="sdt">{t('settings_page.label_phone')}</label>
+                            <input
+                                type="text"
+                                name="sdt"
+                                id="sdt"
+                                value={formData.sdt}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="email">{t('settings_page.label_email')}</label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                            />
+                        </div>
                     </div>
 
-                    <form className="settings-form" onSubmit={this.handleSaveSettings}>
-                        <div className="form-group">
-                            <label htmlFor="tenChungCu">Tên Chung cư</label>
-                            <input
-                                type="text"
-                                name="tenChungCu"
-                                id="tenChungCu"
-                                value={tenChungCu}
-                                onChange={this.handleInputChange}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="diaChi">Địa chỉ</label>
-                            <input
-                                type="text"
-                                name="diaChi"
-                                id="diaChi"
-                                value={diaChi}
-                                onChange={this.handleInputChange}
-                            />
-                        </div>
-                        <div className="form-group-row"> {/* Layout 2 cột */}
-                            <div className="form-group">
-                                <label htmlFor="sdt">Số điện thoại BQL</label>
-                                <input
-                                    type="text"
-                                    name="sdt"
-                                    id="sdt"
-                                    value={sdt}
-                                    onChange={this.handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="email">Email Liên hệ</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    value={email}
-                                    onChange={this.handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-footer">
-                            <button type="submit" className="save-btn" disabled={isLoading}>
-                                {isLoading ? "Đang lưu..." : "Lưu thay đổi"}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={isLoading}>
+                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                        </button>
+                    </div>
+                </form>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default Settings;

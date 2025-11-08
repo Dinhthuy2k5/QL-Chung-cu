@@ -1,111 +1,96 @@
-import React from "react";
-import '../../styles/resident-styles/SearchBar.scss'
+import React, { useState, useRef, useEffect } from "react";
+import '../../styles/resident-styles/SearchBar.scss';
+import { useTranslation } from "react-i18next"; // 1. Import hook
 
-class SearchBar extends React.Component {
-    state = {
-        searchText: '',
-        searchCategory: 'hoVaTen',
-        isDropdownVisible: false
-    };
+// 2. Chuyển đổi sang Function Component
+function SearchBar({ onSearch }) { // Nhận onSearch qua props
 
-    searchOptions = [
-        { value: 'cccd', label: 'CCCD' },
-        { value: 'cccdChuHo', label: 'CCCD Chủ hộ' },
-        { value: 'hoVaTen', label: 'Họ và Tên' },
-        { value: 'gioiTinh', label: 'Giới Tính' }
+    const { t } = useTranslation(); // 3. Lấy hàm t
+
+    // 4. Định nghĩa các tùy chọn tìm kiếm BẰNG CÁCH DÙNG t()
+    const searchOptions = [
+        { value: 'cccd', label: t('search_bar.option_cccd') },
+        { value: 'cccdChuHo', label: t('search_bar.option_head_cccd') },
+        { value: 'hoVaTen', label: t('search_bar.option_name') },
+        { value: 'gioiTinh', label: t('search_bar.option_gender') }
     ];
 
-    // Ref để theo dõi thẻ div chính của component
-    wrapperRef = React.createRef();
+    // 5. Chuyển đổi state sang hooks
+    const [searchText, setSearchText] = useState('');
+    const [searchCategory, setSearchCategory] = useState('hoVaTen');
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-    componentDidMount = () => {
-        // Thêm event listener để xử lý khi click ra ngoài
-        document.addEventListener('mousedown', this.handleClickOustside);
-    }
+    const wrapperRef = useRef(null); // Tương đương React.createRef()
 
-    componentWillUnmount = () => {
-        // Gỡ event listener khi component bị hủy
-        document.removeEventListener('mousedown', this.handleClickOustside);
-    }
+    // 6. Chuyển đổi componentDidMount/Unmount sang useEffect (xử lý click ra ngoài)
+    useEffect(() => {
+        // Sửa lỗi chính tả từ handleClickOustside -> handleClickOutside
+        function handleClickOutside(event) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setIsDropdownVisible(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [wrapperRef]); // Dependency array
 
-    handleClickOustside = (event) => {
-        if (this.wrapperRef && !this.wrapperRef.current.contains(event.target))
-            this.setState({
-                isDropdownVisible: false
-            });
-    }
-
-    handleInputChange = (event) => {
-        const searchText = event.target.value;
-        this.setState({ searchText });
-        this.props.onSearch({
-            text: searchText,
-            category: this.state.searchCategory
-        })
-
-    }
-
-    // Lấy tên hiển thị của tiêu chí đang chọn
-    getSelectedCategoryLabel = () => {
-        const selectedOption = this.searchOptions.find(opt => opt.value === this.state.searchCategory);
-        return selectedOption ? selectedOption.label : "";
-    }
-
-    handleCategorySelect = (category) => {
-        console.log("handle category");
-        this.setState({
-            searchCategory: category,
-            isDropdownVisible: false
+    // 7. Chuyển đổi các hàm
+    const handleInputChange = (event) => {
+        const newSearchText = event.target.value;
+        setSearchText(newSearchText);
+        onSearch({
+            text: newSearchText,
+            category: searchCategory
         });
-        // Tự động tìm kiếm lại với tiêu chí mới
-        this.props.onSearch({
-            text: this.state.searchText,
+    }
+
+    const handleCategorySelect = (category) => {
+        setSearchCategory(category);
+        setIsDropdownVisible(false);
+        onSearch({
+            text: searchText,
             category: category
         });
     }
 
-    render() {
-        const { searchText, isDropdownVisible } = this.state;
-
-        return (
-            <div className="search-bar-wrapper" ref={this.wrapperRef}>
-                <div className="search-input-container">
-                    <span className="search-icon">&#128269; </span>
-                    <input
-                        type="text"
-                        placeholder={`Tìm kiếm theo ${this.getSelectedCategoryLabel()}...`}
-                        value={searchText}
-                        onChange={this.handleInputChange}
-                        onFocus={() => this.setState({ isDropdownVisible: true })}
-                    />
-                </div>
-
-                {
-                    isDropdownVisible && (
-                        <div className="search-dropdown">
-                            <div className="dropdown-title">TÌM KIẾM THEO </div>
-                            {
-
-                                this.searchOptions.map(option => (
-                                    <div key={option.value}
-                                        className={`dropdown-option ${option.value === this.state.searchCategory ? 'is-selected' : ''}`}
-                                        onClick={() => this.handleCategorySelect(option.value)}
-                                    >
-                                        {option.label}
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    )
-                }
-
-            </div>
-
-        )
+    const getSelectedCategoryLabel = () => {
+        const selectedOption = searchOptions.find(opt => opt.value === searchCategory);
+        return selectedOption ? selectedOption.label : "";
     }
 
+    // 8. Trả về JSX (từ hàm render cũ)
+    return (
+        <div className="search-bar-wrapper" ref={wrapperRef}>
+            <div className="search-input-container">
+                <span className="search-icon">&#128269; </span>
+                <input
+                    type="text"
+                    // Dịch placeholder
+                    placeholder={`${t('search_bar.placeholder_prefix')} ${getSelectedCategoryLabel()}...`}
+                    value={searchText}
+                    onChange={handleInputChange}
+                    onFocus={() => setIsDropdownVisible(true)}
+                />
+            </div>
 
-
+            {isDropdownVisible && (
+                <div className="search-dropdown">
+                    <div className="dropdown-title">{t('search_bar.dropdown_title')}</div>
+                    {searchOptions.map(option => (
+                        <div key={option.value}
+                            className={`dropdown-option ${option.value === searchCategory ? 'is-selected' : ''}`}
+                            onClick={() => handleCategorySelect(option.value)}
+                        >
+                            {/* Label ở đây đã được dịch từ mảng searchOptions */}
+                            {option.label}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default SearchBar;

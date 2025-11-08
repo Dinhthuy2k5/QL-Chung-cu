@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import '../../styles/Header.scss';
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+
+// 1. Import hook 'useTranslation' thay vì HOC
+import { useTranslation } from 'react-i18next';
 
 export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setIsChangeInfor, setIsViewInfor }) {
 
+    const { t } = useTranslation();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     //const [show, setShow] = React.useState(false);
     return (
@@ -21,24 +26,26 @@ export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setI
                 </div>
                 <div className="nav-actions" >
 
+                    <LanguageSwitcher /> {/* <-- Thêm nút chuyển ngôn ngữ ở đây */}
+
                     {isLoggedIn ?
                         < div className="user-menu"
                             onMouseEnter={() => setIsDropdownOpen(true)}
                             onMouseLeave={() => setIsDropdownOpen(false)}>
 
-                            <span className="welcome-message">Xin chào! - {userLoggedIn}</span>
+                            <span className="welcome-message">{t('welcome')}!! - {userLoggedIn}</span>
                             <div className="user-avatar">👤</div> {/* Icon người dùng đơn giản */}
                             {
                                 isDropdownOpen &&
                                 <div className="dropdown-menu">
                                     <NavLink to="/change-infor" className="dropdown-item" onClick={setIsChangeInfor(true)}>
-                                        Sửa thông tin
+                                        {t('header.change_information')}
                                     </NavLink>
                                     <NavLink to="/view-infor" className="dropdown-item" onClick={setIsViewInfor(true)}>
-                                        Xem thông tin
+                                        {t('header.view_information')}
                                     </NavLink>
                                     <div onClick={handleLoggedOut} className="dropdown-item logout">
-                                        Đăng xuất
+                                        {t('header.log_out')}
                                     </div>
                                 </div>
                             }
@@ -46,7 +53,7 @@ export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setI
                         </div>
                         :
                         <NavLink to="/log-in" className="btn-login" >
-                            Đăng nhập
+                            {t('login')}
                         </NavLink>
                     }
                     {/* Bạn có thể thêm các nút khác ở đây nếu muốn */}
@@ -57,22 +64,22 @@ export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setI
             <nav className="navigation-bar">
                 <div className="nav-links">
                     <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Trang chủ
+                        {t('nav.home')}
                     </NavLink>
                     <NavLink to="/apartments" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Căn hộ
+                        {t('nav.apartment')}
                     </NavLink>
                     <NavLink to="/residents" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Cư dân
+                        {t('nav.resident')}
                     </NavLink>
                     <NavLink to="/receipts" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Khoản thu
+                        {t('nav.receipt')}
                     </NavLink>
                     <NavLink to="/statistics" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Thống kê
+                        {t('nav.statistic')}
                     </NavLink>
                     <NavLink to="/settings" className={({ isActive }) => (isActive ? "active" : "")}>
-                        Cài đặt
+                        {t('nav.setting')}
                     </NavLink>
 
                 </div>

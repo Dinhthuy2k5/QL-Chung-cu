@@ -1,33 +1,42 @@
-import React from "react";
-
+import React, { useState } from "react";
+// Bỏ import { error } from "three"; vì nó không cần thiết và sai
 import { getToken } from "../../services/localStorageService";
 import '../../styles/receipt-styles/MandatoryFeeList.scss'
 import axios from "axios";
+// 1. Import hook
+import { useTranslation } from "react-i18next";
 
-class MandatoryFeeList extends React.Component {
-    state = {
-        idThoiGianThu: '', // Lưu ID thời gian thu nhập vào
-        feeData: null,     // Lưu toàn bộ kết quả từ API
-        isLoading: false,
-        error: null,
+// 2. Chuyển sang Function Component
+function MandatoryFeeList() {
 
-    };
+    // 3. Lấy hàm 't'
+    const { t } = useTranslation();
 
-    handleInputChange = (event) => {
-        this.setState({ idThoiGianThu: event.target.value });
+    // 4. Chuyển đổi state
+    const [idThoiGianThu, setIdThoiGianThu] = useState('');
+    const [feeData, setFeeData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // 5. Chuyển đổi các hàm
+    const handleInputChange = (event) => {
+        setIdThoiGianThu(event.target.value);
     }
 
-    handleGenerateList = async () => {
-        const { idThoiGianThu } = this.state;
+    const handleGenerateList = async () => {
         if (!idThoiGianThu) {
-            alert("Vui lòng nhập ID Thời gian thu.");
+            alert(t('mandatory_fee_list.alert_time_id_required'));
             return;
         }
 
-        this.setState({ isLoading: true, error: null, feeData: null });
+        setIsLoading(true);
+        setError(null);
+        setFeeData(null);
+
         const token = getToken();
         if (!token) {
-            this.setState({ isLoading: false, error: "Phiên đăng nhập đã hết hạn." });
+            setIsLoading(false);
+            setError(t('alerts.session_expired'));
             return;
         }
 
@@ -44,56 +53,53 @@ class MandatoryFeeList extends React.Component {
                     item => item.trangThai === 'DA_THANH_TOAN'
                 ).length;
             }
-            // Lưu cả dữ liệu API và số lượng đã đếm được
-            this.setState({
-                feeData: {
-                    ...response.data.result,
-                    paidApartmentCount: paidCount // Lưu số lượng đã đếm vào state
-                },
-                isLoading: false
+
+            setFeeData({
+                ...response.data.result,
+                paidApartmentCount: paidCount
             });
+            setIsLoading(false);
         } catch (error) {
-            const errorMessage = error.response ? error.response.data.message : "Không thể kết nối đến server.";
-            console.error("Lỗi khi lập danh sách:", errorMessage);
-            this.setState({ error: `Lỗi: ${errorMessage}`, isLoading: false });
+            const errorMessage = error.response ? error.response.data.message : t('mandatory_fee_list.error_loading_generic');
+            console.error(t('mandatory_fee_list.error_loading'), errorMessage);
+            setError(`${t('mandatory_fee_list.error_loading_prefix')}: ${errorMessage}`);
+            setIsLoading(false);
         }
     }
 
-    // Helper function to format currency
-    formatCurrency = (number) => {
+    const formatCurrency = (number) => {
         return (number || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
-    // --- HÀM MỚI ĐỂ XUẤT BÁO CÁO ---
-
-    handleExportReport = () => {
-        const { feeData, idThoiGianThu } = this.state;
+    const handleExportReport = () => {
         if (!feeData) {
-            alert("Không có dữ liệu để xuất báo cáo.");
+            alert(t('mandatory_fee_list.export_alert_no_data'));
             return;
         }
 
-        // Helper function to escape commas in strings for CSV
         const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
 
-        // 1. Header của file báo cáo
-        let csvContent = "\uFEFF"; // BOM for Excel UTF-8 compatibility
-        csvContent += "BÁO CÁO TỔNG HỢP CÁC KHOẢN THU BẮT BUỘC\n";
-        csvContent += `Kỳ báo cáo: ${idThoiGianThu}\n`;
-        csvContent += `Ngày lập báo cáo: ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+        let csvContent = "\uFEFF";
+        csvContent += `${t('mandatory_fee_list.csv.title')}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.report_period')} ${idThoiGianThu}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.report_date')} ${new Date().toLocaleDateString('vi-VN')}\n\n`;
 
-        // 2. Phần tóm tắt
-        csvContent += "THÔNG TIN TÓM TẮT\n";
-        csvContent += `Ngày thu,${feeData.ngayThu}\n`;
-        csvContent += `Hạn thu,${feeData.hanThu}\n`;
-        csvContent += `Số căn hộ đã nộp,${feeData.successCount}/${feeData.totalCanHo}\n`;
-        csvContent += `Tổng tiền đã thu,${feeData.tongPhiAll || 0}\n\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_title')}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_collection_date')},${feeData.ngayThu}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_due_date')},${feeData.hanThu}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_paid_count')},${feeData.paidApartmentCount}/${feeData.totalCanHo}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_total_collected')},${feeData.tongPhiAll || 0}\n\n`;
 
-        // 3. Phần bảng chi tiết
-        csvContent += "CHI TIẾT CÁC KHOẢN THU THEO CĂN HỘ\n";
+        csvContent += `${t('mandatory_fee_list.csv.details_title')}\n`;
         const headers = [
-            "ID Căn hộ", "Trạng thái", "Tổng Phí", "Phí Chung cư", "Phí Gửi Xe",
-            "Phí Tiện ích", "Đã nộp", "Còn nợ"
+            t('mandatory_fee_list.table_header.apartment_id'),
+            t('mandatory_fee_list.table_header.status'),
+            t('mandatory_fee_list.table_header.total_fee'),
+            t('mandatory_fee_list.table_header.apartment_fee'),
+            t('mandatory_fee_list.table_header.parking_fee'),
+            t('mandatory_fee_list.table_header.utility_fee'),
+            t('mandatory_fee_list.table_header.paid_amount'),
+            t('mandatory_fee_list.table_header.debt_amount')
         ];
         csvContent += headers.map(escapeCsv).join(',') + '\n';
 
@@ -111,15 +117,13 @@ class MandatoryFeeList extends React.Component {
             csvContent += row.map(val => escapeCsv(val || 0)).join(',') + '\n';
         });
 
-        // 4. Phần tổng kết
         csvContent += "\n";
-        csvContent += "TỔNG KẾT\n";
-        csvContent += `Tổng Phí Chung Cư,${feeData.tongPhiChungCuAll || 0}\n`;
-        csvContent += `Tổng Phí Gửi Xe,${feeData.tongGuiXeAll || 0}\n`;
-        csvContent += `Tổng Phí Tiện Ích,${feeData.tongTienIchAll || 0}\n`;
-        csvContent += `TỔNG CỘNG,${feeData.tongPhiAll || 0}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_footer_title')}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_footer_apartment')},${feeData.tongPhiChungCuAll || 0}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_footer_parking')},${feeData.tongGuiXeAll || 0}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_footer_utility')},${feeData.tongTienIchAll || 0}\n`;
+        csvContent += `${t('mandatory_fee_list.csv.summary_footer_total')},${feeData.tongPhiAll || 0}\n`;
 
-        // 5. Tạo và tải file
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -130,81 +134,75 @@ class MandatoryFeeList extends React.Component {
         document.body.removeChild(link);
     };
 
-    render() {
-        const { idThoiGianThu, feeData, isLoading, error } = this.state;
-
-        return (
-            <div className="fee-list-container">
-                <div className="fee-list-controls">
-                    <input
-                        type="text"
-                        placeholder="Nhập ID Thời gian thu (VD: 102025)"
-                        value={idThoiGianThu}
-                        onChange={this.handleInputChange}
-                    />
-                    <button onClick={this.handleGenerateList} disabled={isLoading}>
-                        {isLoading ? 'Đang xử lý...' : 'Lập danh sách'}
-                    </button>
-                </div>
-
-                {error && <p className="error-message">{error}</p>}
-
-                {feeData && (
-                    <div className="fee-list-results">
-                        {/* Khu vực tóm tắt */}
-                        <div className="fee-list-summary">
-                            <div className="summary-item"><span>Ngày thu</span><strong>{feeData.ngayThu}</strong></div>
-                            <div className="summary-item"><span>Hạn thu</span><strong>{feeData.hanThu}</strong></div>
-                            <div className="summary-item success"><span>Đã nộp</span>
-                                <strong>{feeData.paidApartmentCount} / {feeData.totalCanHo}</strong></div>
-                            <div className="summary-item total"><span>Tổng thu</span><strong>{this.formatCurrency(feeData.tongPhiAll)}</strong></div>
-                        </div>
-
-
-                        {/* Bảng chi tiết */}
-                        <div className="fee-list-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID Căn hộ</th>
-                                        <th>Trạng thái</th>
-                                        <th>Tổng Phí</th>
-                                        <th>Phí Chung cư</th>
-                                        <th>Phí Gửi Xe</th>
-                                        <th>Phí Tiện ích</th>
-                                        <th>Đã nộp</th>
-                                        <th>Còn nợ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {feeData.danhSachTongThanhToan.map(item => (
-                                        <tr key={item.idCanHo}>
-                                            <td>{item.idCanHo}</td>
-                                            <td><span className={`status ${item.trangThai === 'DA_THANH_TOAN' ? 'paid' : 'unpaid'}`}>{item.trangThai.replace('_', ' ')}</span></td>
-                                            <td>{this.formatCurrency(item.tongPhi)}</td>
-                                            <td>{this.formatCurrency(item.tongPhiChungCu)}</td>
-                                            <td>{this.formatCurrency(item.tongGuiXe)}</td>
-                                            <td>{this.formatCurrency(item.tongTienIch)}</td>
-                                            <td>{this.formatCurrency(item.soTienDaNop)}</td>
-                                            <td>{this.formatCurrency(item.soDu)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* 3. THÊM NÚT XUẤT BÁO CÁO Ở ĐÂY */}
-                        <div className="fee-list-footer">
-                            <button className="export-btn" onClick={this.handleExportReport}>
-                                Xuất báo cáo (CSV)
-                            </button>
-                        </div>
-                    </div>
-                )}
+    // 6. Trả về JSX
+    return (
+        <div className="fee-list-container">
+            <div className="fee-list-controls">
+                <input
+                    type="text"
+                    placeholder={t('mandatory_fee_list.placeholder_time_id')}
+                    value={idThoiGianThu}
+                    onChange={handleInputChange}
+                />
+                <button onClick={handleGenerateList} disabled={isLoading}>
+                    {isLoading ? t('mandatory_fee_list.loading_button') : t('mandatory_fee_list.generate_button')}
+                </button>
             </div>
-        );
-    }
 
+            {error && <p className="error-message">{error}</p>}
+
+            {feeData && (
+                <div className="fee-list-results">
+                    <div className="fee-list-summary">
+                        <div className="summary-item"><span>{t('mandatory_fee_list.summary_collection_date')}</span><strong>{feeData.ngayThu}</strong></div>
+                        <div className="summary-item"><span>{t('mandatory_fee_list.summary_due_date')}</span><strong>{feeData.hanThu}</strong></div>
+                        <div className="summary-item success"><span>{t('mandatory_fee_list.summary_paid')}</span>
+                            <strong>{feeData.paidApartmentCount} / {feeData.totalCanHo}</strong></div>
+                        <div className="summary-item total"><span>{t('mandatory_fee_list.summary_total')}</span><strong>{formatCurrency(feeData.tongPhiAll)}</strong></div>
+                    </div>
+
+                    <div className="fee-list-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{t('mandatory_fee_list.table_header.apartment_id')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.status')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.total_fee')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.apartment_fee')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.parking_fee')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.utility_fee')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.paid_amount')}</th>
+                                    <th>{t('mandatory_fee_list.table_header.debt_amount')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {feeData.danhSachTongThanhToan.map(item => (
+                                    <tr key={item.idCanHo}>
+                                        <td>{item.idCanHo}</td>
+                                        <td><span className={`status ${item.trangThai === 'DA_THANH_TOAN' ? 'paid' : 'unpaid'}`}>
+                                            {item.trangThai === 'DA_THANH_TOAN' ? t('mandatory_fee_list.status_paid') : t('mandatory_fee_list.status_unpaid')}
+                                        </span></td>
+                                        <td>{formatCurrency(item.tongPhi)}</td>
+                                        <td>{formatCurrency(item.tongPhiChungCu)}</td>
+                                        <td>{formatCurrency(item.tongGuiXe)}</td>
+                                        <td>{formatCurrency(item.tongTienIch)}</td>
+                                        <td>{formatCurrency(item.soTienDaNop)}</td>
+                                        <td>{formatCurrency(item.soDu)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="fee-list-footer">
+                        <button className="export-btn" onClick={handleExportReport}>
+                            {t('mandatory_fee_list.export_button')}
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default MandatoryFeeList;

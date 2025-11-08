@@ -1,175 +1,150 @@
-import React from "react";
+import React, { useState } from "react";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import '../../styles/apartment-styles/EditFilter.scss'
+import '../../styles/apartment-styles/EditFilter.scss';
+import { useTranslation } from "react-i18next"; // Import hook
 
-class EditFilter extends React.Component {
+// Đã chuyển sang Function Component để dùng hook
+function EditFilter(props) {
+    const { t } = useTranslation(); // Lấy hàm dịch
 
-    state = {
-        currentView: 'main',  // Quản lý màn hình hiển thị: 'main' hoặc 'area'
-        filters: {
-            soNha: "",
-            dienTich: [20, 150], // Giá trị mặc định: từ 20m² đến 150m²
-            loaiCanHo: []
+    const [currentView, setView] = useState('main');
+    const [filters, setFilters] = useState({
+        soNha: "",
+        dienTich: [20, 150],
+        loaiCanHo: []
+    });
 
-        }
-    }
-    // Chuyển đổi giữa các màn hình
-    setView = (view) => {
-        this.setState({
-            currentView: view
-        })
-    }
-    handleFilterChange = (filterName, value) => {
-        this.setState(prevState => ({
-            filters: {
-                ...prevState.filters,
-                [filterName]: value,
-
-            }
-        }))
+    const handleFilterChange = (filterName, value) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [filterName]: value
+        }));
     }
 
-    // Hàm xử lý khi chọn/bỏ chọn loại căn hộ
-    handleLoaiCanHoChange = (type) => {
-        let { loaiCanHo } = this.state.filters;
+    const handleLoaiCanHoChange = (type) => {
+        let { loaiCanHo } = filters;
         if (loaiCanHo.includes(type)) {
-            loaiCanHo = loaiCanHo.filter(item => item !== type)
-        }
-        else {
+            loaiCanHo = loaiCanHo.filter(item => item !== type);
+        } else {
             loaiCanHo = [...loaiCanHo, type];
         }
-        this.handleFilterChange('loaiCanHo', loaiCanHo);
+        handleFilterChange('loaiCanHo', loaiCanHo);
     }
 
-    // Hàm áp dụng bộ lọc
-    handleApplyFilter = () => {
-        // Gửi state hiện tại lên component cha (Apartments)
-        console.log("filters:", this.state.filters);
-        this.props.onApplyFilter(this.state.filters);
-        // Đóng modal
-        this.props.onClose();
-        this.handleReset();
+    const handleReset = () => {
+        setFilters({
+            soNha: "",
+            dienTich: [20, 150],
+            loaiCanHo: []
+        });
     }
-    // Hàm reset bộ lọc
-    handleReset = () => {
-        this.setState({
-            filters: {
-                soNha: "",
-                dienTich: [20, 150], // Giá trị mặc định: từ 20m² đến 150m²
-                loaiCanHo: []
-            }
-        })
+
+    const handleApplyFilter = () => {
+        props.onApplyFilter(filters);
+        props.onClose();
+        handleReset(); // Reset sau khi áp dụng
     }
 
     // Render màn hình chính
-    renderMainView() {
-        const { filters } = this.state;
+    const renderMainView = () => {
         const loaiCanHoOptions = ['Studio', '1PN', '2PN', '3PN', '3PN+1'];
-        const dienTichValue = `Từ ${filters.dienTich[0]}m² - ${filters.dienTich[1]}m²`;
+
+        // Dùng key "filter.area_range" để dịch
+        const dienTichValue = t('apartment_filter.area_range', {
+            min: filters.dienTich[0],
+            max: filters.dienTich[1]
+        });
 
         return (
             <>
                 <div className="filter-header">
-                    <h3> Bộ lọc</h3>
-                    <button className="close-button" onClick={this.props.onClose}>&times;</button>
+                    <h3>{t('apartment_filter.title')}</h3>
+                    <button className="close-button" onClick={props.onClose}>&times;</button>
                 </div>
-                <div className={"filter-body"}>
-
+                <div className="filter-body">
                     <div className="form-group">
-                        <label className="section-title">Số nhà</label>
+                        <label className="section-title">{t('apartment_filter.unit_number')}</label>
                         <input type="text"
                             value={filters.soNha}
-                            onChange={(e) => this.handleFilterChange('soNha', e.target.value)}
-                            placeholder="Nhập số nhà ..." />
+                            onChange={(e) => handleFilterChange('soNha', e.target.value)}
+                            placeholder={t('apartment_filter.unit_number_placeholder')}
+                        />
                     </div>
                     <div className="form-group">
-                        <label className="section-title">Diện tích </label>
-                        <div className="filter-row" onClick={() => this.setView('area')}>
+                        <label className="section-title">{t('apartment_filter.area')}</label>
+                        <div className="filter-row" onClick={() => setView('area')}>
                             <span>{dienTichValue}</span>
                             <span className="arrow-icon">&gt;</span>
                         </div>
                     </div>
-
                     <div className="form-group">
-                        <label className="section-title"> Loại căn hộ</label>
+                        <label className="section-title">{t('apartment_filter.apartment_type')}</label>
                         <div className="options-group button-group">
-                            {
-                                loaiCanHoOptions.map(type => (
-                                    <div key={type} className="checkbox-item">
-                                        <button key={type}
-                                            className={`option-button ${filters.loaiCanHo.includes(type) ? 'active' : ''}`}
-                                            onClick={() => this.handleLoaiCanHoChange(type)}>
-                                            {type}
-                                        </button>
-                                    </div>
-                                ))
-                            }
+                            {loaiCanHoOptions.map(type => (
+                                <div key={type} className="checkbox-item">
+                                    <button key={type}
+                                        className={`option-button ${filters.loaiCanHo.includes(type) ? 'active' : ''}`}
+                                        onClick={() => handleLoaiCanHoChange(type)}>
+                                        {type}
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
-
                 <div className="filter-footer">
-                    <button className="reset-btn" onClick={this.handleReset}> Đặt lại </button>
-                    <button className="apply-btn" onClick={this.handleApplyFilter}> Xem kết quả </button>
+                    <button className="reset-btn" onClick={handleReset}>{t('apartment_filter.reset')}</button>
+                    <button className="apply-btn" onClick={handleApplyFilter}>{t('apartment_filter.apply')}</button>
                 </div>
             </>
-        )
+        );
     }
 
     // Render màn hình chọn diện tích
-    renderAreaView() {
-        const { dienTich } = this.state.filters;
+    const renderAreaView = () => {
+        const { dienTich } = filters;
         return (
             <>
                 <div className="filter-header sub-header">
-                    <button className="back-button" onClick={() => this.setView('main')}>&larr;</button>
-                    <h3> Chọn diện tích</h3>
-                    <button className="close-button" onClick={this.props.onClose}>&times; </button>
+                    <button className="back-button" onClick={() => setView('main')}>&larr;</button>
+                    <h3>{t('apartment_filter.area_select_title')}</h3>
+                    <button className="close-button" onClick={props.onClose}>&times;</button>
                 </div>
-
                 <div className="filter-body area-slider-body">
                     <div className="area-display">
-                        <div className="area-box" > Từ <span>{dienTich[0]}m²</span> </div>
-                        <div className="area-box" > Đến <span>{dienTich[1]}m²</span> </div>
+                        <div className="area-box">{t('apartment_filter.from')}: <span>{dienTich[0]}m²</span></div>
+                        <div className="area-box">{t('apartment_filter.to')}: <span>{dienTich[1]}m²</span></div>
                     </div>
-
                     <Slider
                         range
                         min={0}
                         max={500}
                         value={dienTich}
-                        onChange={(value) => { this.handleFilterChange('dienTich', value) }}
+                        onChange={(value) => handleFilterChange('dienTich', value)}
                         tipFormatter={value => `${value}m²`}
                         allowCross={false}
                     />
                 </div>
-
                 <div className="filter-footer">
-                    <button className="apply-btn" onClick={() => this.setView('main')}>Xác nhận</button>
+                    <button className="apply-btn" onClick={() => setView('main')}>{t('apartment_filter.confirm')}</button>
                 </div>
             </>
-
-        )
+        );
     }
 
+    // --- Render chính của component ---
+    if (!props.show) {
+        return null;
+    }
 
-    render() {
-        if (this.props.show !== true) {
-            return null; // Nếu show là false, không render gì cả
-        }
-
-        return (
-            <div className="filter-container" >
-                <div className="filter-content">
-
-                    {this.state.currentView === 'main' ? this.renderMainView() : this.renderAreaView()}
-
-                </div>
-
+    return (
+        <div className="filter-container" onClick={props.onClose}>
+            <div className="filter-content" onClick={e => e.stopPropagation()}>
+                {currentView === 'main' ? renderMainView() : renderAreaView()}
             </div>
-        )
-    }
+        </div>
+    );
 }
 
 export default EditFilter;

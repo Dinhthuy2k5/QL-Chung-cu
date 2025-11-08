@@ -1,51 +1,51 @@
-import React from "react";
-import { error } from "three";
+import React, { useState } from "react";
 import { getToken } from "../../services/localStorageService";
 import axios from "axios";
-import '../../styles/resident-styles/StatisticByTime.scss'
+import '../../styles/resident-styles/StatisticByTime.scss';
+// 1. Import hook useTranslation
+import { useTranslation } from "react-i18next";
 
-class StatisticByTime extends React.Component {
+// 2. Chuyển đổi sang Function Component
+function StatisticByTime() {
 
-    state = {
-        ngayBatDau: '',
-        ngayKetThuc: '',
-        soLuongNhanKhauMoi: null,
-        isLoading: false,
-        error: null
+    // 3. Lấy hàm dịch 't'
+    const { t } = useTranslation();
 
-    }
+    // 4. Chuyển đổi state sang hooks
+    const [ngayBatDau, setNgayBatDau] = useState('');
+    const [ngayKetThuc, setNgayKetThuc] = useState('');
+    const [soLuongNhanKhauMoi, setSoLuongNhanKhauMoi] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     // Xử lý khi người dùng thay đổi ngày
-    handleDateChange = (event) => {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
+    const handleDateChange = (event) => {
+        if (event.target.name === 'ngayBatDau') {
+            setNgayBatDau(event.target.value);
+        } else {
+            setNgayKetThuc(event.target.value);
+        }
     }
 
-    handleStatistic = async () => {
-        const { ngayBatDau, ngayKetThuc } = this.state;
-
+    // 5. Chuyển đổi hàm class thành const function
+    const handleStatistic = async () => {
         if (!ngayBatDau || !ngayKetThuc) {
-            alert("Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.");
+            alert(t('stats_time_chart.alert_date_required')); // Dịch alert
             return;
         }
 
-        this.setState({
-            isLoading: true,
-            error: null,
-            soLuongNhanKhauMoi: null
-        });
+        setIsLoading(true);
+        setError(null);
+        setSoLuongNhanKhauMoi(null);
 
         const token = getToken();
         if (!token) {
-            alert("Phiên đăng nhập đã hết hạn.");
-            this.setState({ isLoading: false });
+            alert(t('alerts.session_expired')); // Dịch alert
+            setIsLoading(false);
             return;
         }
-        const config = {
-            headers: { 'Authorization': `Bearer ${token}` }
-        };
 
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const data = {
             ngayBatDau: ngayBatDau,
             ngayKetThuc: ngayKetThuc
@@ -56,70 +56,58 @@ class StatisticByTime extends React.Component {
             const response = await axios.post(apiUrl, data, config);
 
             console.log("Thống kê theo thời gian thành công");
-            this.setState({
-                soLuongNhanKhauMoi: response.data.result.soLuongNhanKhauMoi,
-                isLoading: false
-            });
+            setSoLuongNhanKhauMoi(response.data.result.soLuongNhanKhauMoi);
+            setIsLoading(false);
         } catch (error) {
-            const errorMessage = error.response ? error.response.data.message : "Không thể kết nối đến server.";
+            const errorMessage = error.response ? error.response.data.message : t('stats_time_chart.error_generic');
             console.error("Có lỗi khi thống kê:", errorMessage);
-            this.setState({
-                error: `Lỗi: ${errorMessage}`,
-                isLoading: false
-            });
+            setError(`${t('stats_time_chart.error_prefix')}: ${errorMessage}`);
+            setIsLoading(false);
         }
-
-
     }
 
-    render() {
-        const { ngayBatDau, ngayKetThuc, soLuongNhanKhauMoi, isLoading, error } = this.state;
-
-        return (
-            <div className="time-statistic-container">
-                <h3 className="title" >Thống kê Nhân khẩu theo Thời gian </h3>
-                <div className="time-statistic-controls">
-                    <div className="date-picker-group">
-                        <label htmlFor="ngayBatDau">Từ ngày: </label>
-                        <input
-                            type="date"
-                            id="ngayBatDau"
-                            name="ngayBatDau"
-                            value={ngayBatDau}
-                            onChange={this.handleDateChange}
-                        />
-                    </div>
-                    <div className="date-picker-group">
-                        <label htmlFor="ngayKetThuc">Đến ngày:</label>
-                        <input
-                            type="date"
-                            id="ngayKetThuc"
-                            name="ngayKetThuc"
-                            value={ngayKetThuc}
-                            onChange={this.handleDateChange}
-                        />
-                    </div>
-                    <button onClick={this.handleStatistic} disabled={isLoading}>
-                        {isLoading ? 'Đang xử lý...' : 'Thống kê'}
-                    </button>
-
+    // 6. Trả về JSX (không cần hàm render())
+    return (
+        <div className="time-statistic-container">
+            <h3 className="title">{t('stats_time_chart.title')}</h3>
+            <div className="time-statistic-controls">
+                <div className="date-picker-group">
+                    <label htmlFor="ngayBatDau">{t('stats_time_chart.label_from_date')}</label>
+                    <input
+                        type="date"
+                        id="ngayBatDau"
+                        name="ngayBatDau"
+                        value={ngayBatDau}
+                        onChange={handleDateChange}
+                    />
                 </div>
-
-                <div className="time-statistic-results">
-                    {error && <p className="error-message">{error}</p>}
-
-                    {soLuongNhanKhauMoi !== null && (
-                        <div className="result-box">
-                            <span className="result-label">Số lượng nhân khẩu mới trong khoảng thời gian đã chọn:</span>
-                            <span className="result-count">{soLuongNhanKhauMoi}</span>
-                        </div>
-                    )}
+                <div className="date-picker-group">
+                    <label htmlFor="ngayKetThuc">{t('stats_time_chart.label_to_date')}</label>
+                    <input
+                        type="date"
+                        id="ngayKetThuc"
+                        name="ngayKetThuc"
+                        value={ngayKetThuc}
+                        onChange={handleDateChange}
+                    />
                 </div>
-
+                <button onClick={handleStatistic} disabled={isLoading}>
+                    {isLoading ? t('stats_time_chart.button_loading') : t('stats_time_chart.button_stats')}
+                </button>
             </div>
 
-        )
-    }
+            <div className="time-statistic-results">
+                {error && <p className="error-message">{error}</p>}
+
+                {soLuongNhanKhauMoi !== null && (
+                    <div className="result-box">
+                        <span className="result-label">{t('stats_time_chart.result_label')}</span>
+                        <span className="result-count">{soLuongNhanKhauMoi}</span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default StatisticByTime;

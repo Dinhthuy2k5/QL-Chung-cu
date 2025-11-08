@@ -1,0 +1,445 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "apartment": "Căn hộ",
+        "resident": "Cư dân",
+        "receipt": "Khoản thu",
+        "statistic": "Thống kê",
+        "setting": "Cài đặt"
+    },
+    "header": {
+        "change_information": "Sửa thông tin",
+        "view_information": "Xem thông tin",
+        "log_out": "Đăng xuất"
+    },
+    "home_card": {
+        "title_apartment": "Căn hộ",
+        "title_resident": "Cư dân",
+        "title_receipt": "Khoản thu",
+        "total_count": "Tổng số:",
+        "view_all": "Xem tất cả"
+    },
+    "login": "Đăng nhập",
+    "welcome": "Xin chào",
+    "dashboard": {
+        "fee_stats_title": "Thống kê Thu phí 6 tháng gần nhất",
+        "resident_activity_tab": "Biến động Cư dân",
+        "fee_activity_tab": "Biến động Thu phí",
+        "loading": "Đang tải dữ liệu biểu đồ...",
+        "no_activity": "Không có hoạt động nào."
+    },
+    "apartment_table": {
+        "filter": "Lọc",
+        "id": "Id Căn hộ",
+        "unit_number": "Số nhà",
+        "type": "Loại căn hộ",
+        "area": "Diện tích",
+        "address": "Địa chỉ"
+    },
+    "filter_button": "Lọc",
+    "apartmet_filter": {
+        "title": "Bộ lọc",
+        "unit_number": "Số nhà",
+        "unit_number_placeholder": "Nhập số nhà...",
+        "area": "Diện tích",
+        "area_range": "Từ {{min}}m² - {{max}}m²",
+        "apartment_type": "Loại căn hộ",
+        "reset": "Đặt lại",
+        "apply": "Xem kết quả",
+        "area_select_title": "Chọn diện tích",
+        "from": "Từ",
+        "to": "Đến",
+        "confirm": "Xác nhận"
+    },
+    "alerts": {
+        "session_expired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+    },
+    "resident_page": {
+        "menu_list": "Danh sách cư dân",
+        "menu_families": "Hộ gia đình",
+        "menu_statistics": "Thống kê",
+        "menu_query": "Truy vấn",
+        "stats_by_gender": "Theo giới tính",
+        "stats_by_age": "Theo độ tuổi",
+        "stats_by_status": "Theo tình trạng cư trú",
+        "stats_by_time": "Theo thời gian",
+        "query_search": "Tìm kiếm thông tin",
+        "query_history": "Xem lịch sử thay đổi nhân khẩu"
+    },
+    "edit_modal": {
+        "title_add": "Thêm nhân khẩu mới",
+        "title_edit": "Chỉnh sửa thông tin cư dân",
+        "label_cccd": "CCCD:",
+        "label_name": "Họ và Tên:",
+        "label_gender": "Giới tính:",
+        "gender_placeholder": "-- Chọn giới tính --",
+        "gender_male": "NAM",
+        "gender_female": "NỮ",
+        "gender_other": "KHÁC",
+        "label_dob": "Ngày Sinh:",
+        "label_ethnicity": "Dân tộc:",
+        "label_religion": "Tôn giáo:",
+        "label_nationality": "Quốc tịch:",
+        "label_address": "Địa chỉ:",
+        "label_phone": "Số điện thoại:",
+        "label_email": "Email:",
+        "label_relationship": "Quan hệ:",
+        "label_status": "Trạng thái:",
+        "label_household_head_cccd": "CCCD Chủ hộ:",
+        "save_button": "Lưu thay đổi",
+        "cancel_button": "Hủy"
+    },
+    "families_page": {
+        "add_button": "Thêm hộ gia đình",
+        "table_headers": {
+            "head_cccd": "CCCD Chủ hộ",
+            "head_name": "Họ tên Chủ hộ",
+            "apartment_id": "ID Căn hộ",
+            "member_count": "Số thành viên",
+            "phone": "Số điện thoại",
+            "motorbikes": "Số xe máy",
+            "cars": "Số ô tô",
+            "address": "Địa chỉ",
+            "status": "Trạng thái",
+            "actions": "Hành động"
+        },
+        "actions": {
+            "change_owner_button": "Thay đổi chủ hộ"
+        },
+        "no_data": "Không có dữ liệu để hiển thị",
+        "prompts": {
+            "enter_new_owner_cccd": "Nhập CCCD của thành viên sẽ làm chủ hộ mới:"
+        },
+        "alerts": {
+            "action_cancelled": "Thao tác bị hủy bỏ",
+            "owner_change_success": "Đã thay đổi chủ hộ thành công!"
+        }
+    },
+    "resident_list": {
+        "temp_absence_button": "Cấp tạm vắng",
+        "temp_residence_button": "Cấp tạm trú",
+        "add_resident_button": "Thêm nhân khẩu",
+        "table_header": {
+            "cccd": "CCCD",
+            "head_cccd": "CCCD Chủ hộ",
+            "name": "Họ và Tên",
+            "dob": "Ngày Sinh",
+            "gender": "Giới Tính",
+            "ethnicity": "Dân Tộc",
+            "religion": "Tôn Giáo",
+            "phone": "Số điện thoại",
+            "relationship": "Quan hệ",
+            "actions": "Hành động"
+        },
+        "actions": {
+            "edit": "Sửa",
+            "delete": "Xóa"
+        },
+        "no_data": "Không có dữ liệu để hiển thị",
+        "alerts": {
+            "absence_success": "Cấp giấy tạm vắng thành công!",
+            "absence_fail": "Có lỗi khi gửi thông tin tạm vắng",
+            "address_success": "Cấp giấy tạm trú thành công!",
+            "address_fail": "Có lỗi khi gửi thông tin tạm trú"
+        }
+    },
+    "resident_history_page": {
+        "placeholder": "Nhập CCCD của nhân khẩu...",
+        "alert_cccd_required": "Vui lòng nhập CCCD cần truy vấn.",
+        "search_button": "Tìm kiếm",
+        "searching_button": "Đang tìm...",
+        "error_prefix": "Lỗi",
+        "error_generic": "Không thể kết nối đến server.",
+        "loading_data": "Đang tải dữ liệu...",
+        "no_data": "Không có dữ liệu để hiển thị.",
+        "header_id": "ID",
+        "header_cccd": "CCCD Nhân khẩu",
+        "header_change_info": "Thông tin thay đổi",
+        "header_change_date": "Ngày thay đổi",
+        "header_executor": "Người thực hiện"
+    },
+    "search_bar": {
+        "placeholder_prefix": "Tìm kiếm theo",
+        "dropdown_title": "TÌM KIẾM THEO",
+        "option_cccd": "CCCD",
+        "option_head_cccd": "CCCD Chủ hộ",
+        "option_name": "Họ và Tên",
+        "option_gender": "Giới Tính"
+    },
+    "stats_age_chart": {
+        "title": "Biểu đồ Thống kê Cư dân theo Độ tuổi",
+        "dataset_label": "Số lượng cư dân",
+        "loading": "Đang tải dữ liệu thống kê...",
+        "error": "Có lỗi khi thống kê độ tuổi",
+        "labels": {
+            "underage": "Dưới vị thành niên",
+            "working_age": "Trong độ tuổi lao động",
+            "over_working_age": "Trên tuổi lao động"
+        }
+    },
+    "stats_gender_chart": {
+        "title": "Biểu đồ Thống kê Cư dân theo Giới tính",
+        "dataset_label": "Số lượng",
+        "loading": "Đang tải dữ liệu thống kê...",
+        "error": "Có lỗi khi thống kê giới tính",
+        "labels": {
+            "male": "Nam",
+            "female": "Nữ",
+            "other": "Khác"
+        }
+    },
+    "stats_time_chart": {
+        "title": "Thống kê Nhân khẩu theo Thời gian",
+        "alert_date_required": "Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.",
+        "error_prefix": "Lỗi",
+        "error_generic": "Không thể kết nối đến server.",
+        "label_from_date": "Từ ngày:",
+        "label_to_date": "Đến ngày:",
+        "button_stats": "Thống kê",
+        "button_loading": "Đang xử lý...",
+        "result_label": "Số lượng nhân khẩu mới trong khoảng thời gian đã chọn:"
+    },
+    "temp_absence_modal": {
+        "title": "Cấp Giấy Tạm Vắng",
+        "label_cccd": "CCCD Cư dân",
+        "label_start_date": "Ngày bắt đầu",
+        "label_end_date": "Ngày kết thúc",
+        "label_reason": "Lý do tạm vắng",
+        "button_confirm": "Xác nhận"
+    },
+    "temp_address_modal": {
+        "title": "Cấp Giấy Tạm Trú",
+        "label_cccd": "CCCD Cư dân",
+        "label_name": "Họ và tên",
+        "label_apartment_id": "ID Căn hộ",
+        "label_start_date": "Ngày bắt đầu",
+        "label_end_date": "Ngày kết thúc",
+        "label_reason": "Lý do tạm trú",
+        "button_confirm": "Xác nhận"
+    },
+    "user_profile": {
+        "title_edit": "Cập nhật thông tin cá nhân",
+        "title_view": "Thông tin cá nhân",
+        "label_firstname": "Họ",
+        "placeholder_firstname": "Nhập họ của bạn",
+        "label_lastname": "Tên",
+        "placeholder_lastname": "Nhập tên của bạn",
+        "label_dob": "Ngày sinh",
+        "label_role": "Vai trò",
+        "label_current_password": "Mật khẩu hiện tại",
+        "placeholder_current_password": "Nhập để xác nhận thay đổi",
+        "label_new_password": "Mật khẩu mới",
+        "placeholder_new_password": "Bỏ trống nếu không muốn đổi",
+        "save_button": "Lưu thay đổi",
+        "alert_load_fail": "Không thể tải thông tin người dùng. Vui lòng thử lại.",
+        "alert_update_success": "Cập nhật thông tin thành công!",
+        "alert_update_fail": "Cập nhật thất bại"
+    },
+    "login_page": {
+        "username_placeholder": "Tên đăng nhập...",
+        "password_placeholder": "Mật khẩu...",
+        "forgot_password": "Quên mật khẩu?",
+        "login_fail_generic": "Thông tin đăng nhập không chính xác",
+        "login_fail_alert_prefix": "Đăng nhập thất bại"
+    },
+    "receipt_page": {
+        "tab_mandatory": "Quản lý Khoản thu Bắt buộc",
+        "tab_voluntary": "Quản lý Đóng góp Tự nguyện",
+        "tab_history": "Tra cứu Lịch sử Căn hộ",
+        "mandatory_title": "Quản lý Khoản thu Bắt buộc",
+        "mandatory_desc": "Tạo, tính toán và ghi nhận các khoản phí hàng tháng của cư dân.",
+        "mandatory_btn_create": "1. Tạo Khoản thu",
+        "mandatory_btn_calculate": "2. Tính tổng thanh toán",
+        "mandatory_btn_collect": "3. Xác nhận Thanh toán",
+        "mandatory_btn_list": "4. Xem Danh sách Khoản thu",
+        "alerts": {
+            "invalid_fee_type": "Vui lòng chọn một loại khoản thu hợp lệ.",
+            "create_success": "Tạo khoản thu thành công!",
+            "create_fail": "Tạo khoản thu thất bại: {{error}}",
+            "collect_missing_info": "Vui lòng nhập đầy đủ thông tin.",
+            "collect_invalid_ids": "Danh sách ID căn hộ không hợp lệ.",
+            "collect_fail": "Thu phí thất bại: {{error}}",
+            "calculate_missing_id": "Vui lòng nhập ID Thời gian thu.",
+            "calculate_success": "Đã tính tổng phí cho tất cả căn hộ thành công!",
+            "calculate_fail": "Tính tổng phí thất bại: {{error}}"
+        },
+        "modal_create_fee": {
+            "title": "Tạo khoản thu",
+            "label_fee_type": "Loại khoản thu",
+            "placeholder_fee_type": "-- Chọn loại khoản thu --",
+            "fee_type_utility": "Phí tiện ích",
+            "fee_type_apartment": "Phí chung cư",
+            "fee_type_parking": "Phí gửi xe",
+            "label_apartment_id": "Id Căn hộ",
+            "label_time_id": "Id Thời gian thu",
+            "label_electricity": "Tiền điện",
+            "label_water": "Tiền nước",
+            "label_internet": "Tiền Internet",
+            "label_service_fee": "Phí dịch vụ trên 1m2",
+            "label_management_fee": "Phí quản lý trên 1m2",
+            "label_motorcycle_fee": "Phí gửi 1 xe máy",
+            "label_car_fee": "Phí gửi 1 ô tô",
+            "create_button": "Tạo"
+        },
+        "modal_collect_fee": {
+            "title": "Thu phí Bắt buộc",
+            "label_time_id": "ID Thời gian thu",
+            "placeholder_time_id": "Ví dụ: 102025",
+            "label_apartment_ids": "Danh sách ID Căn hộ đã nộp (cách nhau bởi dấu phẩy)",
+            "placeholder_apartment_ids": "Ví dụ: 1, 2, 5",
+            "confirm_button": "Xác nhận Thanh toán"
+        },
+        "modal_payment_result": {
+            "title": "Kết quả Thanh toán",
+            "total_apartments": "Tổng Căn hộ",
+            "success": "Thành công",
+            "failed": "Thất bại",
+            "total_collected": "Tổng Phí Thu",
+            "header_apartment_id": "ID Căn hộ",
+            "header_total_apartment_fee": "Tổng Phí Chung cư",
+            "header_service_fee": "Phí Dịch vụ",
+            "header_management_fee": "Phí Quản lý",
+            "header_parking_fee": "Phí Gửi xe",
+            "header_utility_fee": "Phí Tiện ích",
+            "header_status": "Trạng thái",
+            "close_button": "Đóng"
+        },
+        "modal_mandatory_list": {
+            "title": "Danh sách Khoản thu Bắt buộc"
+        },
+        "modal_calculate_fee": {
+            "title": "Tính tổng phí hàng loạt",
+            "label_time_id": "ID Thời gian thu (VD: 102025)",
+            "help_text": "Nhập ID kỳ thu mà bạn muốn hệ thống tự động tính toán tổng phí (chung cư, xe, tiện ích) cho TẤT CẢ các căn hộ.",
+            "start_button": "Bắt đầu Tính toán",
+            "result_title": "Kết quả tính toán:",
+            "result_total": "Tổng số căn hộ:",
+            "result_success": "Tính thành công:",
+            "result_failed": "Tính thất bại:",
+            "result_note": "(Chi tiết các căn hộ thất bại đã được ghi lại ở backend)"
+        }
+    },
+    "mandatory_fee_list": {
+        "placeholder_time_id": "Nhập ID Thời gian thu (VD: 102025)",
+        "alert_time_id_required": "Vui lòng nhập ID Thời gian thu.",
+        "error_loading_prefix": "Lỗi",
+        "error_loading_generic": "Không thể kết nối đến server.",
+        "generate_button": "Lập danh sách",
+        "loading_button": "Đang xử lý...",
+        "summary_collection_date": "Ngày thu",
+        "summary_due_date": "Hạn thu",
+        "summary_paid": "Đã nộp",
+        "summary_total": "Tổng thu",
+        "table_header": {
+            "apartment_id": "ID Căn hộ",
+            "status": "Trạng thái",
+            "total_fee": "Tổng Phí",
+            "apartment_fee": "Phí Chung cư",
+            "parking_fee": "Phí Gửi Xe",
+            "utility_fee": "Phí Tiện ích",
+            "paid_amount": "Đã nộp",
+            "debt_amount": "Còn nợ"
+        },
+        "status_paid": "ĐÃ THANH TOÁN",
+        "status_unpaid": "CHƯA THANH TOÁN",
+        "export_button": "Xuất báo cáo (CSV)",
+        "export_alert_no_data": "Không có dữ liệu để xuất báo cáo.",
+        "csv": {
+            "title": "BÁO CÁO TỔNG HỢP CÁC KHOẢN THU BẮT BUỘC",
+            "report_period": "Kỳ báo cáo:",
+            "report_date": "Ngày lập báo cáo:",
+            "summary_title": "THÔNG TIN TÓM TẮT",
+            "summary_collection_date": "Ngày thu",
+            "summary_due_date": "Hạn thu",
+            "summary_paid_count": "Số căn hộ đã nộp",
+            "summary_total_collected": "Tổng tiền đã thu",
+            "details_title": "CHI TIẾT CÁC KHOẢN THU THEO CĂN HỘ",
+            "summary_footer_title": "TỔNG KẾT",
+            "summary_footer_apartment": "Tổng Phí Chung Cư",
+            "summary_footer_parking": "Tổng Phí Gửi Xe",
+            "summary_footer_utility": "Tổng Phí Tiện Ích",
+            "summary_footer_total": "TỔNG CỘNG"
+        }
+    },
+    "voluntary_contribution": {
+        "title": "Quản lý Đóng góp Tự nguyện",
+        "description": "Tạo các đợt vận động đóng góp và ghi nhận thông tin chi tiết.",
+        "create_campaign_button": "Tạo đợt đóng góp",
+        "update_contribution_button": "Cập nhật đóng góp",
+        "table_header": {
+            "id": "ID",
+            "name": "Tên khoản đóng góp",
+            "created_date": "Ngày tạo",
+            "due_date": "Hạn đóng góp",
+            "household_count": "Số hộ đóng góp",
+            "total_amount": "Tổng tiền"
+        },
+        "no_data": "Chưa có đợt đóng góp nào.",
+        "modal_create": {
+            "title": "Tạo Đợt Đóng góp",
+            "label_name": "Tên khoản đóng góp",
+            "label_start_date": "Ngày bắt đầu thu",
+            "label_due_date": "Hạn đóng góp",
+            "create_button": "Tạo"
+        },
+        "modal_update": {
+            "title": "Cập nhật Chi tiết Đóng góp",
+            "label_contribution_id": "ID Khoản đóng góp",
+            "label_apartment_id": "ID Căn hộ",
+            "label_amount": "Số tiền đóng góp",
+            "label_date": "Ngày đóng góp",
+            "label_payment_method": "Hình thức thanh toán",
+            "label_receiver": "Người nhận",
+            "label_notes": "Ghi chú",
+            "update_button": "Cập nhật"
+        },
+        "alerts": {
+            "load_fail": "Không thể lấy thông tin đóng góp.",
+            "create_success": "Tạo đợt đóng góp thành công!",
+            "create_fail": "Không thể tạo đợt đóng góp.",
+            "update_success": "Cập nhật chi tiết đóng góp thành công!",
+            "update_fail": "Không thể cập nhật chi tiết đóng góp."
+        }
+    },
+    "apt_history_page": {
+        "placeholder": "Nhập ID căn hộ cần tra cứu...",
+        "alert_id_required": "Vui lòng nhập ID Căn hộ.",
+        "search_button": "Tra cứu",
+        "searching_button": "Đang tìm...",
+        "error_prefix": "Lỗi",
+        "error_generic": "Không tìm thấy thông tin hoặc có lỗi xảy ra.",
+        "summary_must_pay": "Phải nộp (Bắt buộc)",
+        "summary_paid": "Đã nộp (Bắt buộc)",
+        "summary_debt": "Còn thiếu (Bắt buộc)",
+        "summary_voluntary": "Đã đóng góp (Tự nguyện)",
+        "mandatory_title": "Lịch sử Phí Bắt buộc",
+        "voluntary_title": "Lịch sử Đóng góp Tự nguyện",
+        "table_mandatory": {
+            "period": "Kỳ thu",
+            "total_fee": "Tổng phí",
+            "paid_amount": "Đã nộp",
+            "debt": "Còn nợ",
+            "status": "Trạng thái"
+        },
+        "table_voluntary": {
+            "name": "Tên khoản đóng góp",
+            "date": "Ngày đóng góp",
+            "amount": "Số tiền"
+        },
+        "status_paid": "ĐÃ THANH TOÁN",
+        "status_unpaid": "CHƯA THANH TOÁN"
+    },
+    "settings_page": {
+        "title": "Cài đặt Chung",
+        "description": "Quản lý thông tin cơ bản của chung cư. Thông tin này sẽ được sử dụng trong các báo cáo và hóa đơn.",
+        "label_name": "Tên Chung cư",
+        "label_address": "Địa chỉ",
+        "label_phone": "Số điện thoại BQL",
+        "label_email": "Email Liên hệ",
+        "save_button": "Lưu thay đổi",
+        "saving_button": "Đang lưu...",
+        "alert_load_fail": "Lỗi khi tải cài đặt:",
+        "alert_save_success": "Cập nhật thông tin thành công!",
+        "alert_save_fail": "Không thể lưu cài đặt."
+    }
+}
