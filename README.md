@@ -97,27 +97,27 @@ Hướng dẫn cài đặt và chạy dự án này trên máy local của bạn
 ```bash
 git clone https://github.com/Dinhthuy2k5/QL-Chung-cu.git
 cd QL-Chung-cu
-2. Cài đặt Dependencies
+```
+
+### 2. Cài đặt Dependencies
 Dự án này có thể có xung đột phiên bản TypeScript giữa react-scripts và các thư viện mới hơn.
 Sử dụng cờ --legacy-peer-deps để bỏ qua kiểm tra và cài đặt:
-
-bash
-Copy code
+```bash
 npm install --legacy-peer-deps
-3. Khởi chạy Dự án
-Sau khi cài đặt thành công, khởi chạy server phát triển:
+```
 
-bash
-Copy code
+### 3. Khởi chạy Dự án
+Sau khi cài đặt thành công, khởi chạy server phát triển:
+```bash
 npm start
+```
 Ứng dụng sẽ tự động mở trong trình duyệt của bạn tại http://localhost:3000.
 
-4. Yêu cầu Bắt buộc
+### 4. Yêu cầu Bắt buộc
 Đảm bảo rằng máy chủ Backend Spring Boot của bạn đang chạy tại địa chỉ http://localhost:8080 để các API có thể hoạt động.
 
-📁 Cấu trúc Thư mục
-bash
-Copy code
+### 📁 Cấu trúc Thư mục
+
 src/
 ├── components/          # Các component con tái sử dụng
 │   ├── apartment_component/
@@ -145,6 +145,7 @@ src/
 ├── App.scss             # Style chung cho App
 ├── i18n.js              # Cấu hình đa ngôn ngữ
 └── index.js             # Điểm bắt đầu của ứng dụng
-🧑‍💻 Tác giả & Đóng góp
+
+### 🧑‍💻 Tác giả & Đóng góp
 Dự án được phát triển bởi Nguyễn Đình Thủy.
 Nếu bạn muốn đóng góp, hãy fork repository này và gửi pull request.
