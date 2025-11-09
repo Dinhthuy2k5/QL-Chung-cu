@@ -117,7 +117,7 @@ npm start
 Đảm bảo rằng máy chủ Backend Spring Boot của bạn đang chạy tại địa chỉ http://localhost:8080 để các API có thể hoạt động.
 
 ### 📁 Cấu trúc Thư mục
-
+```bash
 src/
 ├── components/          # Các component con tái sử dụng
 │   ├── apartment_component/
@@ -145,6 +145,7 @@ src/
 ├── App.scss             # Style chung cho App
 ├── i18n.js              # Cấu hình đa ngôn ngữ
 └── index.js             # Điểm bắt đầu của ứng dụng
+```
 
 ### 🧑‍💻 Tác giả & Đóng góp
 Dự án được phát triển bởi Nguyễn Đình Thủy.
