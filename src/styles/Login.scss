@@ -1,66 +1,95 @@
 .login-page {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f6f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; // Hoặc 100vh tùy layout của bạn
 }
 
 .login-box {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  width: 350px;
-}
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px; // Giới hạn chiều rộng form
 
-.login-box input {
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-}
+    // Style chung cho cả 2 input để đảm bảo chúng bằng nhau
+    .login-input {
+        width: 100%;
+        height: 50px; // Chiều cao cố định
+        padding: 10px 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-sizing: border-box; // Quan trọng: để padding không làm to khung
+        transition: all 0.3s ease;
 
-.password-wrapper {
-  position: relative;
-}
+        &:focus {
+            outline: none;
+            border-color: #007bff; // Màu xanh khi focus
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+    }
 
-.password-wrapper input {
-  width: 100%;
-}
+    // Wrapper cho password để đặt icon
+    .password-wrapper {
+        position: relative;
+        width: 100%;
 
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  cursor: pointer;
-}
+        // Input password kế thừa style .login-input, chỉ cần thêm padding phải để tránh chữ đè lên icon
+        input {
+            padding-right: 45px; 
+        }
 
-.btn-login {
-  background: #1877f2;
-  color: #fff;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            // Hiệu ứng hover cho mắt
+            svg {
+                transition: stroke 0.3s;
+            }
+            &:hover svg {
+                stroke: #333;
+            }
+        }
+    }
 
-.btn-login:hover {
-  background: #166fe5;
-}
+    .btn-login {
+        height: 50px;
+        background-color: #28a745; // Màu xanh lá giống trong ảnh bạn gửi
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
 
-.forgot-link {
-  text-align: center;
-  font-size: 14px;
-  color: #1877f2;
-  text-decoration: none;
-}
+        &:hover {
+            background-color: darken(#28a745, 10%);
+        }
+    }
 
-.forgot-link:hover {
-  text-decoration: underline;
+    .forgot-link {
+        text-align: center;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }

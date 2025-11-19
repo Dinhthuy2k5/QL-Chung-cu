@@ -68,30 +68,67 @@ function MandatoryFeeList() {
     }
 
     const formatCurrency = (number) => {
-        return (number || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        return (number || 0).toLocaleString('vi-VN'); // Bỏ 'đ' để Excel dễ tính toán nếu cần
     }
 
+    // HÀM : Format ngày tháng từ yyyy-mm-dd sang dd/mm/yyyy
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        // Giả sử dateString có dạng "2025-10-26"
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`; // Trả về 26/10/2025
+        }
+        return dateString;
+    }
+
+    // HÀM XUẤT BÁO CÁO ĐƯỢC VIẾT LẠI CHUYÊN NGHIỆP
     const handleExportReport = () => {
         if (!feeData) {
             alert(t('mandatory_fee_list.export_alert_no_data'));
             return;
         }
 
-        const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+        // Lấy ngày hiện tại
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
 
-        let csvContent = "\uFEFF";
-        csvContent += `${t('mandatory_fee_list.csv.title')}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.report_period')} ${idThoiGianThu}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.report_date')} ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+        // Lấy tên người dùng
+        const currentUser = localStorage.getItem("user") || "Admin";
 
-        csvContent += `${t('mandatory_fee_list.csv.summary_title')}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_collection_date')},${feeData.ngayThu}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_due_date')},${feeData.hanThu}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_paid_count')},${feeData.paidApartmentCount}/${feeData.totalCanHo}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_total_collected')},${feeData.tongPhiAll || 0}\n\n`;
+        // Hàm giúp escape ký tự đặc biệt cho CSV
+        const e = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
 
-        csvContent += `${t('mandatory_fee_list.csv.details_title')}\n`;
-        const headers = [
+        // Tạo cấu trúc dữ liệu theo dòng
+        const rows = [];
+
+        // 1. Header: Thông tin đơn vị & Quốc hiệu
+        rows.push([e(t('mandatory_fee_list.csv.company_name')), "", "", "", e(t('mandatory_fee_list.csv.motto_1'))]);
+        rows.push([e(t('mandatory_fee_list.csv.company_address')), "", "", "", e(t('mandatory_fee_list.csv.motto_2'))]);
+        rows.push([e(t('mandatory_fee_list.csv.company_phone')), "", "", "", "-------------------"]);
+        rows.push([]);
+
+        // 2. Tiêu đề báo cáo
+        rows.push(["", "", e(t('mandatory_fee_list.csv.title'))]);
+        rows.push(["", "", e(`${t('mandatory_fee_list.csv.report_period')} ${idThoiGianThu}`)]);
+        rows.push(["", "", e(`${t('mandatory_fee_list.csv.created_at')} ${day} ${t('mandatory_fee_list.csv.month')} ${month} ${t('mandatory_fee_list.csv.year')} ${year}`)]);
+        rows.push([]);
+
+        // 3. Thông tin tóm tắt (SỬ DỤNG formatDate Ở ĐÂY)
+        rows.push([e(t('mandatory_fee_list.csv.summary_section'))]);
+        // Chèn thêm dấu nháy đơn (') hoặc khoảng trắng để Excel hiểu là text, hoặc dùng formatDate để chuẩn hóa
+        rows.push([e(t('mandatory_fee_list.summary_collection_date')), e(formatDate(feeData.ngayThu))]);
+        rows.push([e(t('mandatory_fee_list.summary_due_date')), e(formatDate(feeData.hanThu))]);
+        rows.push([e(t('mandatory_fee_list.csv.summary_paid_count')), `'${feeData.paidApartmentCount}/${feeData.totalCanHo}`]); // Thêm dấu ' để tránh Excel tự chuyển thành ngày tháng (ví dụ 2/2 thành 02-Feb)
+        rows.push([e(t('mandatory_fee_list.csv.summary_total_collected')), formatCurrency(feeData.tongPhiAll) + " VNĐ"]);
+        rows.push([e(t('mandatory_fee_list.csv.reporter')), currentUser]);
+        rows.push([]);
+
+        // 4. Bảng chi tiết
+        rows.push([e(t('mandatory_fee_list.csv.detail_section'))]);
+        const tableHeaders = [
             t('mandatory_fee_list.table_header.apartment_id'),
             t('mandatory_fee_list.table_header.status'),
             t('mandatory_fee_list.table_header.total_fee'),
@@ -101,34 +138,58 @@ function MandatoryFeeList() {
             t('mandatory_fee_list.table_header.paid_amount'),
             t('mandatory_fee_list.table_header.debt_amount')
         ];
-        csvContent += headers.map(escapeCsv).join(',') + '\n';
+        rows.push(tableHeaders.map(e));
 
         feeData.danhSachTongThanhToan.forEach(item => {
-            const row = [
-                item.idCanHo,
-                item.trangThai.replace('_', ' '),
-                item.tongPhi,
-                item.tongPhiChungCu,
-                item.tongGuiXe,
-                item.tongTienIch,
-                item.soTienDaNop,
-                item.soDu
-            ];
-            csvContent += row.map(val => escapeCsv(val || 0)).join(',') + '\n';
+            rows.push([
+                e(item.idCanHo),
+                e(item.trangThai),
+                e(formatCurrency(item.tongPhi)),
+                e(formatCurrency(item.tongPhiChungCu)),
+                e(formatCurrency(item.tongGuiXe)),
+                e(formatCurrency(item.tongTienIch)),
+                e(formatCurrency(item.soTienDaNop)),
+                e(formatCurrency(item.soDu))
+            ]);
         });
 
-        csvContent += "\n";
-        csvContent += `${t('mandatory_fee_list.csv.summary_footer_title')}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_footer_apartment')},${feeData.tongPhiChungCuAll || 0}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_footer_parking')},${feeData.tongGuiXeAll || 0}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_footer_utility')},${feeData.tongTienIchAll || 0}\n`;
-        csvContent += `${t('mandatory_fee_list.csv.summary_footer_total')},${feeData.tongPhiAll || 0}\n`;
+        // Dòng tổng kết cuối bảng
+        rows.push([]);
+        rows.push([
+            e(t('mandatory_fee_list.csv.summary_footer_title')),
+            "",
+            e(formatCurrency(feeData.tongPhiAll)),
+            e(formatCurrency(feeData.tongPhiChungCuAll)),
+            e(formatCurrency(feeData.tongGuiXeAll)),
+            e(formatCurrency(feeData.tongTienIchAll)),
+            "", ""
+        ]);
 
+        rows.push([]);
+        rows.push([]);
+
+        // 5. Phần chữ ký
+        rows.push([
+            e(t('mandatory_fee_list.csv.footer_prepared_by')),
+            "", "",
+            e(t('mandatory_fee_list.csv.footer_accountant')),
+            "", "",
+            e(t('mandatory_fee_list.csv.footer_director'))
+        ]);
+        rows.push([
+            e(t('mandatory_fee_list.csv.footer_sign_placeholder')),
+            "", "",
+            e(t('mandatory_fee_list.csv.footer_sign_placeholder')),
+            "", "",
+            e(t('mandatory_fee_list.csv.footer_sign_placeholder'))
+        ]);
+
+        const csvContent = "\uFEFF" + rows.map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `BaoCao_PhiBatBuoc_${idThoiGianThu}.csv`);
+        link.setAttribute("download", `BaoCao_ThuPhi_${idThoiGianThu}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
