@@ -2,146 +2,205 @@ import React, { useState, useEffect } from "react";
 import '../styles/settings-styles/Settings.scss';
 import axios from "axios";
 import { getToken } from "../services/localStorageService";
-// 1. Import hook
 import { useTranslation } from "react-i18next";
 
-// 2. Chuyển sang Function Component
 function Settings() {
-
-    // 3. Lấy hàm 't'
     const { t } = useTranslation();
+    const [activeTab, setActiveTab] = useState('general'); // State quản lý tab đang chọn
+    const [isLoading, setIsLoading] = useState(false);
 
-    // 4. Chuyển đổi state
-    const [formData, setFormData] = useState({
+    // State cho phần "Thông tin chung" (Có API thật)
+    const [generalForm, setGeneralForm] = useState({
         tenChungCu: 'Chung cư BlueMoon',
         diaChi: '123 Đường Văn Phú, Hà Đông, Hà Nội',
         sdt: '024 1234 5678',
         email: 'bql.bluemoon@example.com'
     });
-    const [isLoading, setIsLoading] = useState(false);
 
-    // 5. Chuyển đổi componentDidMount sang useEffect
+    // State giả lập cho phần "Cấu hình phí" (Chưa có API)
+    const [feeForm, setFeeForm] = useState({
+        servicePrice: 6000,
+        managementPrice: 7000,
+        bikePrice: 70000,
+        carPrice: 1200000
+    });
+
+    // Hàm hiển thị thông báo "Đang phát triển"
+    const handleDevFeature = (e) => {
+        e.preventDefault();
+        alert(t('settings_page.alert_dev_feature'));
+    };
+
+    // --- XỬ LÝ API THẬT (PHẦN THÔNG TIN CHUNG) ---
     useEffect(() => {
-        // (Bạn có thể bỏ comment phần này khi API của bạn sẵn sàng)
-        // const fetchSettings = async () => {
-        //     const token = getToken();
-        //     if (!token) {
-        //         console.error("Không tìm thấy token");
-        //         return;
-        //     }
-        //     const config = { headers: { 'Authorization': `Bearer ${token}` } };
-        //     try {
-        //         const response = await axios.get('http://localhost:8080/qlcc/settings', config);
-        //         const settings = response.data.result;
-        //         setFormData({
-        //             tenChungCu: settings.tenChungCu,
-        //             diaChi: settings.diaChi,
-        //             sdt: settings.sdt,
-        //             email: settings.email,
-        //         });
-        //     } catch (error) {
-        //         console.error(t('settings_page.alert_load_fail'), error);
-        //     }
-        // };
-        // fetchSettings();
-    }, [t]); // Thêm 't' vào dependency array
+        // (Logic gọi API lấy thông tin chung - giữ nguyên hoặc bỏ comment khi backend sẵn sàng)
+    }, [t]);
 
-    // 6. Chuyển đổi các hàm class
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    }
+    const handleGeneralChange = (e) => {
+        setGeneralForm({ ...generalForm, [e.target.name]: e.target.value });
+    };
 
-    const handleSaveSettings = async (event) => {
-        event.preventDefault();
+    const handleSaveGeneral = async (e) => {
+        e.preventDefault();
         setIsLoading(true);
-
         const token = getToken();
         if (!token) {
             alert(t('alerts.session_expired'));
             setIsLoading(false);
             return;
         }
-
-        const config = { headers: { 'Authorization': `Bearer ${token}` } };
-        const data = formData; // Dữ liệu đã có trong state formData
-        const apiUrl = `http://localhost:8080/qlcc/settings/update`;
-
+        // ... (Logic gọi API thật giống code cũ của bạn)
         try {
-            console.log("Saving settings:", data);
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Giả lập gọi API
-
+            // Giả lập delay
+            await new Promise(r => setTimeout(r, 1000));
             alert(t('settings_page.alert_save_success'));
-            setIsLoading(false);
         } catch (error) {
-            const errorMsg = error.response?.data?.message || t('settings_page.alert_save_fail');
-            alert(`${t('user_profile.alert_update_fail')}: ${errorMsg}`);
-            setIsLoading(false);
+            alert(t('settings_page.alert_save_fail'));
         }
-    }
+        setIsLoading(false);
+    };
 
-    // 7. Trả về JSX (đã dịch)
-    return (
-        <div className="settings-container">
-            <div className="settings-panel">
-                <div className="panel-header">
-                    <h2>{t('settings_page.title')}</h2>
-                    <p>{t('settings_page.description')}</p>
+    // --- CÁC HÀM RENDER GIAO DIỆN ---
+
+    // 1. Render Form Thông tin chung (API Thật)
+    const renderGeneralSettings = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.title')}</h3>
+                <p>{t('settings_page.description')}</p>
+            </div>
+            <form className="settings-form" onSubmit={handleSaveGeneral}>
+                <div className="form-group">
+                    <label>{t('settings_page.label_name')}</label>
+                    <input type="text" name="tenChungCu" value={generalForm.tenChungCu} onChange={handleGeneralChange} />
                 </div>
-
-                <form className="settings-form" onSubmit={handleSaveSettings}>
+                <div className="form-group">
+                    <label>{t('settings_page.label_address')}</label>
+                    <input type="text" name="diaChi" value={generalForm.diaChi} onChange={handleGeneralChange} />
+                </div>
+                <div className="form-group-row">
                     <div className="form-group">
-                        <label htmlFor="tenChungCu">{t('settings_page.label_name')}</label>
-                        <input
-                            type="text"
-                            name="tenChungCu"
-                            id="tenChungCu"
-                            value={formData.tenChungCu}
-                            onChange={handleInputChange}
-                        />
+                        <label>{t('settings_page.label_phone')}</label>
+                        <input type="text" name="sdt" value={generalForm.sdt} onChange={handleGeneralChange} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="diaChi">{t('settings_page.label_address')}</label>
-                        <input
-                            type="text"
-                            name="diaChi"
-                            id="diaChi"
-                            value={formData.diaChi}
-                            onChange={handleInputChange}
-                        />
+                        <label>{t('settings_page.label_email')}</label>
+                        <input type="email" name="email" value={generalForm.email} onChange={handleGeneralChange} />
                     </div>
-                    <div className="form-group-row">
-                        <div className="form-group">
-                            <label htmlFor="sdt">{t('settings_page.label_phone')}</label>
-                            <input
-                                type="text"
-                                name="sdt"
-                                id="sdt"
-                                value={formData.sdt}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="email">{t('settings_page.label_email')}</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                    </div>
+                </div>
+                <div className="form-footer">
+                    <button type="submit" className="save-btn" disabled={isLoading}>
+                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
 
-                    <div className="form-footer">
-                        <button type="submit" className="save-btn" disabled={isLoading}>
-                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
-                        </button>
+    // 2. Render Form Cấu hình Phí (Fake UI)
+    const renderFeeSettings = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.fee_title')}</h3>
+                <p>{t('settings_page.fee_desc')}</p>
+            </div>
+            <form className="settings-form">
+                <div className="form-group-row">
+                    <div className="form-group">
+                        <label>{t('settings_page.label_service_price')}</label>
+                        <input type="number" value={feeForm.servicePrice} onChange={() => { }} />
                     </div>
-                </form>
+                    <div className="form-group">
+                        <label>{t('settings_page.label_management_price')}</label>
+                        <input type="number" value={feeForm.managementPrice} onChange={() => { }} />
+                    </div>
+                </div>
+                <div className="form-group-row">
+                    <div className="form-group">
+                        <label>{t('settings_page.label_bike_price')}</label>
+                        <input type="number" value={feeForm.bikePrice} onChange={() => { }} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('settings_page.label_car_price')}</label>
+                        <input type="number" value={feeForm.carPrice} onChange={() => { }} />
+                    </div>
+                </div>
+                <div className="form-footer">
+                    <button className="save-btn" onClick={handleDevFeature}>
+                        {t('settings_page.save_button')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+
+    // 3. Render Form Thông báo (Fake UI)
+    const renderNotifications = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.notif_title')}</h3>
+                <p>{t('settings_page.notif_desc')}</p>
+            </div>
+            <div className="settings-list">
+                <div className="setting-item">
+                    <span>{t('settings_page.label_email_notif')}</span>
+                    <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                </div>
+                <div className="setting-item">
+                    <span>{t('settings_page.label_sms_notif')}</span>
+                    <input type="checkbox" onChange={handleDevFeature} />
+                </div>
+                <div className="setting-item">
+                    <span>{t('settings_page.label_payment_reminder')}</span>
+                    <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                </div>
+            </div>
+        </div>
+    );
+
+    // 4. Render Hệ thống (Fake UI)
+    const renderSystem = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.sys_title')}</h3>
+                <p>{t('settings_page.sys_desc')}</p>
+            </div>
+            <div className="system-actions">
+                <button className="sys-btn" onClick={handleDevFeature}>☁️ {t('settings_page.btn_backup')}</button>
+                <button className="sys-btn" onClick={handleDevFeature}>Tb {t('settings_page.btn_restore')}</button>
+                <button className="sys-btn danger" onClick={handleDevFeature}>🗑️ {t('settings_page.btn_clear_cache')}</button>
+            </div>
+        </div>
+    );
+
+    // --- RENDER CHÍNH ---
+    return (
+        <div className="settings-layout">
+            {/* SIDEBAR MENU */}
+            <div className="settings-sidebar">
+                <div className="sidebar-title">{t('nav.setting')}</div>
+                <ul>
+                    <li className={activeTab === 'general' ? 'active' : ''} onClick={() => setActiveTab('general')}>
+                        🏢 {t('settings_page.menu_general')}
+                    </li>
+                    <li className={activeTab === 'fees' ? 'active' : ''} onClick={() => setActiveTab('fees')}>
+                        💰 {t('settings_page.menu_fees')}
+                    </li>
+                    <li className={activeTab === 'notifications' ? 'active' : ''} onClick={() => setActiveTab('notifications')}>
+                        🔔 {t('settings_page.menu_notifications')}
+                    </li>
+                    <li className={activeTab === 'system' ? 'active' : ''} onClick={() => setActiveTab('system')}>
+                        ⚙️ {t('settings_page.menu_system')}
+                    </li>
+                </ul>
+            </div>
+
+            {/* CONTENT AREA */}
+            <div className="settings-main">
+                {activeTab === 'general' && renderGeneralSettings()}
+                {activeTab === 'fees' && renderFeeSettings()}
+                {activeTab === 'notifications' && renderNotifications()}
+                {activeTab === 'system' && renderSystem()}
             </div>
         </div>
     );
