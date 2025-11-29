@@ -33,7 +33,7 @@ export default function Login({ onLoggedIn, setUserLoggedIn }) {
     useEffect(() => {
         const accessToken = getToken();
         if (accessToken) {
-            //removeToken();
+            // removeToken();
             navigate("/");
         }
     }, [navigate]);

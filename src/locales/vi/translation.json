@@ -479,5 +479,38 @@
         "alert_save_success": "Cập nhật thông tin thành công!",
         "alert_save_fail": "Không thể lưu cài đặt.",
         "alert_dev_feature": "Tính năng đang được phát triển. Xin cảm ơn!"
+    },
+    "create_fee_wizard": {
+        "step_1_title": "Bước 1: Thiết lập Thời gian",
+        "step_2_title": "Bước 2: Phí Chung cư (Đơn giá/m2)",
+        "step_3_title": "Bước 3: Phí Gửi xe (Đơn giá/xe)",
+        "step_4_title": "Bước 4: Phí Tiện ích (Điện, Nước, Net)",
+        "label_time_id": "ID Thời gian thu (VD: 102025)",
+        "label_service": "Phí Dịch vụ",
+        "label_management": "Phí Quản lý",
+        "label_bike": "Xe máy",
+        "label_car": "Ô tô",
+        "table_apt_id": "Căn hộ",
+        "table_electric": "Điện",
+        "table_water": "Nước",
+        "table_internet": "Internet",
+        "btn_next": "Tiếp theo",
+        "btn_back": "Quay lại",
+        "btn_submit": "Hoàn tất & Tính tổng",
+        "success_message": "Đã tạo các khoản phí và tính toán tổng thanh toán thành công!"
+    },
+    "collect_fee_wizard": {
+        "step_1_title": "Bước 1: Chọn Kỳ Thu",
+        "step_2_title": "Bước 2: Xác nhận Thanh toán",
+        "label_time_id": "ID Thời gian thu (VD: 102025)",
+        "btn_fetch_list": "Lấy danh sách",
+        "table_apt_id": "Căn hộ",
+        "table_total": "Tổng phải thu",
+        "table_status": "Trạng thái",
+        "status_paid": "Đã nộp",
+        "status_unpaid": "Chưa nộp",
+        "btn_confirm_selected": "Xác nhận Đã nộp ({{count}})",
+        "alert_select_required": "Vui lòng chọn ít nhất một căn hộ để xác nhận.",
+        "success_message": "Xác nhận thanh toán thành công!"
     }
 }

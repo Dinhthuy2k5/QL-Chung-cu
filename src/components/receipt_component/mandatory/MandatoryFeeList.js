@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 // Bỏ import { error } from "three"; vì nó không cần thiết và sai
-import { getToken } from "../../services/localStorageService";
-import '../../styles/receipt-styles/MandatoryFeeList.scss'
+import { getToken } from "../../../services/localStorageService";
+import '../../../styles/receipt-styles/MandatoryFeeList.scss'
 import axios from "axios";
 // 1. Import hook
 import { useTranslation } from "react-i18next";
