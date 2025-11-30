@@ -188,12 +188,14 @@ $zebra-stripe: rgba(255, 255, 255, 0.03);
 }
 
 // --- 5. FOOTER ---
+// --- 5. FOOTER ---
 .modal-footer {
     padding: 20px 40px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255,255,255,0.03);
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; // Đẩy 2 nút ra 2 đầu
+    align-items: center;
     flex-shrink: 0;
 
     button {
@@ -204,19 +206,43 @@ $zebra-stripe: rgba(255, 255, 255, 0.03);
         cursor: pointer;
         border: none;
         transition: all 0.2s ease;
+        letter-spacing: 0.5px;
 
+        // Style cho nút chính (Next/Submit)
         &:not(.secondary-btn) {
-            background: $primary-color;
+            background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
             color: white;
             box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            &:hover { transform: translateY(-2px); filter: brightness(1.1); }
+            margin-left: auto; // Quan trọng: Đẩy nút chính về sát bên phải nếu chỉ có 1 mình nó
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+                filter: brightness(1.1);
+            }
+            
+            &:active { transform: translateY(0); }
+
+            &:disabled {
+                background: #555;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
         }
 
+        // Style cho nút phụ (Back)
         &.secondary-btn {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: $text-color;
-            &:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+            color: $label-color;
+            margin-right: auto; // Quan trọng: Đảm bảo nó luôn ở bên trái
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: #fff;
+                color: #fff;
+            }
         }
     }
 }

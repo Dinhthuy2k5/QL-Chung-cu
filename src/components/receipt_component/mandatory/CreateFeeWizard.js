@@ -2,45 +2,63 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getToken } from '../../../services/localStorageService';
 import { useTranslation } from 'react-i18next';
-import '../../../styles/receipt-styles/CreateFeeWizard.scss'; // Tái sử dụng style hoặc tạo file riêng
+import '../../../styles/receipt-styles/CreateFeeWizard.scss';
 
 const CreateFeeWizard = ({ onClose, onRefresh }) => {
     const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+
+    // State lưu danh sách căn hộ ĐÃ ĐƯỢC LỌC (chỉ những căn có người ở)
     const [apartments, setApartments] = useState([]);
 
     // --- STATE DỮ LIỆU ---
     const [idThoiGianThu, setIdThoiGianThu] = useState('');
-
     const [aptFee, setAptFee] = useState({ phiDichVu: '', phiQuanLy: '' });
     const [parkingFee, setParkingFee] = useState({ xeMay: '', oto: '' });
-
-    // Dữ liệu tiện ích: { "ID_CAN_HO": { dien: 0, nuoc: 0, net: 0 } }
     const [utilities, setUtilities] = useState({});
 
-    // --- LẤY DANH SÁCH CĂN HỘ (Cho bước 4) ---
+    // --- LẤY DỮ LIỆU & LỌC CĂN HỘ CÓ NGƯỜI Ở ---
     useEffect(() => {
-        const fetchApartments = async () => {
+        const fetchData = async () => {
             const token = getToken();
+            if (!token) return;
+
+            const config = { headers: { 'Authorization': `Bearer ${token}` } };
+
             try {
-                const res = await axios.get('http://localhost:8080/qlcc/can-ho', {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                // Gọi song song 2 API để tối ưu tốc độ
+                const [resApartments, resFamilies] = await Promise.all([
+                    axios.get('http://localhost:8080/qlcc/can-ho', config),
+                    axios.get('http://localhost:8080/qlcc/ho-gia-dinh', config)
+                ]);
+
+                const allApartments = resApartments.data.result || [];
+                const allFamilies = resFamilies.data.result || [];
+
+                // 1. Tạo một Set chứa ID các căn hộ đang có hộ gia đình sinh sống
+                // (Set giúp tìm kiếm nhanh hơn Array)
+                const occupiedAptIds = new Set(allFamilies.map(family => family.idCanHo));
+
+                // 2. Lọc danh sách căn hộ: Chỉ giữ lại căn nào có ID nằm trong Set trên
+                const occupiedApartments = allApartments.filter(apt => occupiedAptIds.has(apt.idCanHo));
+
+                setApartments(occupiedApartments);
+
+                // 3. Khởi tạo state tiện ích chỉ cho những căn hộ này
+                const initUtils = {};
+                occupiedApartments.forEach(apt => {
+                    initUtils[apt.idCanHo] = { tienDien: '', tienNuoc: '', tienInternet: '' };
                 });
-                if (res.data.result) {
-                    setApartments(res.data.result);
-                    // Khởi tạo state tiện ích cho từng căn hộ
-                    const initUtils = {};
-                    res.data.result.forEach(apt => {
-                        initUtils[apt.idCanHo] = { tienDien: '', tienNuoc: '', tienInternet: '' };
-                    });
-                    setUtilities(initUtils);
-                }
+                setUtilities(initUtils);
+
             } catch (error) {
-                console.error("Lỗi lấy danh sách căn hộ:", error);
+                console.error("Lỗi khi tải dữ liệu:", error);
+                alert("Không thể tải danh sách căn hộ/hộ gia đình.");
             }
         };
-        fetchApartments();
+
+        fetchData();
     }, []);
 
     // --- XỬ LÝ INPUT TIỆN ÍCH ---
@@ -74,11 +92,11 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                 tienXeOtoPerXe: parkingFee.oto
             }, config);
 
-            // 3. Gửi Phí Tiện Ích (Loop từng căn hộ)
-            // Lưu ý: Nếu backend có API batch cho tiện ích thì tốt hơn, nếu không phải loop
+            // 3. Gửi Phí Tiện Ích (Chỉ gửi cho các căn hộ CÓ NGƯỜI Ở)
             const utilityPromises = apartments.map(apt => {
                 const utilData = utilities[apt.idCanHo];
-                // Chỉ gửi nếu có nhập dữ liệu (hoặc gửi 0 tùy logic backend)
+                // Chỉ gửi API nếu có ít nhất một trường dữ liệu được nhập khác 0 hoặc rỗng
+                // (Tùy logic backend, ở đây ta cứ gửi hết cho các căn hộ đã lọc)
                 return axios.post('http://localhost:8080/qlcc/phi/tien-ich', {
                     idCanHo: apt.idCanHo,
                     idThoiGianThu,
@@ -95,8 +113,8 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
             }, config);
 
             alert(t('create_fee_wizard.success_message'));
-            onRefresh(); // Tải lại danh sách bên ngoài nếu cần
-            onClose();   // Đóng modal
+            onRefresh();
+            onClose();
 
         } catch (error) {
             console.error(error);
@@ -106,7 +124,6 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
         }
     };
 
-    // --- RENDER TỪNG BƯỚC ---
     return (
         <div className="modal-overlay">
             <div className="modal-content wizard-modal">
@@ -163,11 +180,11 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                         <div className="utility-input-container">
                             <h4>{t('create_fee_wizard.step_4_title')}</h4>
 
+                            {/* Wrapper bảng chiếm toàn bộ chiều cao còn lại */}
                             <div className="table-wrapper">
                                 <table>
                                     <thead>
                                         <tr>
-                                            {/* Các class CSS sẽ tự động căn chỉnh padding và border */}
                                             <th>{t('create_fee_wizard.table_apt_id')}</th>
                                             <th>{t('create_fee_wizard.table_electric')}</th>
                                             <th>{t('create_fee_wizard.table_water')}</th>
@@ -175,41 +192,43 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {apartments.map((apt) => (
-                                            <tr key={apt.idCanHo}>
-                                                <td>
-                                                    {apt.soNha}
-                                                    <span>(ID: {apt.idCanHo})</span>
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="0"
-                                                        className="utility-input"
-                                                        value={utilities[apt.idCanHo]?.tienDien || ''}
-                                                        onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienDien', e.target.value)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="0"
-                                                        className="utility-input"
-                                                        value={utilities[apt.idCanHo]?.tienNuoc || ''}
-                                                        onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienNuoc', e.target.value)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="0"
-                                                        className="utility-input"
-                                                        value={utilities[apt.idCanHo]?.tienInternet || ''}
-                                                        onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienInternet', e.target.value)}
-                                                    />
+                                        {apartments.length > 0 ? (
+                                            apartments.map((apt, index) => (
+                                                <tr key={apt.idCanHo}>
+                                                    <td>
+                                                        {apt.soNha}
+                                                        <span>(ID: {apt.idCanHo})</span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" placeholder="0"
+                                                            className="utility-input"
+                                                            value={utilities[apt.idCanHo]?.tienDien || ''}
+                                                            onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienDien', e.target.value)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" placeholder="0"
+                                                            className="utility-input"
+                                                            value={utilities[apt.idCanHo]?.tienNuoc || ''}
+                                                            onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienNuoc', e.target.value)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" placeholder="0"
+                                                            className="utility-input"
+                                                            value={utilities[apt.idCanHo]?.tienInternet || ''}
+                                                            onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienInternet', e.target.value)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#adb5bd' }}>
+                                                    Không có căn hộ nào đang có người ở.
                                                 </td>
                                             </tr>
-                                        ))}
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -218,7 +237,7 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                 </div>
 
                 {/* FOOTER ĐIỀU HƯỚNG */}
-                <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
+                <div className="modal-footer">
                     {step > 1 ? (
                         <button className="secondary-btn" onClick={() => setStep(step - 1)}>{t('create_fee_wizard.btn_back')}</button>
                     ) : <div></div>}
