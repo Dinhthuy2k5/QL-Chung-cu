@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getToken } from '../../../services/localStorageService';
 import { useTranslation } from 'react-i18next';
-import '../../../styles/receipt-styles/Receipt.scss'; // Tái sử dụng style hoặc tạo file riêng
+import '../../../styles/receipt-styles/CreateFeeWizard.scss'; // Tái sử dụng style hoặc tạo file riêng
 
 const CreateFeeWizard = ({ onClose, onRefresh }) => {
     const { t } = useTranslation();
@@ -109,7 +109,7 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
     // --- RENDER TỪNG BƯỚC ---
     return (
         <div className="modal-overlay">
-            <div className="modal-content large"> {/* Class large để rộng hơn */}
+            <div className="modal-content wizard-modal">
                 <div className="modal-header">
                     <h3>Tạo Khoản Thu (Bước {step}/4)</h3>
                     <button onClick={onClose}>&times;</button>
@@ -162,10 +162,12 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                     {step === 4 && (
                         <div className="utility-input-container">
                             <h4>{t('create_fee_wizard.step_4_title')}</h4>
-                            <div className="table-wrapper" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                    <thead style={{ position: 'sticky', top: 0, background: '#333' }}>
+
+                            <div className="table-wrapper">
+                                <table>
+                                    <thead>
                                         <tr>
+                                            {/* Các class CSS sẽ tự động căn chỉnh padding và border */}
                                             <th>{t('create_fee_wizard.table_apt_id')}</th>
                                             <th>{t('create_fee_wizard.table_electric')}</th>
                                             <th>{t('create_fee_wizard.table_water')}</th>
@@ -173,28 +175,37 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {apartments.map(apt => (
+                                        {apartments.map((apt) => (
                                             <tr key={apt.idCanHo}>
-                                                <td>{apt.soNha} (ID: {apt.idCanHo})</td>
                                                 <td>
-                                                    <input type="number" placeholder="0"
+                                                    {apt.soNha}
+                                                    <span>(ID: {apt.idCanHo})</span>
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="0"
+                                                        className="utility-input"
                                                         value={utilities[apt.idCanHo]?.tienDien || ''}
                                                         onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienDien', e.target.value)}
-                                                        style={{ width: '100px', padding: '5px' }}
                                                     />
                                                 </td>
                                                 <td>
-                                                    <input type="number" placeholder="0"
+                                                    <input
+                                                        type="number"
+                                                        placeholder="0"
+                                                        className="utility-input"
                                                         value={utilities[apt.idCanHo]?.tienNuoc || ''}
                                                         onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienNuoc', e.target.value)}
-                                                        style={{ width: '100px', padding: '5px' }}
                                                     />
                                                 </td>
                                                 <td>
-                                                    <input type="number" placeholder="0"
+                                                    <input
+                                                        type="number"
+                                                        placeholder="0"
+                                                        className="utility-input"
                                                         value={utilities[apt.idCanHo]?.tienInternet || ''}
                                                         onChange={(e) => handleUtilityChange(apt.idCanHo, 'tienInternet', e.target.value)}
-                                                        style={{ width: '100px', padding: '5px' }}
                                                     />
                                                 </td>
                                             </tr>

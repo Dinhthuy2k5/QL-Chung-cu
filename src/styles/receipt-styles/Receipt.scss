@@ -336,3 +336,39 @@ $dark-bg-input: rgba(44, 48, 56, 0.7);
     font-style: italic;
     line-height: 1.4;
 }
+// Trong file Receipt.scss hoặc tạo mới CreateFeeWizard.scss
+
+.utility-input {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: rgba(44, 48, 56, 0.7); // Màu nền tối mờ
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: #007bff; // Màu xanh chủ đạo
+        background-color: rgba(44, 48, 56, 1);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    }
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    // Ẩn nút tăng giảm số mặc định của trình duyệt nếu muốn
+    &::-webkit-inner-spin-button, 
+    &::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+}
+
+// Đảm bảo modal đủ rộng cho bảng
+.modal-content.large {
+    max-width: 1000px; // Tăng chiều rộng modal
+    height: 85vh;      // Tăng chiều cao modal để hiển thị được nhiều hàng hơn
+}
