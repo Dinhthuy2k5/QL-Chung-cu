@@ -1,0 +1,132 @@
+$glass-bg: rgba(44, 48, 56, 0.8);
+$glass-border: rgba(255, 255, 255, 0.1);
+$text-color: #e9ecef;
+
+.mandatory-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: $text-color;
+
+    // 1. Quick Actions
+    .quick-actions-panel {
+        background: $glass-bg;
+        border: 1px solid $glass-border;
+        border-radius: 12px;
+        padding: 20px;
+        
+        h3 { margin: 0 0 15px 0; font-size: 1.1rem; color: #adb5bd; }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+
+            .btn-action {
+                flex: 1;
+                padding: 15px;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                transition: transform 0.2s, box-shadow 0.2s;
+                color: white;
+
+                .icon { font-size: 1.2rem; }
+
+                &.create { background: linear-gradient(135deg, #007bff, #0056b3); }
+                &.calc { background: linear-gradient(135deg, #6f42c1, #59359a); }
+                &.collect { background: linear-gradient(135deg, #28a745, #218838); }
+                &.list { background: linear-gradient(135deg, #17a2b8, #117a8b); }
+
+                &:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                }
+            }
+        }
+    }
+
+    // 2. KPI Cards
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+
+        .kpi-card {
+            background: $glass-bg;
+            border: 1px solid $glass-border;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #adb5bd; text-transform: uppercase; }
+            .value { font-size: 2rem; font-weight: bold; }
+            .sub-text { font-size: 0.85rem; margin-top: 5px; opacity: 0.8; }
+
+            &.blue { border-left: 4px solid #007bff; .value { color: #007bff; } }
+            &.green { border-left: 4px solid #28a745; .value { color: #28a745; } }
+            &.red { border-left: 4px solid #dc3545; .value { color: #dc3545; } }
+        }
+    }
+
+    // 3. Charts Grid
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr; // Cột 1 rộng gấp đôi
+        gap: 20px;
+        height: 350px;
+
+        .chart-panel, .debt-list-panel {
+            background: $glass-bg;
+            border: 1px solid $glass-border;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+
+            h4 { margin: 0 0 15px 0; font-size: 1rem; font-weight: 600; }
+        }
+
+        .chart-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        // Debt List Styling
+        .debt-list-panel {
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                overflow-y: auto;
+
+                li {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 12px 0;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+
+                    .room-info {
+                        display: flex;
+                        flex-direction: column;
+                        .room { font-weight: bold; color: #fff; }
+                        .month-badge { font-size: 0.75rem; color: #ffc107; }
+                    }
+                    .amount {
+                        color: #dc3545;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}

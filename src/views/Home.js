@@ -1,50 +1,65 @@
 import React from "react";
 import '../styles/home-styles/Home.scss';
 import { useNavigate } from "react-router-dom";
-import { withRouter } from "../HOC/withRouter"; // Import HOC của bạn
-import { Bar } from 'react-chartjs-2'; // Import biểu đồ
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { withRouter } from "../HOC/withRouter";
+// Chuyển sang dùng Line Chart cho đẹp hơn
+import { Line } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler // Để tạo hiệu ứng màu nền dưới đường biểu đồ
+} from 'chart.js';
 import axios from "axios";
 import { getToken } from "../services/localStorageService";
-
 import { withTranslation } from 'react-i18next';
-import { useTranslation } from "react-i18next";
-// Đăng ký các thành phần cho Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-// Component con cho các thẻ thống kê
-function StatCard(props) {
-    const navigate = props.navigate;
-    const { t } = useTranslation();
+// Đăng ký các thành phần cho Chart.js
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
+
+// Component StatCard được thiết kế lại nhỏ gọn
+function StatCard({ icon, title, count, linkTo, color, navigate, t }) {
     return (
-        <div className="stat-card" onClick={() => navigate(props.linkTo)}>
-            <div className="card-header">
-                <span className="card-icon">{props.icon}</span>
-                <h3 className="card-title">{props.title}</h3>
+        <div className="stat-card-mini" onClick={() => navigate(linkTo)}>
+            <div className={`card-icon-wrapper ${color}`}>
+                <span className="material-icons">{icon}</span>
             </div>
-            <div className="card-body">
-                <span className="label">{t('home_card.total_count')}</span>
-                <span className="count">{props.count}</span>
+            <div className="card-content">
+                <p className="card-title">{title}</p>
+                <h3 className="card-count">{count}</h3>
             </div>
-            <button className="view-all-button">{t('home_card.view_all')}</button>
+            <div className="card-arrow">➔</div>
         </div>
     );
 }
 
 class Home extends React.Component {
 
-    // Thêm state để quản lý tab hoạt động
     state = {
-        activeActivityTab: 'resident', // 'resident' hoặc 'fee'
-        chartData: null, // 2. Chuyển chartData vào state để cập nhật động
-        residentActivities: [], // <-- để nhận dữ liệu API cho biến động dân cư
-        feeActivities: [],  // <-- để nhận dữ liệu API cho biến động thu phí
+        activeActivityTab: 'resident',
+        chartData: null,
+        residentActivities: [],
+        feeActivities: [],
     };
 
-    // 3. Hàm gọi API lấy dữ liệu biểu đồ
+    // --- 1. API LẤY DỮ LIỆU BIỂU ĐỒ (6 tháng gần nhất) ---
     fetchChartData = async () => {
         const token = getToken();
-        if (!token) return; // Không gọi API nếu chưa đăng nhập
+        if (!token) return;
 
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = 'http://localhost:8080/qlcc/thong-ke-thu-phi/sau-thang-gan-nhat';
@@ -53,18 +68,24 @@ class Home extends React.Component {
             const response = await axios.get(apiUrl, config);
             const apiData = response.data.result;
 
-            // Xử lý dữ liệu API trả về để khớp với định dạng của Chart.js
             const labels = apiData.danhSachThang.map(item => item.thangNam);
-            const data = apiData.danhSachThang.map(item => item.tongTienThu / 1000000); // Chia cho 1 triệu
+            const data = apiData.danhSachThang.map(item => item.tongTienThu / 1000000); // Đơn vị: Triệu VNĐ
 
             this.setState({
                 chartData: {
                     labels: labels,
                     datasets: [{
-                        label: 'Tổng thu (triệu VNĐ)',
+                        label: 'Tổng thu (Triệu VNĐ)',
                         data: data,
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                        borderRadius: 5,
+                        borderColor: '#007bff', // Màu đường
+                        backgroundColor: 'rgba(0, 123, 255, 0.15)', // Màu nền dưới đường
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#007bff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.4, // Độ cong mềm mại
+                        fill: true, // Tô màu nền
                     }]
                 }
             });
@@ -74,7 +95,7 @@ class Home extends React.Component {
         }
     }
 
-    // HÀM gọi API LẤY BIẾN ĐỘNG CƯ DÂN 
+    // --- 2. API LẤY BIẾN ĐỘNG CƯ DÂN ---
     fetchResidentActivities = async () => {
         const token = getToken();
         if (!token) return;
@@ -85,10 +106,10 @@ class Home extends React.Component {
         try {
             const response = await axios.get(apiUrl, config);
             if (response.data && response.data.result) {
-                // Sắp xếp lại, giả sử API trả về mảng, lấy 5 mục mới nhất
+                // Sắp xếp mới nhất lên đầu và lấy 5-7 item
                 const sortedActivities = response.data.result
-                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao)) // Sắp xếp theo ngayTao mới nhất
-                    .slice(0, 5); // Chỉ lấy 5 mục
+                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao))
+                    .slice(0, 7);
 
                 this.setState({ residentActivities: sortedActivities });
             }
@@ -97,23 +118,19 @@ class Home extends React.Component {
         }
     }
 
-    // HÀM gọi API LẤY BIẾN ĐỘNG THU PHÍ
+    // --- 3. API LẤY BIẾN ĐỘNG THU PHÍ ---
     fetchFeeActivities = async () => {
-
         const token = getToken();
         if (!token) return;
-
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = 'http://localhost:8080/qlcc/bien-dong-thu-phi';
 
         try {
             const response = await axios.get(apiUrl, config);
             if (response.data && response.data.result) {
-                // Sắp xếp lại, giả sử API trả về mảng, lấy 5 mục mới nhất
                 const sortedActivities = response.data.result
-                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao)) // Sắp xếp theo ngayTao mới nhất
-                    .slice(0, 5); // Chỉ lấy 5 mục
-
+                    .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao))
+                    .slice(0, 7);
                 this.setState({ feeActivities: sortedActivities });
             }
         } catch (error) {
@@ -121,99 +138,178 @@ class Home extends React.Component {
         }
     }
 
-    // 4. Gọi API khi component được tải
     componentDidMount() {
         this.fetchChartData();
         this.fetchResidentActivities();
         this.fetchFeeActivities();
     }
 
-    // Hàm thay đổi tab
     setActivityTab = (tab) => {
         this.setState({ activeActivityTab: tab });
     }
 
     render() {
-        const { totalApartments, totalResidents, t } = this.props; // Nhận thêm totalResidents từ App.js
-        const { activeActivityTab, chartData, residentActivities, feeActivities } = this.state; // 5. Lấy chartData, residentActivities, feeActivities từ state
+        const { totalApartments, totalResidents, t, navigate } = this.props;
+        const { activeActivityTab, chartData, residentActivities, feeActivities } = this.state;
 
-        // Chọn danh sách hoạt động dựa trên tab đang active
         const activitiesToDisplay = activeActivityTab === 'resident' ? residentActivities : feeActivities;
 
+        // Tùy chọn hiển thị biểu đồ
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }, // Ẩn chú thích mặc định
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#adb5bd' }
+                },
+                y: {
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', borderDash: [5, 5] },
+                    ticks: { color: '#adb5bd' },
+                    beginAtZero: true
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        };
+
         return (
-            <div className="home-container">
-                {/* --- HÀNG THỐNG KÊ NHANH --- */}
-                <div className="stat-cards-container">
+            <div className="home-dashboard">
+
+                {/* --- HÀNG 1: THẺ THỐNG KÊ NHỎ GỌN --- */}
+                <div className="dashboard-stats-row">
                     <StatCard
-                        navigate={this.props.navigate}
-                        icon="🏢"
+                        navigate={navigate}
+                        t={t}
+                        icon="🏢" // Hoặc icon SVG
                         title={t('home_card.title_apartment')}
                         count={totalApartments || 0}
                         linkTo="/apartments"
+                        color="blue"
                     />
                     <StatCard
-                        navigate={this.props.navigate}
+                        navigate={navigate}
+                        t={t}
                         icon="👥"
                         title={t('home_card.title_resident')}
-                        count={totalResidents || 0} // Bạn cần truyền prop này từ App.js
+                        count={totalResidents || 0}
                         linkTo="/residents"
+                        color="green"
                     />
                     <StatCard
-                        navigate={this.props.navigate}
+                        navigate={navigate}
+                        t={t}
                         icon="💰"
                         title={t('home_card.title_receipt')}
-                        count={0} // Thay bằng state của bạn
+                        count={0}
                         linkTo="/receipts"
+                        color="purple"
+                    />
+                    {/* Thêm thẻ Thống kê nhanh khác nếu muốn */}
+                    <StatCard
+                        navigate={navigate}
+                        t={t}
+                        icon="📊"
+                        title="Báo cáo"
+                        count="CSV"
+                        linkTo="/receipts"
+                        color="orange"
                     />
                 </div>
 
-                {/* --- BẢNG ĐIỀU KHIỂN CHÍNH --- */}
-                <div className="main-dashboard-grid">
-                    {/* --- CỘT TRÁI: BIỂU ĐỒ --- */}
+                {/* --- HÀNG 2: MAIN CONTENT (CHIA 2 CỘT) --- */}
+                <div className="dashboard-main-content">
+
+                    {/* CỘT TRÁI: BIỂU ĐỒ DOANH THU (CHIẾM 65%) */}
                     <div className="dashboard-panel chart-panel">
                         <div className="panel-header">
-                            <h4>{t('dashboard.fee_stats_title')}</h4>
+                            <div>
+                                <h4>{t('dashboard.fee_stats_title')}</h4>
+                                <p className="sub-text">Xu hướng thu phí thực tế theo từng tháng</p>
+                            </div>
+                            <div className="chart-legend">
+                                <span className="dot"></span> Tổng thu
+                            </div>
                         </div>
-                        <div className="panel-body">
-                            {/* 6. Kiểm tra chartData trước khi render */}
+                        <div className="panel-body chart-wrapper">
                             {chartData ? (
-                                <Bar data={chartData} options={{ maintainAspectRatio: false }} />
+                                <Line data={chartData} options={chartOptions} />
                             ) : (
-                                <p style={{ textAlign: 'center' }}>{t('dashboard.loading')}</p>
+                                <div className="loading-state">{t('dashboard.loading')}</div>
                             )}
                         </div>
                     </div>
 
-                    {/* --- CỘT PHẢI: HOẠT ĐỘNG GẦN ĐÂY --- */}
+                    {/* CỘT PHẢI: HOẠT ĐỘNG GẦN ĐÂY (CHIẾM 35%) */}
                     <div className="dashboard-panel activity-panel">
-                        <div className="panel-header">
-                            {/* --- TẠO CÁC TAB ĐIỀU HƯỚNG --- */}
-                            <div className="activity-tabs">
-                                <button
-                                    className={`tab-button ${activeActivityTab === 'resident' ? 'active' : ''}`}
-                                    onClick={() => this.setActivityTab('resident')}
-                                >
-                                    {t('dashboard.resident_activity_tab')}
-                                </button>
-                                <button
-                                    className={`tab-button ${activeActivityTab === 'fee' ? 'active' : ''}`}
-                                    onClick={() => this.setActivityTab('fee')}
-                                >
-                                    {t('dashboard.fee_activity_tab')}
-                                </button>
-                            </div>
+                        <div className="panel-header-tabs">
+                            <button
+                                className={`tab-btn ${activeActivityTab === 'resident' ? 'active' : ''}`}
+                                onClick={() => this.setActivityTab('resident')}
+                            >
+                                {t('dashboard.resident_activity_tab')}
+                            </button>
+                            <button
+                                className={`tab-btn ${activeActivityTab === 'fee' ? 'active' : ''}`}
+                                onClick={() => this.setActivityTab('fee')}
+                            >
+                                {t('dashboard.fee_activity_tab')}
+                            </button>
                         </div>
-                        <div className="panel-body">
+
+                        <div className="panel-body list-wrapper">
                             <ul className="activity-list">
                                 {activitiesToDisplay.length > 0 ? (
-                                    activitiesToDisplay.map(activity => (
-                                        <li key={activity.id} className={`activity-item ${activity.loai.toLowerCase().replace(/ /g, '-')}`}>
-                                            <div className="activity-type">{activity.loai}</div>
-                                            <div className="activity-text">{activity.text}</div>
-                                        </li>
-                                    ))
+                                    activitiesToDisplay.map((activity, index) => {
+                                        // 1. Lấy loại hoạt động từ API (ưu tiên 'type', fallback sang 'loai' nếu có)
+                                        // API của bạn trả về: "Đóng góp", "Thu phí", "Tạm trú"...
+                                        const rawType = activity.type || activity.loai || 'Thông báo';
+
+                                        // 2. Chuyển đổi sang class name chuẩn để dùng trong SCSS
+                                        // Ví dụ: "Đóng góp" -> "đóng-góp", "Thu phí" -> "thu-phí"
+                                        const typeClass = rawType.toLowerCase().trim().replace(/\s+/g, '-');
+
+                                        // 3. Chọn icon
+                                        const icon = activeActivityTab === 'resident' ? '👤' : '💲';
+
+                                        return (
+                                            <li key={index} className="activity-item">
+                                                <div className={`activity-icon ${activeActivityTab === 'resident' ? 'res' : 'fee'}`}>
+                                                    {icon}
+                                                </div>
+                                                <div className="activity-content">
+                                                    {/* Class động: 'thu-phí', 'đóng-góp', 'tạm-trú'... khớp với SCSS */}
+                                                    <span className={`activity-type-badge ${typeClass}`}>
+                                                        {rawType}
+                                                    </span>
+                                                    <p className="activity-msg">{activity.text}</p>
+                                                    <span className="activity-time">
+                                                        {activity.ngayTao ? new Date(activity.ngayTao).toLocaleDateString('vi-VN') : 'Vừa xong'}
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        );
+                                    })
                                 ) : (
-                                    <li className="activity-item-empty">{t('dashboard.no_activity')}</li>
+                                    <div className="empty-state">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No Data" width="60" />
+                                        <p>{t('dashboard.no_activity')}</p>
+                                    </div>
                                 )}
                             </ul>
                         </div>
@@ -223,5 +319,4 @@ class Home extends React.Component {
         );
     }
 }
-
 export default withRouter(withTranslation()(Home));

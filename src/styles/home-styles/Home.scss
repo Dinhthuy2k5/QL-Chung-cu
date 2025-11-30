@@ -1,270 +1,306 @@
-// --- BIẾN MÀU SẮC ---
-$text-color: #e9ecef;
-$label-color: #adb5bd;
-$border-color-subtle: rgba(255, 255, 255, 0.1);
-$glass-bg: rgba(53, 58, 66, 0.6);
-$primary-blue: #007bff;
-$primary-blue-hover: #0056b3;
-$green-dot: #28a745;
-$red-dot: #dc3545;
+// --- Biến màu sắc ---
+$bg-dark: #1e1e2f;
+$panel-bg: #27293d;
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
 
-// --- CONTAINER CHÍNH CỦA TRANG CHỦ ---
-.home-container {
-    padding: 30px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+// Gradients cho icon
+$blue-grad: linear-gradient(to bottom right, #007bff, #0056b3);
+$green-grad: linear-gradient(to bottom right, #28a745, #218838);
+$purple-grad: linear-gradient(to bottom right, #6f42c1, #59359a);
+$orange-grad: linear-gradient(to bottom right, #fd7e14, #d66203);
+
+.home-dashboard {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: $text-primary;
+    font-family: 'Inter', sans-serif; // Nên dùng font hiện đại
 }
 
-// --- KHU VỰC CÁC THẺ THỐNG KÊ NHANH ---
-.stat-cards-container {
+// --- 1. STAT CARDS MINI (Hàng trên cùng) ---
+.dashboard-stats-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); // 3 cột bằng nhau
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
-.stat-card {
-    background: $glass-bg;
-    backdrop-filter: blur(10px);
-    border: 1px solid $border-color-subtle;
-    border-radius: 15px;
-    padding: 25px;
+.stat-card-mini {
+    background: $panel-bg;
+    border-radius: 12px;
+    padding: 20px;
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    align-items: center;
+    position: relative;
     cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid transparent;
 
     &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        border-color: rgba(255,255,255,0.1);
+        
+        .card-arrow { opacity: 1; transform: translateX(0); }
     }
 
-    .card-header {
+    .card-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        gap: 15px;
-        margin-bottom: 25px;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
-        .card-icon {
-            font-size: 2rem;
-        }
+        &.blue { background: $blue-grad; }
+        &.green { background: $green-grad; }
+        &.purple { background: $purple-grad; }
+        &.orange { background: $orange-grad; }
+    }
+
+    .card-content {
+        flex-grow: 1;
         .card-title {
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            color: $text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card-count {
+            margin: 5px 0 0 0;
+            font-size: 1.6rem;
+            font-weight: 700;
         }
     }
 
-    .card-body {
-        flex-grow: 1;
-        text-align: center;
-        .label {
-            display: block;
-            color: $label-color;
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-        .count {
-            display: block;
-            font-size: 4rem;
-            font-weight: 300;
-            color: #fff;
-            line-height: 1.1;
-        }
-    }
-
-    .view-all-button {
-        width: 100%;
-        padding: 14px;
-        background-color: $primary-blue;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.2s ease;
-        margin-top: 25px;
-
-        &:hover {
-            background-color: $primary-blue-hover;
-        }
+    .card-arrow {
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.3s;
+        color: $text-secondary;
+        font-size: 1.2rem;
     }
 }
 
-// --- KHU VỰC DASHBOARD CHÍNH ---
-.main-dashboard-grid {
+// --- 2. MAIN CONTENT GRID ---
+.dashboard-main-content {
     display: grid;
-    grid-template-columns: 2fr 1fr; // Cột trái (biểu đồ) rộng gấp đôi cột phải
-    gap: 30px;
-    min-height: 400px;
+    grid-template-columns: 2fr 1fr; // Tỷ lệ 2:1
+    gap: 25px;
+    height: 500px; // Chiều cao cố định cho khu vực này
+
+    @media (max-width: 992px) {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
 }
 
 .dashboard-panel {
-    background: $glass-bg;
-    backdrop-filter: blur(10px);
-    border: 1px solid $border-color-subtle;
-    border-radius: 15px;
-    padding: 25px;
+    background: $panel-bg;
+    border-radius: 12px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    overflow: hidden; // Ẩn nội dung bị tràn
+    border: 1px solid $border-color;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.panel-header {
-    border-bottom: 1px solid $border-color-subtle;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-    flex-shrink: 0;
-
-    h4 {
-        margin: 0;
-        font-size: 1.25rem;
-        color: $text-color;
-    }
-}
-
-.panel-body {
-    flex-grow: 1;
-    min-height: 0; // Quan trọng để flex-grow hoạt động
-    position: relative;
-}
-
-// --- Style cho biểu đồ ---
-.chart-panel .panel-body {
-    padding-top: 10px;
-}
-
-// --- Style cho danh sách hoạt động ---
-.activity-panel .panel-body {
-    overflow-y: auto; // Thêm thanh cuộn nếu nội dung quá dài
-}
-
-.activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    
-    .activity-item {
-        display: flex;
-        padding: 15px 5px;
-        border-bottom: 1px solid $border-color-subtle;
-        gap: 15px;
-
-        &:last-child {
-            border-bottom: none;
-        }
-
-        .activity-type {
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 5px;
-            white-space: nowrap;
-            
-            &.tạm-trú { background-color: rgba($green-dot, 0.2); color: $green-dot; }
-            &.tạm-vắng { background-color: rgba(#ffc107, 0.2); color: #ffc107; }
-            &.thu-phí { background-color: rgba($primary-blue, 0.2); color: $primary-blue; }
-        }
-
-        .activity-text {
-            font-size: 0.9rem;
-            color: $label-color;
-            line-height: 1.4;
-        }
-    }
-}
-// ... (Tất cả các style cũ của bạn từ .home-container đến .chart-panel giữ nguyên) ...
-
-// --- Style cho danh sách hoạt động ---
-.activity-panel {
+// --- 3. BIỂU ĐỒ (CHART PANEL) ---
+.chart-panel {
     .panel-header {
-        // Ghi đè style cũ để chứa các tab
-        padding: 0; // Bỏ padding
-        border-bottom: 1px solid $border-color-subtle;
-        margin-bottom: 0; // Bỏ margin
-    }
-
-    .panel-body {
-        overflow-y: auto;
-        padding: 0; // Bỏ padding của body
-    }
-}
-
-// --- GIAO DIỆN TAB MỚI ---
-.activity-tabs {
-    display: flex;
-
-    .tab-button {
-        flex: 1; // Chia 2 tab bằng nhau
-        background: transparent;
-        border: none;
-        color: $label-color;
-        padding: 15px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-bottom: 3px solid transparent;
-
-        &.active {
-            color: $primary-blue; // Dùng màu xanh dương từ thẻ của bạn
-            border-bottom-color: $primary-blue;
-        }
-
-        &:not(.active):hover {
-            color: $text-color;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-    }
-}
-
-.activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    
-    .activity-item {
         display: flex;
-        padding: 15px 20px; // Thêm padding cho các mục
-        border-bottom: 1px solid $border-color-subtle;
-        gap: 15px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
 
-        &:last-child {
-            border-bottom: none;
-        }
-
-        .activity-type {
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 5px;
-            white-space: nowrap;
-            
-            // Cập nhật các class màu
-            &.tạm-trú { background-color: rgba($green-dot, 0.2); color: $green-dot; }
-            &.tạm-vắng { background-color: rgba(#ffc107, 0.2); color: #ffc107; }
-            &.thêm-mới { background-color: rgba(#17a2b8, 0.2); color: #17a2b8; }
-            &.thu-phí { background-color: rgba($primary-blue, 0.2); color: $primary-blue; }
-            &.đóng-góp { background-color: rgba(#6f42c1, 0.2); color: #6f42c1; }
-        }
-
-        .activity-text {
-            font-size: 0.9rem;
-            color: $label-color;
-            line-height: 1.4;
+        h4 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+        .sub-text { margin: 5px 0 0 0; font-size: 0.85rem; color: $text-secondary; }
+        
+        .chart-legend {
+            font-size: 0.85rem;
+            color: $text-secondary;
+            display: flex;
+            align-items: center;
+            .dot { width: 10px; height: 10px; background: #007bff; border-radius: 50%; margin-right: 5px; }
         }
     }
 
- 
+    .chart-wrapper {
+        flex-grow: 1;
+        position: relative;
+        width: 100%;
+        min-height: 0; // Quan trọng cho chart.js resize
+    }
 
-    .activity-item-empty {
-        padding: 20px;
-        text-align: center;
-        color: $label-color;
+    .loading-state {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: $text-secondary;
         font-style: italic;
     }
+}
 
+// --- 4. HOẠT ĐỘNG (ACTIVITY PANEL) ---
+.activity-panel {
+    padding: 0; // Reset padding để tabs dính sát lề
+    overflow: hidden;
+
+    .panel-header-tabs {
+        display: flex;
+        border-bottom: 1px solid $border-color;
+        background: rgba(0,0,0,0.1);
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            color: $text-secondary;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+
+            &:hover { color: $text-primary; background: rgba(255,255,255,0.02); }
+
+            &.active {
+                color: #007bff;
+                border-bottom-color: #007bff;
+                background: rgba(0, 123, 255, 0.05);
+            }
+        }
+    }
+
+    .list-wrapper {
+        padding: 10px 20px;
+        overflow-y: auto;
+        height: 100%;
+
+        // Scrollbar đẹp
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-track { background: transparent; }
+        &::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    }
+
+    // ... (các phần trên giữ nguyên)
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    .activity-item {
+        display: flex;
+        padding: 15px 0;
+        border-bottom: 1px solid $border-color;
+        
+        &:last-child { border-bottom: none; }
+
+        // Icon tròn bên trái
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+            
+            // Màu nền mặc định cho icon
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            &.res { background: rgba(40, 167, 69, 0.15); border-color: rgba(40, 167, 69, 0.3); color: #28a745; }
+            &.fee { background: rgba(0, 123, 255, 0.15); border-color: rgba(0, 123, 255, 0.3); color: #007bff; }
+        }
+
+        .activity-content {
+            flex-grow: 1;
+            
+            .activity-type-badge {
+                display: inline-block;
+                font-size: 0.7rem;
+                font-weight: bold;
+                padding: 2px 8px;
+                border-radius: 4px;
+                margin-bottom: 5px;
+                text-transform: capitalize;
+                
+                // --- ĐỊNH NGHĨA MÀU CHO 5 LOẠI ---
+                
+                // 1. Tạm trú (Xanh lá)
+                &.tạm-trú { 
+                    background: rgba(40, 167, 69, 0.2); 
+                    color: #28a745; 
+                    border: 1px solid rgba(40, 167, 69, 0.3);
+                }
+                
+                // 2. Tạm vắng (Vàng cam)
+                &.tạm-vắng { 
+                    background: rgba(255, 193, 7, 0.2); 
+                    color: #ffc107; 
+                    border: 1px solid rgba(255, 193, 7, 0.3);
+                }
+
+                // 3. Thêm mới (Xanh lơ - Cyan)
+                &.thêm-mới { 
+                    background: rgba(23, 162, 184, 0.2); 
+                    color: #17a2b8; 
+                    border: 1px solid rgba(23, 162, 184, 0.3);
+                }
+
+                // 4. Thu phí (Xanh dương)
+                &.thu-phí { 
+                    background: rgba(0, 123, 255, 0.2); 
+                    color: #007bff; 
+                    border: 1px solid rgba(0, 123, 255, 0.3);
+                }
+
+                // 5. Đóng góp (Tím)
+                &.đóng-góp { 
+                    background: rgba(111, 66, 193, 0.2); 
+                    color: #d63384; 
+                    border: 1px solid rgba(111, 66, 193, 0.3);
+                }
+            }
+
+            .activity-msg {
+                margin: 0;
+                font-size: 0.9rem;
+                line-height: 1.4;
+                color: #e9ecef;
+            }
+
+            .activity-time {
+                display: block;
+                font-size: 0.75rem;
+                color: $text-secondary;
+                margin-top: 5px;
+            }
+        }
+    }
+}
+
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: $text-secondary;
+        opacity: 0.6;
+        
+        img { margin-bottom: 10px; filter: grayscale(100%); }
+    }
 }

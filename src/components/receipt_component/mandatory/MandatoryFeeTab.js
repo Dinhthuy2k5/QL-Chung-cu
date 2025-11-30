@@ -4,6 +4,7 @@ import MandatoryFeeList from './MandatoryFeeList';
 import CreateFeeWizard from './CreateFeeWizard';
 import CollectFeeWizard from './CollectFeeWizard';
 import { useTranslation } from 'react-i18next';
+import MandatoryDashboard from './MandatoryDashboard'; // Import component mới
 
 const MandatoryFeeTab = () => {
     const { t } = useTranslation();
@@ -16,29 +17,12 @@ const MandatoryFeeTab = () => {
 
     return (
         <div className="mandatory-tab">
-            <div className="section-header">
-                <h2>{t('receipt_page.mandatory_title')}</h2>
-                <p>{t('receipt_page.mandatory_desc')}</p>
-            </div>
-
-            <div className="section-actions">
-                {/* Nút 1: Tạo khoản thu */}
-                <button onClick={() => setShowCreateWizard(true)}>
-                    ➕ {t('receipt_page.mandatory_btn_create')}
-                </button>
-
-                {/* Nút 2: Thu phí (Sử dụng Wizard mới) */}
-                <button onClick={() => setShowCollectWizard(true)}>
-                    💰 {t('receipt_page.mandatory_btn_collect')}
-                </button>
-
-                {/* Nút 3: Xem danh sách */}
-                <button onClick={() => setShowList(true)}>
-                    📄 {t('receipt_page.mandatory_btn_list')}
-                </button>
-            </div>
-
-            {/* --- CÁC MODAL --- */}
+            <MandatoryDashboard
+                onOpenCreate={() => setShowCreateWizard(true)}
+                // onOpenCalculate={() => setShowCreateWizard(true)} // Hoặc tách nút tính toán riêng nếu muốn
+                onOpenCollect={() => setShowCollectWizard(true)}
+                onOpenList={() => setShowList(true)}
+            />
 
             {showCreateWizard && (
                 <CreateFeeWizard onClose={() => setShowCreateWizard(false)} onRefresh={() => { }} />
