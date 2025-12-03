@@ -29,12 +29,21 @@
         "no_activity": "No activity to display."
     },
     "apartment_table": {
+        "list_title": "Apartment Management",
         "filter": "Filter",
-        "id": "Apartment ID",
+        "id": "ID",
         "unit_number": "Unit No.",
-        "type": "Apartment Type",
+        "type": "Type",
+        "status": "Status",
         "area": "Area",
-        "address": "Address"
+        "address": "Address",
+        "action": "Actions",
+        "total_units": "Total Units",
+        "types": "Categories",
+        "avg_area": "Avg. Area",
+        "no_data": "No matching data found",
+        "edit": "Edit",
+        "delete": "Delete"
     },
     "filter_button": "Filter",
     "apartment_filter": {

@@ -29,15 +29,24 @@
         "no_activity": "Không có hoạt động nào."
     },
     "apartment_table": {
-        "filter": "Lọc",
-        "id": "Id Căn hộ",
-        "unit_number": "Số nhà",
-        "type": "Loại căn hộ",
+        "list_title": "Quản lý Căn hộ",
+        "filter": "Bộ lọc",
+        "id": "Mã căn",
+        "unit_number": "Số phòng",
+        "type": "Loại hình",
+        "status": "Phân loại",
         "area": "Diện tích",
-        "address": "Địa chỉ"
+        "address": "Địa chỉ",
+        "action": "Hành động",
+        "total_units": "Tổng số căn",
+        "types": "Loại căn hộ",
+        "avg_area": "Diện tích TB",
+        "no_data": "Không tìm thấy dữ liệu phù hợp",
+        "edit": "Sửa",
+        "delete": "Xóa"
     },
     "filter_button": "Lọc",
-    "apartmet_filter": {
+    "apartment_filter": {
         "title": "Bộ lọc",
         "unit_number": "Số nhà",
         "unit_number_placeholder": "Nhập số nhà...",

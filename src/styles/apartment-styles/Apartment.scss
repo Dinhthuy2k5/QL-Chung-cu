@@ -1,112 +1,384 @@
-// --- BIẾN MÀU SẮC ---
-$text-color: #e9ecef;
-$primary-red: #e74c3c;
-// Màu sắc cho hiệu ứng kính
-$glass-bg: rgba(53, 58, 66, 0.6);
-$glass-border: rgba(255, 255, 255, 0.1);
-$glass-header-bg: rgba(255, 255, 255, 0.05);
-$glass-row-hover: rgba(255, 255, 255, 0.1);
+// --- BIẾN MÀU SẮC & CẤU HÌNH ---
+$text-primary: #ffffff;
+$text-secondary: #adb5bd;
+$accent-color: #4361ee; // Màu xanh chủ đạo hiện đại
+$danger-color: #ef476f;
+$warning-color: #ffd166;
+$success-color: #06d6a0;
 
-// --- KHU VỰC CHÍNH CỦA TRANG CĂN HỘ ---
-.apartment-container {
-    padding: 0 40px;
+// Hiệu ứng kính mờ (Glassmorphism)
+$glass-bg: rgba(30, 30, 40, 0.7); 
+$glass-border: 1px solid rgba(255, 255, 255, 0.1);
+$card-hover-bg: rgba(255, 255, 255, 0.08);
+
+.apartment-page-wrapper {
+    padding: 20px 40px;
     width: 100%;
-    box-sizing: border-box; // Đảm bảo padding không làm tràn
+    color: $text-primary;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-// --- KHU VỰC CHỨA CÁC NÚT HÀNH ĐỘNG ---
-.table-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: 20px 0 15px 0;
-}
+// --- 1. PHẦN THỐNG KÊ (STATS CARDS) ---
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 
-// --- STYLE CHO NÚT LỌC ---
-.filter-btn {
-    background-color: $primary-red;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
+    .stat-card {
+        background: $glass-bg;
+        backdrop-filter: blur(12px);
+        border: $glass-border;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 
-    &:hover {
-        background-color: darken($primary-red, 10%);
-        transform: translateY(-2px);
-    }
-    .icon { font-size: 1.1rem; }
-}
-
-// --- BẢNG DỮ LIỆU (ĐÃ CẬP NHẬT) ---
-.apartment-table-container {
-    background: $glass-bg;
-    backdrop-filter: blur(10px);
-    border: 1px solid $glass-border;
-    border-radius: 15px;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    color: $text-color;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-// --- HÀNG TIÊU ĐỀ CỦA BẢNG ---
-.apartment-header-row {
-    display: flex;
-    background-color: $glass-header-bg;
-    font-weight: bold;
-    border-bottom: 1px solid $glass-border;
-
-    h4 {
-        padding: 18px 15px; // Tăng padding cho cao hơn
-        margin: 0;
-        font-size: 1.05rem; // Tăng cỡ chữ tiêu đề
-        text-align: left;
-        
-        &:not(:last-child) {
-            border-right: 1px solid $glass-border;
+        &:hover {
+            transform: translateY(-5px);
+            background: rgba(40, 40, 55, 0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        // --- Phân chia lại độ rộng cột ---
-        &:nth-child(1) { flex: 1; } // Id Căn hộ
-        &:nth-child(2) { flex: 1; } // Số nhà
-        &:nth-child(3) { flex: 1.5; } // Loại căn hộ
-        &:nth-child(4) { flex: 1; } // Diện tích
-        &:nth-child(5) { flex: 3; } // Địa chỉ (rộng nhất)
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            
+            &.orange { background: rgba($warning-color, 0.2); color: $warning-color; }
+            &.blue { background: rgba($accent-color, 0.2); color: $accent-color; }
+            &.green { background: rgba($success-color, 0.2); color: $success-color; }
+        }
+
+        .stat-info {
+            h3 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+            p { margin: 5px 0 0; color: $text-secondary; font-size: 0.9rem; }
+        }
     }
 }
 
-// --- PHẦN THÂN BẢNG ---
-.apartment-table-body {
-    background-color: transparent;
+// --- 2. THANH TIÊU ĐỀ & NÚT LỌC ---
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 
-    .apartment-data-row {
+    .section-title {
+        font-size: 1.5rem;
+        margin: 0;
+        border-left: 4px solid $accent-color;
+        padding-left: 15px;
+    }
+
+    .filter-btn {
+        background: linear-gradient(135deg, $accent-color, darken($accent-color, 15%));
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px; // Bo tròn kiểu pill button
+        font-weight: 600;
+        cursor: pointer;
         display: flex;
-        border-bottom: 1px solid $glass-border;
-        transition: background-color 0.2s ease;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba($accent-color, 0.4);
+        transition: all 0.3s ease;
 
-        &:last-child { border-bottom: none; }
-        &:hover { background-color: $glass-row-hover; }
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba($accent-color, 0.6);
+        }
+    }
+}
 
-        div {
-            padding: 18px 15px;
-            font-size: 1rem; // Tăng cỡ chữ nội dung
-            
-            &:not(:last-child) {
-                border-right: 1px solid $glass-border;
+// --- 3. BẢNG DỮ LIỆU HIỆN ĐẠI ---
+.glass-table-container {
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: $glass-border;
+    border-radius: 20px;
+    overflow: hidden; // Bo góc cho cả bảng
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    thead {
+        background: rgba(255, 255, 255, 0.05);
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: $text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: $glass-border;
+        }
+    }
+
+    tbody {
+        tr {
+            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+            &:hover {
+                background: $card-hover-bg;
             }
 
-            // --- Phân chia lại độ rộng cột (phải khớp với h4) ---
-            &:nth-child(1) { flex: 1; }
-            &:nth-child(2) { flex: 1; }
-            &:nth-child(3) { flex: 1.5; }
-            &:nth-child(4) { flex: 1; }
-            &:nth-child(5) { flex: 3; }
+            td {
+                padding: 16px 20px;
+                vertical-align: middle;
+                font-size: 0.95rem;
+
+                &.id-col { color: $text-secondary; font-family: monospace; }
+                &.highlight-text { font-weight: bold; color: $warning-color; font-size: 1.1rem; }
+                &.address-col { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            }
         }
     }
+}
+
+// --- CÁC PHẦN TỬ NHỎ (Badge, Buttons) ---
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+
+    &.status-vip { background: rgba($warning-color, 0.15); color: $warning-color; border: 1px solid rgba($warning-color, 0.3); }
+    &.status-occupied { background: rgba($success-color, 0.15); color: $success-color; border: 1px solid rgba($success-color, 0.3); }
+    &.status-vacant { background: rgba($text-secondary, 0.15); color: $text-secondary; border: 1px solid rgba($text-secondary, 0.3); }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &.edit { background: rgba($accent-color, 0.1); color: $accent-color; &:hover { background: $accent-color; color: white; }}
+        &.delete { background: rgba($danger-color, 0.1); color: $danger-color; &:hover { background: $danger-color; color: white; }}
+    }
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: $text-secondary;
+    font-style: italic;
+}
+
+/* --- 1. CẬP NHẬT THANH ĐIỀU KHIỂN (CONTROLS) --- */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.right-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa nút View và nút Filter */
+}
+
+/* Nút chuyển đổi View (List/Grid) */
+.view-toggles {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    color: $text-secondary;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-btn.active {
+    background: $accent-color;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- 2. STYLE MỚI CHO GIAO DIỆN GRID (CARD VIEW) --- */
+
+.apartment-grid-container {
+    display: grid;
+    /* Tự động chia cột, tối thiểu 280px 1 cột */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.apartment-card-item {
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: $glass-border;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.apartment-card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba($accent-color, 0.5);
+}
+
+/* Header của Card (ID + Badge) */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-id {
+    font-family: monospace;
+    color: $text-secondary;
+    font-size: 0.9rem;
+}
+
+/* Body của Card */
+.card-body {
+    flex: 1; /* Đẩy footer xuống đáy */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card-icon-placeholder {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: 700;
+}
+
+.card-subtitle {
+    margin: 5px 0 15px 0;
+    color: $accent-color;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.card-details {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: left;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.detail-item.full-width {
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 8px;
+}
+
+.detail-item .label {
+    color: $text-secondary;
+}
+
+.detail-item .value {
+    color: white;
+    font-weight: 600;
+}
+
+.detail-item .value.address {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #e9ecef;
+}
+
+/* Footer của Card (Nút bấm) */
+.card-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 8px 0;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.btn-action.edit {
+    background: rgba($accent-color, 0.1);
+    color: $accent-color;
+}
+.btn-action.edit:hover {
+    background: $accent-color;
+    color: white;
+}
+
+.btn-action.delete {
+    background: rgba($danger-color, 0.1);
+    color: $danger-color;
+}
+.btn-action.delete:hover {
+    background: $danger-color;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
