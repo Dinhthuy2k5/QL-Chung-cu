@@ -1,0 +1,208 @@
+// --- Biến màu sắc (Đồng bộ trang Home) ---
+$bg-dark: #1e1e2f;
+$panel-bg: #27293d;
+$accent-color: #4361ee; // Xanh chủ đạo
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
+$hover-bg: rgba(255, 255, 255, 0.05);
+
+.resident-page-wrapper {
+    padding: 20px 30px;
+    min-height: 100vh;
+    background-color: $bg-dark;
+    color: $text-primary;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+// --- 1. NAVIGATION TABS ---
+.resident-nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 10px;
+    position: relative;
+
+    .nav-item {
+        padding: 10px 20px;
+        color: $text-secondary;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.2s;
+        cursor: pointer;
+        position: relative; // Để neo dropdown
+
+        &:hover {
+            background: $hover-bg;
+            color: $text-primary;
+        }
+
+        &.active {
+            background: rgba($accent-color, 0.1);
+            color: $accent-color;
+        }
+    }
+
+    // Dropdown Menu cho mục Thống kê
+    .nav-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: $panel-bg;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        min-width: 220px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        margin-top: 5px;
+
+        a {
+            padding: 12px 20px;
+            color: $text-secondary;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+
+            &:hover {
+                background: $hover-bg;
+                color: $text-primary;
+            }
+            &.active {
+                color: $accent-color;
+                background: rgba($accent-color, 0.1);
+            }
+        }
+    }
+}
+
+// --- 2. TOOLBAR (Cho ListResident) ---
+.list-resident-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: $panel-bg;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    // Ô tìm kiếm
+    .search-group {
+        width: 40%;
+        // SearchBar component của bạn sẽ nằm ở đây
+        // Bạn có thể style lại SearchBar.scss để bỏ background nếu muốn nó hòa nhập vào thanh này
+    }
+
+    // Các nút chức năng
+    .action-group {
+        display: flex;
+        gap: 10px;
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            // Nút phụ (Tạm vắng/Tạm trú)
+            &.btn-secondary {
+                background: rgba(255, 255, 255, 0.1);
+                color: $text-primary;
+                border: 1px solid $border-color;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+            }
+
+            // Nút chính (Thêm nhân khẩu)
+            &.btn-primary {
+                background: $accent-color;
+                color: white;
+                box-shadow: 0 4px 10px rgba($accent-color, 0.3);
+
+                &:hover {
+                    background: lighten($accent-color, 5%);
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+}
+
+// --- 3. BẢNG DỮ LIỆU (Glassmorphism) ---
+.glass-table {
+    width: 100%;
+    background: $panel-bg;
+    border-radius: 12px;
+    overflow: hidden;
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    thead {
+        background: rgba(0, 0, 0, 0.2);
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: $text-secondary;
+            border-bottom: 1px solid $border-color;
+            white-space: nowrap;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+
+            &:hover {
+                background: $hover-bg;
+            }
+
+            td {
+                padding: 15px 20px;
+                color: $text-primary;
+                vertical-align: middle;
+            }
+
+            // Cột hành động
+            .action-cell {
+                display: flex;
+                gap: 10px;
+                
+                button {
+                    padding: 6px 12px;
+                    border-radius: 6px;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: bold;
+                    font-size: 0.8rem;
+
+                    &.edit-btn {
+                        background: rgba($accent-color, 0.15);
+                        color: $accent-color;
+                        &:hover { background: $accent-color; color: white; }
+                    }
+
+                    &.delete-btn {
+                        background: rgba(#ef476f, 0.15);
+                        color: #ef476f;
+                        &:hover { background: #ef476f; color: white; }
+                    }
+                }
+            }
+        }
+    }
+}

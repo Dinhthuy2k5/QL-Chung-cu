@@ -1,8 +1,11 @@
-// --- BIẾN MÀU SẮC ---
-$primary-red: #e74c3c;
-$light-gray: #f0f0f0;
-$medium-gray: #ccc;
-$text-color: #333;
+// --- BIẾN MÀU SẮC (Đồng bộ với Apartment.scss) ---
+$accent-color: #4361ee;       // Màu chủ đạo (Xanh)
+$text-primary: #ffffff;       // Chữ trắng
+$text-secondary: #adb5bd;     // Chữ xám nhạt
+$bg-dark: #1e1e28;            // Nền tối
+$glass-bg: rgba(30, 30, 40, 0.95); // Nền kính (đậm hơn để dễ đọc text)
+$border-color: rgba(255, 255, 255, 0.1);
+$input-bg: rgba(0, 0, 0, 0.3);
 
 // --- LỚP PHỦ VÀ KHUNG MODAL ---
 .filter-container {
@@ -11,109 +14,138 @@ $text-color: #333;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6); // Làm tối nền đằng sau
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
+    z-index: 2000; // Cao hơn các thành phần khác
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
 }
 
 .filter-content {
-    background-color: white;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px; // Kích thước vừa vặn
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    color: $text-color;
-    overflow: hidden;
+    background: $glass-bg;
+    border: 1px solid $border-color;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    color: $text-primary;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
 }
 
 // --- HEADER ---
 .filter-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid $light-gray;
+    padding: 16px 24px;
+    border-bottom: 1px solid $border-color;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
 
-    h2 {
+    h3 {
         margin: 0;
-        font-size: 18px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $text-primary;
     }
 
     .close-button, .back-button {
         background: none;
         border: none;
-        font-size: 24px;
+        font-size: 1.5rem;
         cursor: pointer;
-        color: #888;
+        color: $text-secondary;
+        transition: color 0.2s;
+        padding: 0;
         line-height: 1;
+
         &:hover {
-            color: #000;
+            color: $text-primary;
         }
+    }
+    
+    .back-button {
+        margin-right: 15px;
+        font-size: 1.2rem;
     }
 }
 
 // --- BODY ---
 .filter-body {
-    padding: 10px 20px 20px 20px;
-    overflow-y: auto; // Cho phép cuộn nếu nội dung dài
-
+    padding: 24px;
+    
     .form-group {
-        margin-top: 20px;
+        margin-bottom: 24px;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     .section-title {
         display: block;
-        font-weight: 600;
-        margin-bottom: 12px;
-        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    // Input cho "Số nhà"
+    // Input Text
     input[type="text"] {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid $medium-gray;
+        padding: 12px 16px;
+        background: $input-bg;
+        border: 1px solid $border-color;
         border-radius: 8px;
-        font-size: 14px; // Đảm bảo input cũng có size 14px
+        color: $text-primary;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        box-sizing: border-box; 
+
         &:focus {
             outline: none;
-            border-color: $primary-red;
-            box-shadow: 0 0 5px rgba($primary-red, 0.3);
+            border-color: $accent-color;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        &::placeholder {
+            color: rgba(255,255,255,0.3);
         }
     }
 
-    // Hàng có thể click (Diện tích)
+    // Row Clickable (Diện tích)
     .filter-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 15px;
-        border: 1px solid $medium-gray;
+        padding: 12px 16px;
+        background: $input-bg;
+        border: 1px solid $border-color;
         border-radius: 8px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.2s;
 
         &:hover {
-            border-color: $primary-red;
-            box-shadow: 0 0 5px rgba($primary-red, 0.3);
+            border-color: $accent-color;
+            background: rgba(255, 255, 255, 0.05);
         }
-        .arrow-icon {
-            font-size: 20px;
-            color: $medium-gray;
-        }
+        
         span {
-            font-size: 14px;
-            color: #333; // Đảm bảo màu chữ đồng bộ
+            color: $text-primary;
+            font-weight: 500;
+        }
+
+        .arrow-icon {
+            color: $text-secondary;
+            font-size: 1.2rem;
         }
     }
 
-    // Nhóm các nút bấm
+    // Buttons Group (Loại căn hộ)
     .button-group {
         display: flex;
         flex-wrap: wrap;
@@ -121,43 +153,57 @@ $text-color: #333;
     }
 
     .option-button {
-        padding: 8px 15px;
-        border: 1px solid $medium-gray;
-        background-color: white;
-        color: $text-color;
-        border-radius: 20px; // Bo tròn
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid $border-color;
+        color: $text-secondary;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s ease;
-        font-size: 14px;
+        font-size: 0.9rem;
+        font-weight: 500;
 
         &:hover {
-            border-color: $primary-red;
+            border-color: $text-primary;
+            color: $text-primary;
+            background: rgba(255,255,255,0.05);
         }
 
         &.active {
-            background-color: $primary-red;
+            background-color: $accent-color;
             color: white;
-            border-color: $primary-red;
-            font-weight: 600;
+            border-color: $accent-color;
+            box-shadow: 0 4px 10px rgba($accent-color, 0.3);
         }
     }
 }
 
-// --- Màn hình chọn diện tích ---
+// --- SLIDER AREA ---
 .area-slider-body {
-    padding: 25px 20px;
+    padding: 30px 24px;
+    
     .area-display {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 25px;
+        margin-bottom: 40px;
+        
         .area-box {
-            width: 48%;
+            background: $input-bg;
+            padding: 10px 20px;
+            border-radius: 8px;
             text-align: center;
+            border: 1px solid $border-color;
+            min-width: 100px;
+            
+            color: $text-secondary;
+            font-size: 0.85rem;
+
             span {
                 display: block;
-                font-weight: 600;
-                margin-top: 5px;
-                font-size: 18px;
+                font-weight: 700;
+                margin-top: 4px;
+                font-size: 1.1rem;
+                color: $accent-color;
             }
         }
     }
@@ -168,46 +214,84 @@ $text-color: #333;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding: 15px 20px;
-    background-color: #fafafa;
-    border-top: 1px solid $light-gray;
-    flex-shrink: 0;
+    padding: 16px 24px;
+    border-top: 1px solid $border-color;
+    background: rgba(0,0,0,0.2); // Tối hơn body một chút
 
     button {
-        padding: 10px 20px;
+        padding: 10px 24px;
         border-radius: 8px;
         border: none;
         cursor: pointer;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 0.9rem;
         transition: all 0.2s ease;
 
         &.reset-btn {
-            background-color: $light-gray;
-            color: $text-color;
+            background: transparent;
+            color: $text-secondary;
+            border: 1px solid transparent;
+            
             &:hover {
-                background-color: #e0e0e0;
+                color: $text-primary;
+                background: rgba(255,255,255,0.05);
             }
         }
+        
         &.apply-btn {
-            background-color: $primary-red;
+            background: $accent-color;
             color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            
             &:hover {
-                opacity: 0.9;
+                background: lighten($accent-color, 5%);
+                transform: translateY(-1px);
+                box-shadow: 0 6px 15px rgba($accent-color, 0.4);
+            }
+            
+            &:active {
+                transform: translateY(0);
             }
         }
     }
 }
 
 // --- CUSTOM STYLE CHO RC-SLIDER ---
+// Ghi đè style mặc định để hợp dark theme
 .rc-slider {
-    .rc-slider-track {
-        background-color: $primary-red;
+    .rc-slider-rail {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        height: 6px !important;
     }
+    
+    .rc-slider-track {
+        background-color: $accent-color !important;
+        height: 6px !important;
+    }
+    
     .rc-slider-handle {
-        border-color: $primary-red;
-        &:focus, &:active {
-            box-shadow: 0 0 0 5px rgba($primary-red, 0.2);
+        border: 2px solid $accent-color !important;
+        background-color: #1e1e28 !important; // Màu nền handle trùng nền web
+        width: 20px !important;
+        height: 20px !important;
+        margin-top: -7px !important; // Căn giữa handle
+        opacity: 1 !important;
+        box-shadow: 0 0 10px rgba($accent-color, 0.5);
+        
+        &:focus, &:active, &:hover {
+            box-shadow: 0 0 0 4px rgba($accent-color, 0.2) !important;
+            border-color: lighten($accent-color, 10%) !important;
         }
     }
+}
+
+// Animation
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
