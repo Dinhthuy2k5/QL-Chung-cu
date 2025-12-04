@@ -60,7 +60,7 @@ function Families() {
     return (
         <div className="family-list-container">
             <div className="family-list-header">
-                <h2 className="page-title">{t('families_page.title')}</h2>
+                <h3 className="page-title">{t('families_page.title')}</h3>
                 <button className="add-family-btn">
                     <i className="fa-solid fa-plus"></i> {t('families_page.add_button')}
                 </button>

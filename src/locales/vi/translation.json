@@ -99,6 +99,7 @@
         "cancel_button": "Hủy"
     },
     "families_page": {
+        "title": "Danh sách hộ gia đình",
         "add_button": "Thêm hộ gia đình",
         "table_headers": {
             "head_cccd": "CCCD Chủ hộ",
