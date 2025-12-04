@@ -124,6 +124,29 @@
             "owner_change_success": "Household head changed successfully!"
         }
     },
+    "family_detail": {
+        "title": "Family Details",
+        "householder": "Householder",
+        "cccd": "Householder ID",
+        "address": "Room Address",
+        "vehicles": "Vehicles",
+        "members_list": "Members List"
+    },
+    "common": {
+        "motorbike": "Motorbike",
+        "car": "Car",
+        "owner": "Owner",
+        "close": "Close",
+        "no_data": "No data available",
+        "loading": "Loading..."
+    },
+    "resident_table": {
+        "name": "Full Name",
+        "dob": "Date of Birth",
+        "gender": "Gender",
+        "relation": "Relation to Owner",
+        "phone": "Phone Number"
+    },
     "resident_list": {
         "temp_absence_button": "Register Absence",
         "temp_residence_button": "Register Residence",

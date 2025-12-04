@@ -1,129 +1,231 @@
-// This file is very similar to List_Resident.scss for consistency
+// --- BIẾN MÀU SẮC CHUNG (Đồng bộ toàn app) ---
+$bg-dark: #1e1e2f;
+$panel-bg: #27293d;
+$accent-color: #4361ee;
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
+$success-color: #00f2c3;
+$warning-color: #ff8d72;
+$danger-color: #fd5d93;
 
 .family-list-container {
     width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    // UPDATED: Reduced top padding to move the component up
-    padding: 5px 20px 20px 20px;
-}
+    padding: 20px 30px;
+    color: $text-primary;
+    animation: fadeIn 0.5s ease-out;
 
-.family-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    // UPDATED: Reduced bottom margin to move the table up
-    margin-bottom: 15px;
-}
+    .family-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
 
-// Style for "Thêm hộ gia đình" button
-.add-family-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    &:hover {
-        background-color: #0056b3;
+        .add-family-btn {
+            background-color: $accent-color;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba($accent-color, 0.4);
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba($accent-color, 0.6);
+            }
+        }
     }
 }
 
-// Table styling
-// ... (các style khác giữ nguyên)
+// --- STYLE BẢNG CHÍNH ---
+.table-wrapper {
+    background-color: $panel-bg;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow-x: auto;
+}
 
-// Table styling
-table {
+.main-table {
     width: 100%;
-    border-collapse: collapse;
-    color: #e9ecef;
-    
-    // --- Bắt đầu cập nhật ---
-    background: rgba(53, 58, 66, 0.6); // Nền kính mờ
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    // --- Kết thúc cập nhật ---
-    
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-collapse: separate;
+    border-spacing: 0 10px; // Tạo khoảng cách giữa các hàng
 
-    th, td {
-        padding: 15px;
+    th {
         text-align: left;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1); // Viền mờ
-        font-size: 0.9rem;
-    }
-
-    thead tr {
-        // Nền cho hàng tiêu đề
-        background-color: rgba(255, 255, 255, 0.05); // Nền nổi bật nhẹ
-        font-weight: bold;
+        color: $text-secondary;
+        font-weight: 600;
+        padding: 15px;
+        border-bottom: 1px solid $border-color;
+        text-transform: uppercase;
+        font-size: 0.8rem;
     }
 
     tbody tr {
-        transition: background-color 0.2s ease;
+        background-color: rgba(255, 255, 255, 0.02);
+        transition: transform 0.2s, background-color 0.2s;
+
         &:hover {
-            background-color: rgba(255, 255, 255, 0.1); // Hiệu ứng hover
-        }
-    }
-    
-    // ... (các style .action giữ nguyên)
-
-    .actions-header {
-        text-align: center;
-    }
-
-    .action {
-        text-align: center;
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-
-        .edit-btn, .delete-btn {
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s ease;
+            background-color: rgba($accent-color, 0.1);
+            transform: scale(1.01);
         }
 
-        .edit-btn {
-            background-color: #17a2b8; // Info color
-            &:hover {
-                background-color: darken(#17a2b8, 10%);
-            }
-        }
+        td {
+            padding: 15px;
+            vertical-align: middle;
+            border-top: 1px solid rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(0,0,0,0.2);
 
-        .delete-btn {
-            background-color: #dc3545; // Danger color
-            &:hover {
-                background-color: darken(#dc3545, 10%);
-            }
+            &:first-child { border-left: 1px solid rgba(0,0,0,0.2); border-radius: 8px 0 0 8px; }
+            &:last-child { border-right: 1px solid rgba(0,0,0,0.2); border-radius: 0 8px 8px 0; }
         }
     }
 }
 
-// ... các style cho .edit-btn, .delete-btn
+// Các thành phần trong bảng
+.highlight-text { color: $accent-color; font-weight: bold; }
+.text-center { text-align: center; }
 
-    // Style cho nút thay đổi chủ hộ
-    .change-owner-btn {
-        background-color: #ffc107; // Màu vàng (warning)
-        color: black;
+.user-info {
+    display: flex;
+    flex-direction: column;
+    span { font-weight: 600; color: $text-primary; }
+    small { font-size: 0.8rem; color: $text-secondary; }
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    &.success { background: rgba($success-color, 0.2); color: $success-color; }
+    &.warning { background: rgba($warning-color, 0.2); color: $warning-color; }
+}
+
+.action-cell {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    .icon-btn {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
         border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.2s ease;
-        white-space: nowrap; // Giữ chữ trên một hàng
+        transition: all 0.2s;
+        font-size: 1rem;
 
-        &:hover {
-            background-color: darken(#ffc107, 10%);
+        &.view-btn {
+            background-color: rgba($accent-color, 0.2);
+            color: $accent-color;
+            &:hover { background-color: $accent-color; color: white; }
+        }
+
+        &.change-btn {
+            background-color: rgba($warning-color, 0.2);
+            color: $warning-color;
+            &:hover { background-color: $warning-color; color: white; }
         }
     }
+}
+
+// --- STYLE CHO MODAL CHI TIẾT (FamilyDetailModal) ---
+.detail-modal {
+    // Kế thừa style modal-content từ file global hoặc định nghĩa lại
+    background-color: $panel-bg;
+    border: 1px solid $border-color;
+    width: 90%;
+    max-width: 900px;
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        border-bottom: 1px solid $border-color;
+
+        h3 { margin: 0; color: $accent-color; }
+        .close-btn { background: none; border: none; color: $text-secondary; font-size: 1.5rem; cursor: pointer; }
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    // Card thông tin chung
+    .family-info-card {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); // 2 cột
+        gap: 20px;
+        background-color: rgba(255,255,255,0.03);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            label { color: $text-secondary; font-size: 0.85rem; margin-bottom: 5px; }
+            span { color: $text-primary; font-weight: 600; font-size: 1.1rem; }
+        }
+    }
+
+    .section-title {
+        color: $text-primary;
+        margin-bottom: 15px;
+        padding-left: 10px;
+        border-left: 4px solid $accent-color;
+    }
+
+    // Bảng thành viên trong Modal
+    .members-table-container {
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            
+            th, td {
+                padding: 12px 15px;
+                text-align: left;
+                font-size: 0.9rem;
+            }
+            
+            th { background-color: rgba(0,0,0,0.3); color: $text-secondary; }
+            td { border-top: 1px solid $border-color; color: $text-primary; }
+            
+            // Highlight chủ hộ
+            .is-householder {
+                font-weight: bold;
+                color: $accent-color;
+            }
+            
+            .tag-owner {
+                font-size: 0.7rem;
+                background-color: $accent-color;
+                color: white;
+                padding: 2px 6px;
+                border-radius: 4px;
+                margin-left: 8px;
+                vertical-align: middle;
+            }
+        }
+    }
+}

@@ -1,0 +1,202 @@
+/* --- 1. Variables --- */
+$modal-overlay: rgba(0, 0, 0, 0.7);
+$glass-bg: #27293d; // Dùng màu nền đặc thay vì kính mờ để tránh lỗi hiển thị chồng chéo
+$accent-color: #4361ee;
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
+$highlight-color: #00f2c3;
+
+/* --- 2. Layout --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: $modal-overlay;
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content.detail-modal {
+    width: 850px;
+    max-width: 95%;
+    max-height: 90vh; // Giới hạn chiều cao modal
+    display: flex;
+    flex-direction: column;
+    
+    background: $glass-bg;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    color: $text-primary;
+    animation: slideUp 0.3s ease;
+
+    .modal-header {
+        padding: 20px 30px;
+        border-bottom: 1px solid $border-color;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255,255,255,0.02);
+
+        h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            color: $accent-color;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .close-btn {
+            background: none; border: none;
+            color: $text-secondary;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            &:hover { color: #ff5b5b; }
+        }
+    }
+
+    // --- BODY ---
+    .modal-body {
+        padding: 30px;
+        overflow-y: auto; // Cho phép cuộn nội dung body
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+
+        // Card thông tin chung
+        .family-info-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); // Chia 2 cột lớn
+            gap: 20px;
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                label {
+                    font-size: 0.75rem;
+                    color: $text-secondary;
+                    text-transform: uppercase;
+                    margin-bottom: 6px;
+                    font-weight: 600;
+                }
+                span {
+                    font-size: 1rem;
+                    color: $text-primary;
+                    font-weight: 500;
+                    word-break: break-word;
+                }
+            }
+        }
+
+        // Phần danh sách thành viên
+        .members-section {
+            .section-title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+                color: $text-primary;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                
+                span {
+                    color: $accent-color;
+                    font-weight: bold;
+                    margin-right: 10px;
+                    font-size: 1.5rem;
+                }
+            }
+
+            // Container bảng - QUAN TRỌNG: Bỏ overflow: hidden để không bị cắt
+            .members-table-container {
+                width: 100%;
+                border: 1px solid $border-color;
+                border-radius: 10px;
+                overflow-x: auto; // Chỉ cuộn ngang nếu bảng quá rộng
+
+                .members-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    min-width: 600px; // Đảm bảo bảng không bị co quá nhỏ
+
+                    thead th {
+                        text-align: left;
+                        padding: 15px;
+                        font-size: 0.8rem;
+                        color: $text-secondary;
+                        text-transform: uppercase;
+                        background: rgba(0,0,0,0.3);
+                        border-bottom: 1px solid $border-color;
+                        white-space: nowrap;
+                    }
+
+                    tbody tr {
+                        border-bottom: 1px solid rgba(255,255,255,0.05);
+                        &:last-child { border-bottom: none; }
+                        &:hover { background: rgba(255,255,255,0.03); }
+
+                        td {
+                            padding: 14px 15px;
+                            font-size: 0.95rem;
+                            color: $text-primary;
+                            vertical-align: middle;
+                        }
+
+                        .is-householder {
+                            font-weight: 700;
+                            color: $highlight-color;
+                            display: flex; 
+                            align-items: center;
+                            gap: 8px;
+                        }
+
+                        .tag-owner {
+                            font-size: 0.65rem;
+                            background: rgba($highlight-color, 0.15);
+                            color: $highlight-color;
+                            padding: 2px 8px;
+                            border-radius: 4px;
+                            border: 1px solid rgba($highlight-color, 0.3);
+                            text-transform: uppercase;
+                        }
+                    }
+                    
+                    .text-center { text-align: center; }
+                }
+            }
+        }
+    }
+
+    .modal-actions {
+        padding: 20px 30px;
+        border-top: 1px solid $border-color;
+        display: flex;
+        justify-content: flex-end;
+        background: rgba(0,0,0,0.2);
+
+        .cancel-btn {
+            padding: 10px 30px;
+            background: $accent-color;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            &:hover { background: lighten($accent-color, 5%); }
+        }
+    }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

@@ -124,6 +124,29 @@
             "owner_change_success": "Đã thay đổi chủ hộ thành công!"
         }
     },
+    "family_detail": {
+        "title": "Chi tiết Hộ Gia Đình",
+        "householder": "Chủ hộ",
+        "cccd": "Số CCCD Chủ hộ",
+        "address": "Địa chỉ phòng",
+        "vehicles": "Phương tiện",
+        "members_list": "Danh sách thành viên"
+    },
+    "common": {
+        "motorbike": "Xe máy",
+        "car": "Ô tô",
+        "owner": "Chủ hộ",
+        "close": "Đóng",
+        "no_data": "Không có dữ liệu",
+        "loading": "Đang tải..."
+    },
+    "resident_table": {
+        "name": "Họ và tên",
+        "dob": "Ngày sinh",
+        "gender": "Giới tính",
+        "relation": "Quan hệ với chủ hộ",
+        "phone": "Số điện thoại"
+    },
     "resident_list": {
         "temp_absence_button": "Cấp tạm vắng",
         "temp_residence_button": "Cấp tạm trú",
