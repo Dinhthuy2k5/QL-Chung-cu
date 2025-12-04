@@ -125,7 +125,7 @@ function Resident(props) {
     return (
         <div className="resident-page-wrapper">
             <div className="resident-header">
-                <h2 style={{ marginBottom: '25px' }}>Quản lý Cư dân</h2>
+                {/* <h2 style={{ marginBottom: '25px' }}>Quản lý Cư dân</h2> */}
 
                 {/* --- 1. MENU TAB NGANG --- */}
                 <div className="resident-nav-tabs">

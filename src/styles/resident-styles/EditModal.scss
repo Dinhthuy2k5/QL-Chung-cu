@@ -1,58 +1,78 @@
-// --- BIẾN MÀU SẮC CHO THEME TỐI ---
-$primary-red: #e74c3c;
-$secondary-gray: #6c757d;
-$dark-bg-main: #3a3f44;
-$dark-bg-header: #40454c;
-$dark-bg-input: #2c3038;
-$text-color-light: #e9ecef;
-$label-color-light: #adb5bd;
-$border-color-dark: #5a5f66;
+// --- 1. BIẾN MÀU SẮC (Đồng bộ ResidentGlobal) ---
+$bg-dark: #1e1e2f;       // Màu nền input
+$panel-bg: #27293d;      // Màu nền Modal
+$accent-color: #4361ee;  // Màu chủ đạo (Xanh)
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
+$danger-color: #ef476f;
 
-// --- LỚP PHỦ NỀN MỜ ---
+// --- 2. LỚP PHỦ (Overlay) ---
 .modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.7); // Tối hơn để nổi bật modal
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1001;
-    backdrop-filter: blur(4px);
+    z-index: 1050;
+    animation: fadeIn 0.3s ease-out;
 }
 
-// --- KHUNG NỘI DUNG CỦA MODAL ---
+// --- 3. KHUNG MODAL ---
 .modal-content {
-    background-color: $dark-bg-main;
-    color: $text-color-light;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 700px; // Tăng chiều rộng để chứa 2 cột
-    box-shadow: 0 5px B20px rgba(0, 0, 0, 0.5);
-    border: 1px solid $border-color-dark;
+    background-color: $panel-bg;
+    color: $text-primary;
+    border-radius: 16px;
+    border: 1px solid $border-color;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     
-    h3 {
-        text-align: center;
-        padding: 20px;
-        margin: 0;
-        font-size: 1.5rem;
-        background-color: $dark-bg-header;
-        border-bottom: 1px solid $border-color-dark;
-        border-radius: 12px 12px 0 0;
-    }
+    // Kích thước
+    width: 95%;
+    max-width: 800px; // Rộng hơn để chứa 2 cột
+    max-height: 90vh; // Không vượt quá chiều cao màn hình
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
 }
 
-// --- FORM VÀ BODY ---
-.modal-body {
-    padding: 25px 30px;
-    
-    // Sử dụng CSS Grid để tạo layout 2 cột
-    display: grid;
-    grid-template-columns: 1fr 1fr; // Chia làm 2 cột bằng nhau
-    gap: 20px; // Khoảng cách giữa các ô
+// --- 4. HEADER ---
+.modal-content h3 {
+    margin: 0;
+    padding: 20px 30px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid $border-color;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: $text-primary;
+    flex-shrink: 0;
+}
 
+// --- 5. BODY (FORM GRID) ---
+.modal-body {
+    padding: 30px;
+    overflow-y: auto; // Cuộn dọc
+    flex-grow: 1;
+
+    // Tùy chỉnh thanh cuộn
+    &::-webkit-scrollbar { width: 8px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    // --- LAYOUT 2 CỘT ---
+    display: grid;
+    grid-template-columns: 1fr 1fr; // Chia đôi
+    gap: 20px 30px; // Khoảng cách (dòng cột)
+
+    // Style cho từng ô nhập
     .form-group {
         display: flex;
         flex-direction: column;
@@ -61,70 +81,89 @@ $border-color-dark: #5a5f66;
             margin-bottom: 8px;
             font-size: 0.9rem;
             font-weight: 600;
-            color: $label-color-light;
+            color: $text-secondary;
         }
 
-        input,
-        select {
+        input, select {
             width: 100%;
-            padding: 12px;
-            background-color: $dark-bg-input;
-            border: 1px solid $border-color-dark;
-            color: $text-color-light;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 12px 15px;
+            background-color: $bg-dark;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            color: $text-primary;
+            font-size: 0.95rem;
             box-sizing: border-box;
+            transition: all 0.2s ease;
 
             &:focus {
                 outline: none;
-                border-color: $primary-red;
-                box-shadow: 0 0 0 3px rgba($primary-red, 0.2);
+                border-color: $accent-color;
+                box-shadow: 0 0 0 3px rgba($accent-color, 0.25);
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+            
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.2);
             }
         }
-        
+
+        // Chỉnh icon lịch
         input[type="date"] {
             color-scheme: dark;
-            &::-webkit-calendar-picker-indicator {
-                filter: invert(1);
-                cursor: pointer;
+        }
+    }
+}
+
+// --- 6. FOOTER ---
+.modal-actions {
+    padding: 20px 30px;
+    border-top: 1px solid $border-color;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    flex-shrink: 0;
+
+    button {
+        padding: 12px 25px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.save-btn {
+            background-color: $accent-color;
+            color: white;
+            box-shadow: 0 4px 12px rgba($accent-color, 0.3);
+
+            &:hover {
+                background-color: lighten($accent-color, 5%);
+                transform: translateY(-2px);
+            }
+        }
+
+        &.cancel-btn {
+            background-color: transparent;
+            border: 1px solid $border-color;
+            color: $text-secondary;
+
+            &:hover {
+                border-color: $text-primary;
+                color: $text-primary;
+                background-color: rgba(255, 255, 255, 0.05);
             }
         }
     }
 }
 
-// --- FOOTER VÀ CÁC NÚT BẤM ---
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    padding: 20px 30px;
-    border-top: 1px solid $border-color-dark;
-    background-color: $dark-bg-header;
-    border-radius: 0 0 12px 12px;
-
-    button {
-        padding: 10px 25px;
-        border-radius: 6px;
-        border: none;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .save-btn {
-        background-color: $primary-red;
-        color: white;
-        &:hover {
-            background-color: darken($primary-red, 10%);
-        }
-    }
-
-    .cancel-btn {
-        background-color: $secondary-gray;
-        color: white;
-        &:hover {
-            background-color: darken($secondary-gray, 10%);
-        }
-    }
+// --- Animations ---
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
