@@ -1,0 +1,195 @@
+// --- 1. BIẾN MÀU SẮC (Đồng bộ với ResidentGlobal) ---
+$bg-dark: #1e1e2f;       // Màu nền input
+$panel-bg: #27293d;      // Màu nền Modal
+$accent-color: #4361ee;  // Màu chủ đạo (Xanh)
+$text-primary: #ffffff;
+$text-secondary: #9a9a9a;
+$border-color: rgba(255, 255, 255, 0.1);
+$hover-bg: rgba(255, 255, 255, 0.05);
+
+.my-custom-modal-layout {
+// --- 2. LỚP PHỦ NỀN (Overlay) ---
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); // Làm tối nền sau lưng
+    backdrop-filter: blur(5px);           // Hiệu ứng mờ kính
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+// --- 3. KHUNG MODAL (Modal Content) ---
+.modal-content {
+    background-color: $panel-bg;
+    color: $text-primary;
+    border-radius: 16px;          // Bo tròn mềm mại hơn
+    width: 100%;
+    max-width: 500px;             // Độ rộng vừa phải
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid $border-color;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;             // Tránh tràn màn hình dọc
+    animation: slideUp 0.3s ease-out;
+
+    // Ngăn chặn sự kiện click lan ra overlay
+    pointer-events: auto; 
+}
+
+// --- 4. HEADER ---
+.modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+
+    h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: $text-primary;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .close-button {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: $text-secondary;
+        font-size: 24px;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #ff5b5b; // Màu đỏ khi hover nút đóng
+        }
+    }
+}
+
+// --- 5. BODY & FORM ---
+// Đảm bảo form chiếm hết chiều cao còn lại để scroll hoạt động
+form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden; 
+}
+
+.modal-body {
+    padding: 25px 30px;
+    overflow-y: auto; // Cho phép cuộn nội dung nếu dài
+    flex: 1;
+
+    // Tùy chỉnh thanh cuộn cho đẹp
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: $text-secondary;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: $bg-dark; // Nền tối thẫm cho input
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            color: $text-primary;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+
+            &:focus {
+                outline: none;
+                border-color: $accent-color;
+                box-shadow: 0 0 0 3px rgba($accent-color, 0.2);
+            }
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        // Chỉnh icon lịch cho input date
+        input[type="date"] {
+            color-scheme: dark; 
+        }
+    }
+}
+
+// --- 6. FOOTER ---
+.modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2); // Tối hơn một chút
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    flex-shrink: 0;
+
+    .submit-btn {
+        background: $accent-color;
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba($accent-color, 0.4);
+
+        &:hover {
+            background: lighten($accent-color, 5%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba($accent-color, 0.6);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+// --- Keyframes ---
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+}
