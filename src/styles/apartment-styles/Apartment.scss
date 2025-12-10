@@ -1,20 +1,22 @@
-// --- BIẾN MÀU SẮC & CẤU HÌNH ---
-$text-primary: #ffffff;
-$text-secondary: #adb5bd;
-$accent-color: #4361ee; // Màu xanh chủ đạo hiện đại
-$danger-color: #ef476f;
-$warning-color: #ffd166;
-$success-color: #06d6a0;
+/* --- 1. ĐỊNH NGHĨA BIẾN MÀU (Đồng bộ với ResidentGlobal) --- */
+$accent-color: #4361ee;       // Xanh chủ đạo
+$text-primary: #ffffff;       // Chữ trắng
+$text-secondary: #d1d1d1;     // Chữ xám nhạt
+$success-color: #00f2c3;
+$warning-color: #ff8d72;
+$danger-color: #fd5d93;
 
-// Hiệu ứng kính mờ (Glassmorphism)
-$glass-bg: rgba(30, 30, 40, 0.7); 
+// Cấu hình nền kính tối
+$glass-bg: rgba(39, 41, 61, 0.75); 
 $glass-border: 1px solid rgba(255, 255, 255, 0.1);
-$card-hover-bg: rgba(255, 255, 255, 0.08);
+$card-hover-bg: rgba(255, 255, 255, 0.05);
 
 .apartment-page-wrapper {
     padding: 20px 40px;
     width: 100%;
+    // QUAN TRỌNG: Chuyển màu chữ sang trắng và nền trong suốt
     color: $text-primary;
+    background-color: transparent; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-sizing: border-box;
     animation: fadeIn 0.5s ease-in-out;
@@ -28,6 +30,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     margin-bottom: 30px;
 
     .stat-card {
+        // Thay nền trắng bằng nền kính tối
         background: $glass-bg;
         backdrop-filter: blur(12px);
         border: $glass-border;
@@ -36,12 +39,13 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
         display: flex;
         align-items: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2); // Bóng đổ tối hơn
 
         &:hover {
             transform: translateY(-5px);
-            background: rgba(40, 40, 55, 0.8);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: rgba(45, 47, 70, 0.9); // Highlight nhẹ khi hover
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.2);
         }
 
         .stat-icon {
@@ -54,13 +58,14 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
             font-size: 1.5rem;
             margin-right: 15px;
             
-            &.orange { background: rgba($warning-color, 0.2); color: $warning-color; }
-            &.blue { background: rgba($accent-color, 0.2); color: $accent-color; }
-            &.green { background: rgba($success-color, 0.2); color: $success-color; }
+            // Chỉnh lại màu nền icon cho hợp dark mode (trong suốt hơn)
+            &.orange { background: rgba($warning-color, 0.15); color: $warning-color; }
+            &.blue { background: rgba($accent-color, 0.15); color: $accent-color; }
+            &.green { background: rgba($success-color, 0.15); color: $success-color; }
         }
 
         .stat-info {
-            h3 { margin: 0; font-size: 1.8rem; font-weight: 700; }
+            h3 { margin: 0; font-size: 1.8rem; font-weight: 700; color: $text-primary; }
             p { margin: 5px 0 0; color: $text-secondary; font-size: 0.9rem; }
         }
     }
@@ -76,16 +81,56 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     .section-title {
         font-size: 1.5rem;
         margin: 0;
+        color: $text-primary; // Chữ trắng
         border-left: 4px solid $accent-color;
         padding-left: 15px;
     }
 
+    // Phần controls bên phải
+    .right-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    // Nút chuyển đổi View (List/Grid)
+    .view-toggles {
+        display: flex;
+        background: rgba(255, 255, 255, 0.1); // Nền mờ cho cụm nút
+        border-radius: 8px;
+        padding: 4px;
+        gap: 4px;
+        border: $glass-border;
+    }
+
+    .toggle-btn {
+        background: transparent;
+        border: none;
+        color: $text-secondary;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+            background: $accent-color;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+    }
+
     .filter-btn {
-        background: linear-gradient(135deg, $accent-color, darken($accent-color, 15%));
+        background: $accent-color; // Màu xanh đặc trưng
         color: white;
         border: none;
         padding: 10px 24px;
-        border-radius: 30px; // Bo tròn kiểu pill button
+        border-radius: 30px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
@@ -96,19 +141,20 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 
         &:hover {
             transform: scale(1.05);
+            background: lighten($accent-color, 5%);
             box-shadow: 0 6px 16px rgba($accent-color, 0.6);
         }
     }
 }
 
-// --- 3. BẢNG DỮ LIỆU HIỆN ĐẠI ---
+// --- 3. BẢNG DỮ LIỆU (GLASS TABLE) ---
 .glass-table-container {
-    background: $glass-bg;
+    background: $glass-bg; // Nền tối
     backdrop-filter: blur(12px);
     border: $glass-border;
     border-radius: 20px;
-    overflow: hidden; // Bo góc cho cả bảng
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); // Bóng đậm hơn
 }
 
 .modern-table {
@@ -116,35 +162,36 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     border-collapse: collapse;
     
     thead {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.25); // Header tối hơn nền bảng
         th {
             padding: 18px 20px;
             text-align: left;
             font-size: 0.9rem;
-            color: $text-secondary;
+            color: $text-secondary; // Chữ xám nhạt
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: $glass-border;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); // Viền mờ
         }
     }
 
     tbody {
         tr {
             transition: background 0.2s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); // Viền mờ giữa các dòng
 
             &:hover {
-                background: $card-hover-bg;
+                background: $card-hover-bg; // Màu highlight khi di chuột
             }
 
             td {
                 padding: 16px 20px;
                 vertical-align: middle;
                 font-size: 0.95rem;
+                color: $text-primary; // Chữ trắng
 
                 &.id-col { color: $text-secondary; font-family: monospace; }
-                &.highlight-text { font-weight: bold; color: $warning-color; font-size: 1.1rem; }
-                &.address-col { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+                &.highlight-text { font-weight: bold; color: #4cc9f0; font-size: 1.1rem; } // Đổi sang màu xanh sáng cho nổi
+                &.address-col { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,0.8); }
             }
         }
     }
@@ -159,6 +206,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     text-transform: uppercase;
     display: inline-block;
 
+    // Chỉnh màu badge cho hợp nền tối (dùng opacity thấp)
     &.status-vip { background: rgba($warning-color, 0.15); color: $warning-color; border: 1px solid rgba($warning-color, 0.3); }
     &.status-occupied { background: rgba($success-color, 0.15); color: $success-color; border: 1px solid rgba($success-color, 0.3); }
     &.status-vacant { background: rgba($text-secondary, 0.15); color: $text-secondary; border: 1px solid rgba($text-secondary, 0.3); }
@@ -179,8 +227,9 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
         cursor: pointer;
         transition: all 0.2s;
         
-        &.edit { background: rgba($accent-color, 0.1); color: $accent-color; &:hover { background: $accent-color; color: white; }}
-        &.delete { background: rgba($danger-color, 0.1); color: $danger-color; &:hover { background: $danger-color; color: white; }}
+        // Chỉnh màu nút hành động
+        &.edit { background: rgba($accent-color, 0.15); color: $accent-color; &:hover { background: $accent-color; color: white; }}
+        &.delete { background: rgba($danger-color, 0.15); color: $danger-color; &:hover { background: $danger-color; color: white; }}
     }
 }
 
@@ -191,63 +240,17 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     font-style: italic;
 }
 
-/* --- 1. CẬP NHẬT THANH ĐIỀU KHIỂN (CONTROLS) --- */
-.table-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.right-controls {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Khoảng cách giữa nút View và nút Filter */
-}
-
-/* Nút chuyển đổi View (List/Grid) */
-.view-toggles {
-    display: flex;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 4px;
-    gap: 4px;
-}
-
-.toggle-btn {
-    background: transparent;
-    border: none;
-    color: $text-secondary;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s ease;
-}
-
-.toggle-btn:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.toggle-btn.active {
-    background: $accent-color;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-/* --- 2. STYLE MỚI CHO GIAO DIỆN GRID (CARD VIEW) --- */
+/* --- 4. STYLE CHO GIAO DIỆN GRID (CARD VIEW) --- */
 
 .apartment-grid-container {
     display: grid;
-    /* Tự động chia cột, tối thiểu 280px 1 cột */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
     animation: fadeIn 0.5s ease-in-out;
 }
 
 .apartment-card-item {
-    background: $glass-bg;
+    background: $glass-bg; // Nền kính tối
     backdrop-filter: blur(12px);
     border: $glass-border;
     border-radius: 16px;
@@ -257,12 +260,14 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
-}
+    color: $text-primary;
 
-.apartment-card-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-color: rgba($accent-color, 0.5);
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        border-color: rgba($accent-color, 0.5);
+        background: rgba(45, 47, 70, 0.9);
+    }
 }
 
 /* Header của Card (ID + Badge) */
@@ -281,7 +286,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 
 /* Body của Card */
 .card-body {
-    flex: 1; /* Đẩy footer xuống đáy */
+    flex: 1;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -290,12 +295,13 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
     font-size: 3rem;
     margin-bottom: 10px;
     opacity: 0.8;
+    color: $text-secondary; // Icon màu sáng
 }
 
 .card-title {
     margin: 0;
     font-size: 1.5rem;
-    color: white;
+    color: $text-primary; // Tiêu đề trắng
     font-weight: 700;
 }
 
@@ -307,7 +313,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 .card-details {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.05); // Nền chi tiết mờ
     border-radius: 8px;
     padding: 10px;
     text-align: left;
@@ -333,14 +339,14 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 .detail-item .value {
-    color: white;
+    color: $text-primary;
     font-weight: 600;
 }
 
 .detail-item .value.address {
     font-size: 0.85rem;
     line-height: 1.4;
-    color: #e9ecef;
+    color: rgba(255,255,255,0.8);
 }
 
 /* Footer của Card (Nút bấm) */
@@ -361,7 +367,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 .btn-action.edit {
-    background: rgba($accent-color, 0.1);
+    background: rgba($accent-color, 0.15);
     color: $accent-color;
 }
 .btn-action.edit:hover {
@@ -370,7 +376,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.08);
 }
 
 .btn-action.delete {
-    background: rgba($danger-color, 0.1);
+    background: rgba($danger-color, 0.15);
     color: $danger-color;
 }
 .btn-action.delete:hover {

@@ -144,10 +144,10 @@ function Apartment(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-footer">
+                            {/* <div className="card-footer">
                                 <button className="btn-action edit">{t('apartment_table.edit')}</button>
                                 <button className="btn-action delete">{t('apartment_table.delete')}</button>
-                            </div>
+                            </div> */}
                         </div>
                     ))}
                 </div>
