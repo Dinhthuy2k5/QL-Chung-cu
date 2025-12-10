@@ -43,7 +43,8 @@
         "avg_area": "Avg. Area",
         "no_data": "No matching data found",
         "edit": "Edit",
-        "delete": "Delete"
+        "delete": "Delete",
+        "building": "Building"
     },
     "filter_button": "Filter",
     "apartment_filter": {

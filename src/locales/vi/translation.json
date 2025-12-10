@@ -43,7 +43,8 @@
         "avg_area": "Diện tích TB",
         "no_data": "Không tìm thấy dữ liệu phù hợp",
         "edit": "Sửa",
-        "delete": "Xóa"
+        "delete": "Xóa",
+        "building": "Tòa"
     },
     "filter_button": "Lọc",
     "apartment_filter": {

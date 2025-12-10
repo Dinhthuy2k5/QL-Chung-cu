@@ -240,6 +240,34 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
     font-style: italic;
 }
 
+.apartment-floors-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; // Khoảng cách giữa các tầng
+}
+
+.floor-group {
+    // Không cần background, chỉ cần tiêu đề
+    
+    .floor-title {
+        color: $text-secondary;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); // Đường kẻ ngang phân cách
+        display: flex;
+        align-items: center;
+        
+        &::before {
+            content: '🏢';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+    }
+}
+
 /* --- 4. STYLE CHO GIAO DIỆN GRID (CARD VIEW) --- */
 
 .apartment-grid-container {
@@ -268,6 +296,40 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
         border-color: rgba($accent-color, 0.5);
         background: rgba(45, 47, 70, 0.9);
     }
+
+    // Style riêng cho các loại icon
+    .card-icon-placeholder {
+        font-size: 3.5rem; // Mặc định to
+        margin-bottom: 15px;
+        transition: transform 0.3s;
+        
+        &.icon-penthouse {
+            font-size: 4.5rem; // To nhất
+            filter: drop-shadow(0 0 10px gold); // Phát sáng màu vàng
+            animation: float 3s ease-in-out infinite; // Hiệu ứng bay bổng
+        }
+        
+        &.icon-3pn {
+            font-size: 4rem;
+            color: #4cc9f0;
+        }
+        
+        &.icon-studio {
+            font-size: 2.5rem; // Nhỏ gọn
+            opacity: 0.8;
+        }
+    }
+    
+    &:hover .card-icon-placeholder {
+        transform: scale(1.1); // Phóng to khi hover vào thẻ
+    }
+}
+
+// Animation bay bổng cho Penthouse
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 
 /* Header của Card (ID + Badge) */
