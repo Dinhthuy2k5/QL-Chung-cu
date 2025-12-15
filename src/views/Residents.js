@@ -43,8 +43,21 @@ function Resident(props) {
 
 
     const deleteAResident = (cccd) => {
+
+
+        const token = getToken();
+        if (!token) {
+            alert(t('alerts.session_expired')); // Dịch alert
+            return;
+        }
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        const apiUrl = `http://localhost:8080/qlcc/nhan-khau/${cccd}`;
+
+        axios.delete(apiUrl, config)
+            .then(response => console.log('Xóa nhân khẩu thành công!', response.data))
+            .catch(error => console.error('Lỗi khi xóa nhân khẩu:', error.response ? error.response.data : error.message));
         setListResidents(prevList => prevList.filter(item => item.cccd !== cccd));
-        // Bạn cũng nên gọi API DELETE ở đây
+
     }
 
     const handleOpenEditModal = (resident) => {

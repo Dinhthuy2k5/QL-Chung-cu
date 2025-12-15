@@ -7,6 +7,7 @@ $text-secondary: #9a9a9a;
 $border-color: rgba(255, 255, 255, 0.1);
 $danger-color: #ef476f;
 
+.edit-modal-wrapper {
 // --- 2. LỚP PHỦ (Overlay) ---
 .modal-backdrop {
     position: fixed;
@@ -156,6 +157,7 @@ $danger-color: #ef476f;
             }
         }
     }
+}
 }
 
 // --- Animations ---

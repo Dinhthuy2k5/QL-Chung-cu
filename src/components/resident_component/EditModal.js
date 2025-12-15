@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import '../../styles/resident-styles/EditModal.scss'; // Import file SCSS mới
+import '../../styles/resident-styles/EditModalnew.scss'; // Import file SCSS mới
 import { useTranslation } from "react-i18next";
 
 function EditModal({ show, onClose, onSave, isAddResident, resident }) {
@@ -28,7 +28,7 @@ function EditModal({ show, onClose, onSave, isAddResident, resident }) {
     if (!show) return null;
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
+        <div className="modal-backdrop edit-modal-wrapper" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
 
                 <h3>{isAddResident ? t('edit_modal.title_add') : t('edit_modal.title_edit')}</h3>
