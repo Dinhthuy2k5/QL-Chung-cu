@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom'; // 1. Import ReactDOM
 import axios from 'axios';
 import { getToken } from '../../../services/localStorageService';
 import { useTranslation } from 'react-i18next';
@@ -124,7 +125,7 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
         }
     };
 
-    return (
+    const modalContent = (
         <div className="modal-overlay">
             <div className="modal-content wizard-modal">
                 <div className="modal-header">
@@ -255,6 +256,12 @@ const CreateFeeWizard = ({ onClose, onRefresh }) => {
                 </div>
             </div>
         </div>
+    );
+
+    // 3. Dùng Portal để đẩy modal ra ngoài div#root (gắn thẳng vào body)
+    return ReactDOM.createPortal(
+        modalContent,
+        document.body
     );
 };
 

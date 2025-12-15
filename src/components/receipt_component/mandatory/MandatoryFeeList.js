@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // Bỏ import { error } from "three"; vì nó không cần thiết và sai
 import { getToken } from "../../../services/localStorageService";
-import '../../../styles/receipt-styles/MandatoryFeeList.scss'
+import '../../../styles/receipt-styles/MandatoryFeeListnew.scss'
 import axios from "axios";
 // 1. Import hook
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,26 @@ function MandatoryFeeList() {
     const [feeData, setFeeData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // --- FIX VỊ TRÍ MODAL: ĐẨY LÊN TRÊN ---
+    useEffect(() => {
+        // Tìm phần tử overlay cha (lớp phủ mờ)
+        const overlay = document.querySelector('.modal-overlay');
+        if (overlay) {
+            // Thêm class đặc biệt để CSS nhận biết
+            overlay.classList.add('modal-top-align');
+        }
+
+        // Dọn dẹp: Xóa class khi tắt component này để các modal khác không bị ảnh hưởng
+        return () => {
+            if (overlay) {
+                overlay.classList.remove('modal-top-align');
+            }
+        };
+    }, []);
+    // ---------------------------------------
+
+
 
     // 5. Chuyển đổi các hàm
     const handleInputChange = (event) => {

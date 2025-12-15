@@ -1,248 +1,304 @@
-// --- Biến màu sắc ---
-$primary-color: #007bff;
-$text-color: #e9ecef;
-$label-color: #adb5bd;
-$border-color: #495057;
-$modal-bg: rgba(44, 48, 56, 0.98);
-$input-bg: rgba(30, 33, 39, 0.6);
-$zebra-stripe: rgba(255, 255, 255, 0.03);
+/* --- 1. BIẾN MÀU & CẤU HÌNH (Đồng bộ) --- */
+$accent-color: #4361ee;       // Xanh chủ đạo
+$text-primary: #ffffff;       // Chữ trắng
+$text-secondary: #d1d1d1;     // Chữ xám nhạt
+$success-color: #00f2c3;
+$danger-color: #fd5d93;
+$bg-dark-input: #1e1e2f;      // Nền input đậm
+$modal-bg-dark: rgba(39, 41, 61, 0.95); // Nền modal kính đậm
 
-// --- 1. CẤU TRÚC KHUNG MODAL ---
-.modal-content.wizard-modal {
-    // Thu hẹp chiều rộng lại cho gọn (trước là 95% / 1100px)
-    width: 90%; 
-    max-width: 900px; // Giới hạn tối đa chỉ 900px là đủ đẹp cho bảng 4 cột
-    
-    // Chiều cao tự động co giãn theo nội dung, nhưng có giới hạn tối đa
-    height: auto;     
-    max-height: 85vh; // Không bao giờ vượt quá 85% màn hình
-    
-    display: flex;           
-    flex-direction: column;
-    
-    background-color: $modal-bg;
+// Mixin kính
+@mixin glass-panel {
+    background: $modal-bg-dark;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6); // Bóng đổ mềm hơn
-    color: $text-color;
-    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+}
+
+/* --- 2. LỚP PHỦ OVERLAY (SỬA LỖI CĂN GIỮA TẠI ĐÂY) --- */
+.modal-overlay {
+    position: fixed;
+   top: 0 !important;      // Bắt buộc dính đỉnh
+    left: 0 !important;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7); // Nền tối làm mờ phía sau
+    backdrop-filter: blur(4px);
     
-    // Hiệu ứng xuất hiện nhẹ nhàng
-    animation: modalFadeIn 0.3s ease-out;
-
-    .modal-body {
-        padding: 30px 40px;
-        flex-grow: 1;            
-        display: flex !important;
-        flex-direction: column !important;  
-        overflow-y: auto; // Chỉ cuộn phần body nếu nội dung dài (như bảng)
-        grid-template-columns: none !important;
-        gap: 0 !important;
-        
-        // Tùy chỉnh thanh cuộn cho body
-        &::-webkit-scrollbar { width: 6px; }
-        &::-webkit-scrollbar-track { background: transparent; }
-        &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-    }
-}
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-// --- 2. HEADER ---
-.modal-header {
-    padding: 20px 30px;
-    border-bottom: 1px solid $border-color;
+    // Flexbox để căn giữa tuyệt đối
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255,255,255,0.03);
-    flex-shrink: 0;
-
-    h3 { margin: 0; font-size: 1.4rem; font-weight: 600; color: #fff; }
-    button { 
-        background: none; border: none; color: $label-color; 
-        font-size: 1.8rem; cursor: pointer; transition: all 0.2s;
-        &:hover { color: #fff; transform: scale(1.1); }
-    }
+    justify-content: center;
+    align-items: center; 
+    
+    z-index: 99999; // Tăng z-index lên cực đại để không bị header che
+    margin: 0 !important;
+    padding: 0 !important;
+    animation: fadeIn 0.3s ease-out;
+   
+    box-sizing: border-box;
 }
 
-// --- 3. NỘI DUNG BƯỚC 4 (BẢNG) ---
-.utility-input-container {
+/* --- 3. KHUNG MODAL CHUNG --- */
+.modal-content.wizard-modal {
+    @include glass-panel;
+    
+    width: 100%;
+    max-width: 800px; // Độ rộng mặc định cho Wizard
+    
+    // Chiều cao linh hoạt nhưng không vượt quá màn hình
+    height: auto;
+    max-height: 85vh; 
+    
     display: flex;
     flex-direction: column;
-    height: 100%;       // Chiếm toàn bộ chiều cao modal-body
-    width: 100%;        // Chiếm toàn bộ chiều rộng
-    
-    h4 {
-        margin-top: 0;
-        margin-bottom: 20px;
-        flex-shrink: 0;
-        color: $primary-color;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border-bottom: 2px solid rgba($primary-color, 0.3);
-        display: inline-block;
-        padding-bottom: 5px;
+    color: $text-primary;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+
+    // Class mở rộng cho modal danh sách (Xem danh sách)
+    &.extra-large {
+        max-width: 1200px;
+        height: 85vh; // Modal danh sách nên cao hơn
     }
 
-    // Khung cuộn của bảng
-    .table-wrapper {
-        flex-grow: 1;            // Tự động giãn hết chiều cao còn lại
-        overflow-y: auto;     
-        min-height: 300px; 
-        max-height: 50vh;   
-        // Cuộn dọc nếu bảng quá dài
-        border: 1px solid $border-color;
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.2);
+    /* --- HEADER --- */
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.02);
+        flex-shrink: 0; // Không bị co lại
 
+        h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            color: $accent-color;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        button.close-btn {
+            background: none;
+            border: none;
+            color: $text-secondary;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+            &:hover { color: $danger-color; }
+        }
+    }
+
+    /* --- BODY (Cuộn nội dung ở đây) --- */
+    .modal-body {
+        padding: 30px;
+        overflow-y: auto; // Thanh cuộn dọc
+        flex-grow: 1;     // Chiếm hết khoảng trống còn lại
+        
         // Tùy chỉnh thanh cuộn
         &::-webkit-scrollbar { width: 8px; }
         &::-webkit-scrollbar-track { background: transparent; }
-        &::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            
-            thead {
-                position: sticky; // Cố định tiêu đề khi cuộn
-                top: 0;
-                background-color: #2c3038;
-                z-index: 5;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                
-                th {
-                    padding: 15px;
-                    text-align: left;
-                    color: #fff;
-                    font-weight: 600;
-                    border-bottom: 1px solid $border-color;
-                }
+        // --- CÁC FORM INPUT ---
+        .form-group {
+            margin-bottom: 20px;
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: $text-secondary;
+                font-size: 0.9rem;
+                font-weight: 600;
             }
 
-            tbody tr {
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-                &:nth-child(even) { background-color: $zebra-stripe; }
-                &:hover { background-color: rgba(255,255,255,0.05); }
+            input, select, textarea {
+                width: 100%;
+                padding: 12px 15px;
+                background-color: $bg-dark-input;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
+                color: $text-primary;
+                font-size: 0.95rem;
+                box-sizing: border-box;
+                transition: all 0.2s;
+
+                &:focus {
+                    outline: none;
+                    border-color: $accent-color;
+                    box-shadow: 0 0 0 3px rgba($accent-color, 0.25);
+                    background-color: rgba(0, 0, 0, 0.4);
+                }
+
+                &::placeholder { color: rgba(255, 255, 255, 0.2); }
                 
-                td {
-                    padding: 10px 15px;
-                    vertical-align: middle;
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            }
+            
+            textarea { resize: vertical; min-height: 80px; }
+        }
+
+        // Layout 2 cột cho các form dài
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            
+            @media (max-width: 600px) {
+                grid-template-columns: 1fr; // Mobile về 1 cột
+            }
+        }
+
+        // --- STYLE CHO BẢNG (Trong modal Lập danh sách/Thu phí) ---
+        .utility-input-container, .fee-list-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            h4 {
+                color: $text-primary;
+                margin-bottom: 15px;
+                font-size: 1.1rem;
+                border-left: 4px solid $accent-color;
+                padding-left: 10px;
+            }
+
+            .table-wrapper {
+                flex-grow: 1;
+                overflow: auto;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                background: rgba(0,0,0,0.2);
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
                     
-                    &:first-child { // Cột Tên Căn hộ
-                        font-weight: bold;
-                        color: #fff;
-                        span { display: block; font-size: 0.8rem; font-weight: normal; color: $label-color; }
+                    thead th {
+                        position: sticky;
+                        top: 0;
+                        background-color: #2b2d42; // Nền header đậm để che nội dung khi cuộn
+                        color: $text-secondary;
+                        padding: 12px 15px;
+                        text-align: left;
+                        font-size: 0.85rem;
+                        text-transform: uppercase;
+                        z-index: 2;
+                        border-bottom: 1px solid rgba(255,255,255,0.1);
+                        white-space: nowrap;
                     }
+
+                    tbody td {
+                        padding: 10px 15px;
+                        border-bottom: 1px solid rgba(255,255,255,0.05);
+                        color: $text-primary;
+                        font-size: 0.95rem;
+                        vertical-align: middle;
+                        
+                        // Input nhỏ trong bảng
+                        input.utility-input {
+                            background: rgba(255,255,255,0.05);
+                            border: 1px solid rgba(255,255,255,0.1);
+                            padding: 6px 10px;
+                            color: white;
+                            border-radius: 4px;
+                            width: 100px;
+                            
+                            &:focus {
+                                border-color: $success-color;
+                                background: black;
+                            }
+                        }
+                    }
+                    
+                    tbody tr:hover { background-color: rgba(255,255,255,0.03); }
+                }
+            }
+        }
+    }
+
+    /* --- FOOTER --- */
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between; // Đẩy nút Back sang trái, Next sang phải
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+
+        button {
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+
+            // Nút chính (Next/Save)
+            &:not(.secondary-btn) {
+                background-color: $accent-color;
+                color: white;
+                box-shadow: 0 4px 10px rgba($accent-color, 0.3);
+                margin-left: auto; // Đẩy về bên phải
+
+                &:hover {
+                    background-color: lighten($accent-color, 5%);
+                    transform: translateY(-2px);
+                }
+                
+                &:disabled {
+                    background-color: rgba(255,255,255,0.1);
+                    color: rgba(255,255,255,0.3);
+                    cursor: not-allowed;
+                    box-shadow: none;
+                    transform: none;
+                }
+            }
+
+            // Nút phụ (Back/Cancel)
+            &.secondary-btn {
+                background-color: transparent;
+                border: 1px solid rgba(255,255,255,0.2);
+                color: $text-secondary;
+                margin-right: auto; // Đẩy về bên trái
+
+                &:hover {
+                    border-color: $text-primary;
+                    color: $text-primary;
+                    background-color: rgba(255,255,255,0.05);
                 }
             }
         }
     }
 }
 
-// --- 4. INPUT STYLES ---
-// Input trong bảng tiện ích
-.utility-input {
-    width: 100%;
-    padding: 8px 12px;
-    background-color: $input-bg;
-    border: 1px solid $border-color;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 0.95rem;
+// Kết quả tóm tắt
+.modal-result-summary {
+    background: rgba($success-color, 0.1);
+    border: 1px solid rgba($success-color, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
     
-    &:focus {
-        outline: none;
-        border-color: $primary-color;
-        background-color: rgba(0,0,0,0.5);
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
-    // Ẩn nút tăng giảm số
-    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    h4 { margin: 0 0 10px 0; color: $success-color; font-size: 1rem; }
+    p { margin: 5px 0; font-size: 0.9rem; color: $text-secondary; }
+    strong { color: white; margin-left: 5px; }
 }
 
-// Input Form chung (Bước 1, 2, 3)
-.form-group {
-    margin-bottom: 25px;
-    label { display: block; margin-bottom: 10px; color: $label-color; font-weight: 500; }
-    input {
-        width: 100%;
-        padding: 14px 16px;
-        font-size: 1rem;
-        color: #fff;
-        background-color: $input-bg;
-        border: 1px solid $border-color;
-        border-radius: 8px;
-        box-sizing: border-box;
-        &:focus { outline: none; border-color: $primary-color; box-shadow: 0 0 0 4px rgba($primary-color, 0.15); }
-    }
+body.modal-open {
+    overflow: hidden; // Ngăn cuộn trang nền khi mở modal
 }
 
-.form-group-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr; // Chia đôi cột cho đẹp
-    gap: 40px;
-}
-
-// --- 5. FOOTER ---
-// --- 5. FOOTER ---
-.modal-footer {
-    padding: 20px 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255,255,255,0.03);
-    display: flex;
-    justify-content: space-between; // Đẩy 2 nút ra 2 đầu
-    align-items: center;
-    flex-shrink: 0;
-
-    button {
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        transition: all 0.2s ease;
-        letter-spacing: 0.5px;
-
-        // Style cho nút chính (Next/Submit)
-        &:not(.secondary-btn) {
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            margin-left: auto; // Quan trọng: Đẩy nút chính về sát bên phải nếu chỉ có 1 mình nó
-
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-                filter: brightness(1.1);
-            }
-            
-            &:active { transform: translateY(0); }
-
-            &:disabled {
-                background: #555;
-                cursor: not-allowed;
-                transform: none;
-                box-shadow: none;
-            }
-        }
-
-        // Style cho nút phụ (Back)
-        &.secondary-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: $label-color;
-            margin-right: auto; // Quan trọng: Đảm bảo nó luôn ở bên trái
-
-            &:hover {
-                background: rgba(255, 255, 255, 0.1);
-                border-color: #fff;
-                color: #fff;
-            }
-        }
-    }
-}
+// Animation
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

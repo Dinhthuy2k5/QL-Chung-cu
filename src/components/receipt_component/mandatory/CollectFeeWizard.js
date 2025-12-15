@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { getToken } from '../../../services/localStorageService';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +69,7 @@ const CollectFeeWizard = ({ onClose, onResult }) => {
 
     const formatCurrency = (val) => (val || 0).toLocaleString('vi-VN') + ' đ';
 
-    return (
+    const modalContent = (
         <div className="modal-overlay">
             {/* Sử dụng class wizard-modal để có kích thước nhỏ gọn giống CreateFeeWizard */}
             <div className="modal-content wizard-modal">
@@ -164,6 +165,12 @@ const CollectFeeWizard = ({ onClose, onResult }) => {
                 </div>
             </div>
         </div>
+    );
+
+    // 3. Dùng Portal để đẩy modal ra ngoài body (Fix lỗi bị thụt xuống)
+    return ReactDOM.createPortal(
+        modalContent,
+        document.body
     );
 };
 
