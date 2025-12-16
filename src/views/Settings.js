@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import '../styles/settings-styles/Settings.scss';
 import axios from "axios";
-import { getToken } from "../services/localStorageService";
 import { useTranslation } from "react-i18next";
 
 function Settings() {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState('general'); // State quản lý tab đang chọn
+    const [activeTab, setActiveTab] = useState('general');
     const [isLoading, setIsLoading] = useState(false);
 
-    // State cho phần "Thông tin chung" (Có API thật)
+    // --- 1. STATE: THÔNG TIN CHUNG ---
     const [generalForm, setGeneralForm] = useState({
         tenChungCu: 'Chung cư BlueMoon',
         diaChi: '123 Đường Văn Phú, Hà Đông, Hà Nội',
@@ -17,75 +16,81 @@ function Settings() {
         email: 'bql.bluemoon@example.com'
     });
 
-    // State giả lập cho phần "Cấu hình phí" (Chưa có API)
-    const [feeForm, setFeeForm] = useState({
-        servicePrice: 6000,
-        managementPrice: 7000,
-        bikePrice: 70000,
-        carPrice: 1200000
+    // --- 2. STATE: NGÂN HÀNG (VIETQR) ---
+    const [bankForm, setBankForm] = useState({
+        bankId: 'MB',
+        accountNumber: '0334960588',
+        accountName: 'BAN QUAN LY BLUE MOON',
+        template: 'compact'
     });
 
-    // Hàm hiển thị thông báo "Đang phát triển"
+    // --- 3. STATE: QUY ĐỊNH ---
+    const [rulesForm, setRulesForm] = useState({
+        closingDate: 25,
+        deadlineDate: 10,
+        maxMotorbike: 2,
+        maxCar: 1,
+        lateFeePercent: 0.05
+    });
+
+    // --- 4. STATE: MẪU THÔNG BÁO ---
+    const [templateForm, setTemplateForm] = useState({
+        emailSubject: 'Thông báo phí dịch vụ tháng {thang}',
+        emailContent: 'Kính gửi cư dân {ten_cu_dan}, căn hộ {can_ho}.\nTổng phí tháng {thang} của quý khách là: {tong_tien}.\nVui lòng thanh toán trước ngày {han_nop}.\nXin cảm ơn!'
+    });
+
+    // Hàm giả lập tính năng đang phát triển
     const handleDevFeature = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         alert(t('settings_page.alert_dev_feature'));
     };
 
-    // --- XỬ LÝ API THẬT (PHẦN THÔNG TIN CHUNG) ---
-    useEffect(() => {
-        // (Logic gọi API lấy thông tin chung - giữ nguyên hoặc bỏ comment khi backend sẵn sàng)
-    }, [t]);
-
-    const handleGeneralChange = (e) => {
-        setGeneralForm({ ...generalForm, [e.target.name]: e.target.value });
+    const handleChange = (e, setForm, form) => {
+        const { name, value, type, checked } = e.target;
+        setForm({
+            ...form,
+            [name]: type === 'checkbox' ? checked : value
+        });
     };
 
-    const handleSaveGeneral = async (e) => {
+    const handleSave = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const token = getToken();
-        if (!token) {
-            alert(t('alerts.session_expired'));
+        // Tại đây gọi API lưu dữ liệu...
+        setTimeout(() => {
             setIsLoading(false);
-            return;
-        }
-        // ... (Logic gọi API thật giống code cũ của bạn)
-        try {
-            // Giả lập delay
-            await new Promise(r => setTimeout(r, 1000));
             alert(t('settings_page.alert_save_success'));
-        } catch (error) {
-            alert(t('settings_page.alert_save_fail'));
-        }
-        setIsLoading(false);
+        }, 800);
     };
 
-    // --- CÁC HÀM RENDER GIAO DIỆN ---
+    // ==========================================
+    // RENDER CÁC TAB
+    // ==========================================
 
-    // 1. Render Form Thông tin chung (API Thật)
+    // 1. Render: Thông tin chung
     const renderGeneralSettings = () => (
         <div className="settings-content fade-in">
             <div className="content-header">
-                <h3>{t('settings_page.title')}</h3>
-                <p>{t('settings_page.description')}</p>
+                <h3>{t('settings_page.general.title')}</h3>
+                <p>{t('settings_page.general.desc')}</p>
             </div>
-            <form className="settings-form" onSubmit={handleSaveGeneral}>
+            <form className="settings-form" onSubmit={handleSave}>
                 <div className="form-group">
-                    <label>{t('settings_page.label_name')}</label>
-                    <input type="text" name="tenChungCu" value={generalForm.tenChungCu} onChange={handleGeneralChange} />
+                    <label>{t('settings_page.general.label_name')}</label>
+                    <input type="text" name="tenChungCu" value={generalForm.tenChungCu} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
                 </div>
                 <div className="form-group">
-                    <label>{t('settings_page.label_address')}</label>
-                    <input type="text" name="diaChi" value={generalForm.diaChi} onChange={handleGeneralChange} />
+                    <label>{t('settings_page.general.label_address')}</label>
+                    <input type="text" name="diaChi" value={generalForm.diaChi} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
                 </div>
-                <div className="form-group-row">
+                <div className="form-row">
                     <div className="form-group">
-                        <label>{t('settings_page.label_phone')}</label>
-                        <input type="text" name="sdt" value={generalForm.sdt} onChange={handleGeneralChange} />
+                        <label>{t('settings_page.general.label_phone')}</label>
+                        <input type="text" name="sdt" value={generalForm.sdt} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
                     </div>
                     <div className="form-group">
-                        <label>{t('settings_page.label_email')}</label>
-                        <input type="email" name="email" value={generalForm.email} onChange={handleGeneralChange} />
+                        <label>{t('settings_page.general.label_email')}</label>
+                        <input type="email" name="email" value={generalForm.email} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
                     </div>
                 </div>
                 <div className="form-footer">
@@ -97,110 +102,278 @@ function Settings() {
         </div>
     );
 
-    // 2. Render Form Cấu hình Phí (Fake UI)
-    const renderFeeSettings = () => (
+    // 2. Render: Ngân hàng & QR
+    const renderBankSettings = () => (
         <div className="settings-content fade-in">
             <div className="content-header">
-                <h3>{t('settings_page.fee_title')}</h3>
-                <p>{t('settings_page.fee_desc')}</p>
+                <h3>{t('settings_page.bank.title')}</h3>
+                <p>{t('settings_page.bank.desc')}</p>
             </div>
-            <form className="settings-form">
-                <div className="form-group-row">
+            <form className="settings-form" onSubmit={handleSave}>
+                <div className="form-row">
                     <div className="form-group">
-                        <label>{t('settings_page.label_service_price')}</label>
-                        <input type="number" value={feeForm.servicePrice} onChange={() => { }} />
+                        <label>{t('settings_page.bank.label_bank')}</label>
+                        <select
+                            name="bankId"
+                            value={bankForm.bankId}
+                            onChange={(e) => handleChange(e, setBankForm, bankForm)}
+                        >
+                            <option value="MB">MB Bank</option>
+                            <option value="VCB">Vietcombank</option>
+                            <option value="TCB">Techcombank</option>
+                            <option value="BIDV">BIDV</option>
+                            <option value="ICB">VietinBank</option>
+                        </select>
                     </div>
                     <div className="form-group">
-                        <label>{t('settings_page.label_management_price')}</label>
-                        <input type="number" value={feeForm.managementPrice} onChange={() => { }} />
+                        <label>{t('settings_page.bank.label_acc_number')}</label>
+                        <input type="text" name="accountNumber" value={bankForm.accountNumber} onChange={(e) => handleChange(e, setBankForm, bankForm)} />
                     </div>
                 </div>
-                <div className="form-group-row">
-                    <div className="form-group">
-                        <label>{t('settings_page.label_bike_price')}</label>
-                        <input type="number" value={feeForm.bikePrice} onChange={() => { }} />
-                    </div>
-                    <div className="form-group">
-                        <label>{t('settings_page.label_car_price')}</label>
-                        <input type="number" value={feeForm.carPrice} onChange={() => { }} />
+                <div className="form-group">
+                    <label>{t('settings_page.bank.label_acc_name')}</label>
+                    <input type="text" name="accountName" value={bankForm.accountName} onChange={(e) => handleChange(e, setBankForm, bankForm)} />
+                </div>
+
+                {/* Preview QR */}
+                <div className="form-group">
+                    <label style={{ color: '#00f2c3' }}>{t('settings_page.bank.label_qr_preview')}</label>
+                    <div style={{ marginTop: '15px', padding: '15px', background: 'white', width: 'fit-content', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <img
+                            src={`https://img.vietqr.io/image/${bankForm.bankId}-${bankForm.accountNumber}-${bankForm.template}.png?amount=500000&addInfo=TEST QR&accountName=${encodeURIComponent(bankForm.accountName)}`}
+                            alt="QR Preview"
+                            style={{ height: '180px', objectFit: 'contain' }}
+                            onError={(e) => { e.target.style.display = 'none' }}
+                        />
+                        <span style={{ color: '#333', fontSize: '0.8rem', marginTop: '10px', fontWeight: 'bold' }}>{t('settings_page.bank.preview_note')}</span>
                     </div>
                 </div>
+
                 <div className="form-footer">
-                    <button className="save-btn" onClick={handleDevFeature}>
-                        {t('settings_page.save_button')}
+                    <button type="submit" className="save-btn" disabled={isLoading}>
+                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
                     </button>
                 </div>
             </form>
         </div>
     );
 
-    // 3. Render Form Thông báo (Fake UI)
+    // 3. Render: Quy định & Hạn mức
+    const renderRulesSettings = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.rules.title')}</h3>
+                <p>{t('settings_page.rules.desc')}</p>
+            </div>
+            <form className="settings-form" onSubmit={handleSave}>
+                <div className="form-row">
+                    <div className="form-group">
+                        <label>{t('settings_page.rules.label_closing_date')}</label>
+                        <input type="number" name="closingDate" min="1" max="31" value={rulesForm.closingDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                        <small style={{ color: 'gray', fontSize: '0.8rem' }}>{t('settings_page.rules.note_closing_date')}</small>
+                    </div>
+                    <div className="form-group">
+                        <label>{t('settings_page.rules.label_deadline')}</label>
+                        <input type="number" name="deadlineDate" min="1" max="31" value={rulesForm.deadlineDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                    </div>
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group">
+                        <label>{t('settings_page.rules.label_max_motorbike')}</label>
+                        <input type="number" name="maxMotorbike" value={rulesForm.maxMotorbike} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                    </div>
+                    <div className="form-group">
+                        <label>{t('settings_page.rules.label_max_car')}</label>
+                        <input type="number" name="maxCar" value={rulesForm.maxCar} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label>{t('settings_page.rules.label_late_fee')}</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <input type="number" name="lateFeePercent" step="0.01" value={rulesForm.lateFeePercent} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} style={{ width: '120px' }} />
+                        <span>% / ngày</span>
+                    </div>
+                </div>
+
+                <div className="form-footer">
+                    <button type="submit" className="save-btn" disabled={isLoading}>
+                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+
+    // 4. Render: Mẫu thông báo
+    const renderTemplates = () => (
+        <div className="settings-content fade-in">
+            <div className="content-header">
+                <h3>{t('settings_page.template.title')}</h3>
+                <p>{t('settings_page.template.desc')}</p>
+            </div>
+            <form className="settings-form" onSubmit={handleSave}>
+                <div className="form-group">
+                    <label>{t('settings_page.template.label_subject')}</label>
+                    <input type="text" name="emailSubject" value={templateForm.emailSubject} onChange={(e) => handleChange(e, setTemplateForm, templateForm)} />
+                </div>
+
+                <div className="form-group">
+                    <label>{t('settings_page.template.label_content')}</label>
+                    <textarea
+                        rows="8"
+                        name="emailContent"
+                        value={templateForm.emailContent}
+                        onChange={(e) => handleChange(e, setTemplateForm, templateForm)}
+                        style={{
+                            width: '100%',
+                            padding: '15px',
+                            background: '#1e1e2f',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            color: 'white',
+                            borderRadius: '8px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.95rem',
+                            resize: 'vertical'
+                        }}
+                    />
+                    <div style={{ marginTop: '10px', fontSize: '0.85rem', color: '#00f2c3', background: 'rgba(0, 242, 195, 0.1)', padding: '10px', borderRadius: '6px' }}>
+                        <strong>{t('settings_page.template.support_vars_title')}</strong><br />
+                        <code>{`{ten_cu_dan}`}</code>: {t('settings_page.template.var_resident')} &nbsp;|&nbsp;
+                        <code>{`{can_ho}`}</code>: {t('settings_page.template.var_apartment')} &nbsp;|&nbsp;
+                        <code>{`{thang}`}</code>: {t('settings_page.template.var_month')} &nbsp;|&nbsp;
+                        <code>{`{tong_tien}`}</code>: {t('settings_page.template.var_total')} &nbsp;|&nbsp;
+                        <code>{`{han_nop}`}</code>: {t('settings_page.template.var_deadline')}
+                    </div>
+                </div>
+
+                <div className="form-footer">
+                    <button type="submit" className="save-btn" disabled={isLoading}>
+                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+
+    // 5. Render: Cấu hình thông báo (Toggle)
     const renderNotifications = () => (
         <div className="settings-content fade-in">
             <div className="content-header">
-                <h3>{t('settings_page.notif_title')}</h3>
-                <p>{t('settings_page.notif_desc')}</p>
+                <h3>{t('settings_page.notif.title')}</h3>
+                <p>{t('settings_page.notif.desc')}</p>
             </div>
             <div className="settings-list">
                 <div className="setting-item">
-                    <span>{t('settings_page.label_email_notif')}</span>
-                    <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                    <div className="item-info">
+                        <strong>{t('settings_page.notif.email_title')}</strong>
+                        <span>{t('settings_page.notif.email_desc')}</span>
+                    </div>
+                    <label className="switch">
+                        <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                        <span className="slider round"></span>
+                    </label>
                 </div>
                 <div className="setting-item">
-                    <span>{t('settings_page.label_sms_notif')}</span>
-                    <input type="checkbox" onChange={handleDevFeature} />
+                    <div className="item-info">
+                        <strong>{t('settings_page.notif.app_title')}</strong>
+                        <span>{t('settings_page.notif.app_desc')}</span>
+                    </div>
+                    <label className="switch">
+                        <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                        <span className="slider round"></span>
+                    </label>
                 </div>
                 <div className="setting-item">
-                    <span>{t('settings_page.label_payment_reminder')}</span>
-                    <input type="checkbox" defaultChecked onChange={handleDevFeature} />
+                    <div className="item-info">
+                        <strong>{t('settings_page.notif.sms_title')}</strong>
+                        <span>{t('settings_page.notif.sms_desc')}</span>
+                    </div>
+                    <label className="switch">
+                        <input type="checkbox" onChange={handleDevFeature} />
+                        <span className="slider round"></span>
+                    </label>
                 </div>
             </div>
         </div>
     );
 
-    // 4. Render Hệ thống (Fake UI)
+    // 6. Render: Hệ thống
     const renderSystem = () => (
         <div className="settings-content fade-in">
             <div className="content-header">
-                <h3>{t('settings_page.sys_title')}</h3>
-                <p>{t('settings_page.sys_desc')}</p>
+                <h3>{t('settings_page.sys.title')}</h3>
+                <p>{t('settings_page.sys.desc')}</p>
             </div>
-            <div className="system-actions">
-                <button className="sys-btn" onClick={handleDevFeature}>☁️ {t('settings_page.btn_backup')}</button>
-                <button className="sys-btn" onClick={handleDevFeature}>Tb {t('settings_page.btn_restore')}</button>
-                <button className="sys-btn danger" onClick={handleDevFeature}>🗑️ {t('settings_page.btn_clear_cache')}</button>
+            <div className="system-grid">
+                <div className="sys-card" onClick={handleDevFeature}>
+                    <div className="icon">☁️</div>
+                    <h4>{t('settings_page.sys.backup_title')}</h4>
+                    <p>{t('settings_page.sys.backup_desc')}</p>
+                </div>
+                <div className="sys-card" onClick={handleDevFeature}>
+                    <div className="icon">Tb</div>
+                    <h4>{t('settings_page.sys.restore_title')}</h4>
+                    <p>{t('settings_page.sys.restore_desc')}</p>
+                </div>
+                <div className="sys-card" onClick={handleDevFeature}>
+                    <div className="icon">📝</div>
+                    <h4>{t('settings_page.sys.log_title')}</h4>
+                    <p>{t('settings_page.sys.log_desc')}</p>
+                </div>
+                <div className="sys-card danger" onClick={handleDevFeature}>
+                    <div className="icon">🗑️</div>
+                    <h4>{t('settings_page.sys.cache_title')}</h4>
+                    <p>{t('settings_page.sys.cache_desc')}</p>
+                </div>
             </div>
         </div>
     );
 
-    // --- RENDER CHÍNH ---
+    // ==========================================
+    // MAIN RENDER
+    // ==========================================
     return (
-        <div className="settings-layout">
-            {/* SIDEBAR MENU */}
-            <div className="settings-sidebar">
-                <div className="sidebar-title">{t('nav.setting')}</div>
-                <ul>
-                    <li className={activeTab === 'general' ? 'active' : ''} onClick={() => setActiveTab('general')}>
-                        🏢 {t('settings_page.menu_general')}
-                    </li>
-                    <li className={activeTab === 'fees' ? 'active' : ''} onClick={() => setActiveTab('fees')}>
-                        💰 {t('settings_page.menu_fees')}
-                    </li>
-                    <li className={activeTab === 'notifications' ? 'active' : ''} onClick={() => setActiveTab('notifications')}>
-                        🔔 {t('settings_page.menu_notifications')}
-                    </li>
-                    <li className={activeTab === 'system' ? 'active' : ''} onClick={() => setActiveTab('system')}>
-                        ⚙️ {t('settings_page.menu_system')}
-                    </li>
-                </ul>
-            </div>
+        <div className="settings-container">
+            <div className="settings-layout">
+                {/* SIDEBAR */}
+                <div className="settings-sidebar">
+                    <div className="sidebar-header">
+                        <h3>Cài Đặt</h3>
+                    </div>
 
-            {/* CONTENT AREA */}
-            <div className="settings-main">
-                {activeTab === 'general' && renderGeneralSettings()}
-                {activeTab === 'fees' && renderFeeSettings()}
-                {activeTab === 'notifications' && renderNotifications()}
-                {activeTab === 'system' && renderSystem()}
+                    <ul>
+                        <li className={activeTab === 'general' ? 'active' : ''} onClick={() => setActiveTab('general')}>
+                            🏢 <span>{t('settings_page.menu_general')}</span>
+                        </li>
+                        <li className={activeTab === 'banking' ? 'active' : ''} onClick={() => setActiveTab('banking')}>
+                            🏦 <span>{t('settings_page.menu_banking')}</span>
+                        </li>
+                        <li className={activeTab === 'rules' ? 'active' : ''} onClick={() => setActiveTab('rules')}>
+                            📋 <span>{t('settings_page.menu_rules')}</span>
+                        </li>
+                        <li className={activeTab === 'templates' ? 'active' : ''} onClick={() => setActiveTab('templates')}>
+                            📝 <span>{t('settings_page.menu_templates')}</span>
+                        </li>
+                        <li className={activeTab === 'notifications' ? 'active' : ''} onClick={() => setActiveTab('notifications')}>
+                            🔔 <span>{t('settings_page.menu_notifications')}</span>
+                        </li>
+                        <li className={activeTab === 'system' ? 'active' : ''} onClick={() => setActiveTab('system')}>
+                            ⚙️ <span>{t('settings_page.menu_system')}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* CONTENT AREA */}
+                <div className="settings-main">
+                    {activeTab === 'general' && renderGeneralSettings()}
+                    {activeTab === 'banking' && renderBankSettings()}
+                    {activeTab === 'rules' && renderRulesSettings()}
+                    {activeTab === 'templates' && renderTemplates()}
+                    {activeTab === 'notifications' && renderNotifications()}
+                    {activeTab === 'system' && renderSystem()}
+                </div>
             </div>
         </div>
     );

@@ -1,184 +1,229 @@
-// --- BIẾN MÀU SẮC ---
-$primary-color: #e74c3c; 
-$primary-hover: #c0392b;
-$text-color: #e9ecef;
-$label-color: #adb5bd;
-$border-color-subtle: rgba(255, 255, 255, 0.1);
-$glass-bg: rgba(53, 58, 66, 0.6);
-$dark-bg-input: rgba(44, 48, 56, 0.7);
-$sidebar-bg: rgba(30, 30, 30, 0.8);
-$active-item-bg: rgba(231, 76, 60, 0.2); // Màu đỏ nhạt
+/* --- 1. BIẾN MÀU & MIXIN --- */
+$accent-color: #4361ee;       // Xanh chủ đạo
+$text-primary: #ffffff;       // Chữ trắng
+$text-secondary: #d1d1d1;     // Chữ xám nhạt
+$success-color: #00f2c3;
+$danger-color: #fd5d93;
+$bg-dark-input: #1e1e2f;
+$sidebar-bg: rgba(30, 30, 40, 0.6);
 
-// --- LAYOUT CHÍNH ---
-.settings-layout {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    margin: 40px auto;
+// Cấu hình nền kính
+$glass-bg: rgba(39, 41, 61, 0.75); 
+$glass-border: 1px solid rgba(255, 255, 255, 0.1);
+$glass-blur: 12px;
+$glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+@mixin glass-panel {
     background: $glass-bg;
-    backdrop-filter: blur(10px);
-    border: 1px solid $border-color-subtle;
-    border-radius: 15px;
-    overflow: hidden;
-    min-height: 600px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur($glass-blur);
+    -webkit-backdrop-filter: blur($glass-blur);
+    border: $glass-border;
+    box-shadow: $glass-shadow;
+    border-radius: 16px;
 }
 
-// --- SIDEBAR (BÊN TRÁI) ---
-.settings-sidebar {
-    width: 25%;
-    background-color: $sidebar-bg;
-    border-right: 1px solid $border-color-subtle;
-    padding: 20px 0;
+/* --- 2. LAYOUT CHÍNH --- */
+.settings-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    color: $text-primary;
+    animation: fadeIn 0.5s ease-out;
+}
 
-    .sidebar-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: $text-color;
-        padding: 0 20px 20px 20px;
-        border-bottom: 1px solid $border-color-subtle;
-        margin-bottom: 10px;
+.settings-layout {
+    @include glass-panel;
+    display: flex;
+    min-height: 600px;
+    overflow: hidden; 
+}
+
+/* --- 3. SIDEBAR (BÊN TRÁI - ĐÃ CHỈNH SỬA) --- */
+.settings-sidebar {
+    // 1. Tăng chiều rộng để đủ chỗ cho chữ dài
+    width: 320px; 
+    background-color: $sidebar-bg;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-header {
+        padding: 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        h3 { 
+            margin: 0; 
+            font-size: 1.2rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: $text-primary; 
+            text-align: center; // Căn giữa tiêu đề CÀI ĐẶT
+        }
     }
 
     ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-
+        list-style: none; padding: 15px; margin: 0;
+        
         li {
             padding: 15px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            color: $label-color;
+            color: $text-secondary;
+            font-weight: 600;
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
             transition: all 0.2s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            
+            // 2. Giảm cỡ chữ và ép hiển thị 1 dòng
+            font-size: 0.95rem; // Nhỏ hơn một chút để gọn
+            white-space: nowrap; // Không bao giờ xuống dòng
 
             &:hover {
-                color: white;
                 background-color: rgba(255, 255, 255, 0.05);
+                color: $text-primary;
             }
 
             &.active {
-                color: $primary-color;
-                background-color: $active-item-bg;
-                border-right: 3px solid $primary-color;
+                background-color: $accent-color;
+                color: white;
+                box-shadow: 0 4px 12px rgba($accent-color, 0.4);
+            }
+            
+            // Chỉnh icon to hơn chút cho cân đối
+            span:first-child { 
+                font-size: 1.2rem; 
             }
         }
     }
 }
 
-// --- MAIN CONTENT (BÊN PHẢI) ---
+/* --- 4. MAIN CONTENT (BÊN PHẢI) --- */
 .settings-main {
-    width: 75%;
-    padding: 30px 40px;
-    color: $text-color;
-}
-
-.settings-content {
-    animation: fadeIn 0.3s ease-in-out;
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto; // Cuộn riêng nội dung bên phải nếu dài
 
     .content-header {
         margin-bottom: 30px;
-        border-bottom: 1px solid $border-color-subtle;
-        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px;
         
-        h3 { margin: 0 0 10px 0; font-size: 1.5rem; }
-        p { margin: 0; color: $label-color; font-size: 0.9rem; }
+        h3 { margin: 0 0 10px 0; font-size: 1.6rem; color: $text-primary; }
+        p { margin: 0; color: $text-secondary; font-size: 0.95rem; }
     }
 
-    // Form Styles (Tái sử dụng)
+    // --- FORM STYLES ---
     .settings-form {
-        .form-group-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        max-width: 800px;
+
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
         }
 
         .form-group {
             margin-bottom: 20px;
-            label { display: block; margin-bottom: 8px; color: $label-color; font-weight: 600; font-size: 0.9rem; }
+            label { display: block; margin-bottom: 8px; color: $text-secondary; font-weight: 600; font-size: 0.9rem; }
             
-            input[type="text"], input[type="email"], input[type="number"] {
-                background-color: $dark-bg-input;
-                border: 1px solid $border-color-subtle;
-                color: white;
-                width: 100%;
-                padding: 12px;
-                border-radius: 6px;
+            input, select, textarea {
+                width: 100%; padding: 12px 15px;
+                background-color: $bg-dark-input;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
+                color: $text-primary;
                 font-size: 1rem;
                 box-sizing: border-box;
-                
+                transition: all 0.2s;
+                font-family: inherit;
+
                 &:focus {
-                    outline: none;
-                    border-color: $primary-color;
-                    box-shadow: 0 0 0 3px rgba($primary-color, 0.25);
+                    outline: none; border-color: $accent-color;
+                    box-shadow: 0 0 0 3px rgba($accent-color, 0.25);
                 }
             }
         }
 
         .form-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-
+            margin-top: 30px;
             .save-btn {
-                background-color: $primary-color;
-                color: white;
-                border: none;
-                padding: 12px 30px;
-                border-radius: 6px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: 0.2s;
-                &:hover { background-color: $primary-hover; }
+                background-color: $accent-color;
+                color: white; border: none;
+                padding: 12px 35px; border-radius: 8px;
+                font-size: 1rem; font-weight: 700;
+                cursor: pointer; transition: all 0.2s;
+                box-shadow: 0 4px 12px rgba($accent-color, 0.3);
+
+                &:hover { background-color: lighten($accent-color, 5%); transform: translateY(-2px); }
+                &:disabled { background-color: rgba(255,255,255,0.1); cursor: not-allowed; }
             }
         }
     }
 
-    // Styles cho tab Thông báo & Hệ thống
+    // --- LIST STYLES (Thông báo) ---
     .settings-list {
+        max-width: 800px;
+        
         .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid $border-color-subtle;
-            
-            span { font-size: 1rem; }
-            input[type="checkbox"] { transform: scale(1.5); cursor: pointer; }
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 15px;
+
+            .item-info {
+                strong { display: block; font-size: 1rem; color: $text-primary; margin-bottom: 5px; }
+                span { font-size: 0.85rem; color: $text-secondary; }
+            }
+
+            // Switch Toggle
+            .switch {
+                position: relative; display: inline-block; width: 50px; height: 26px;
+                input { opacity: 0; width: 0; height: 0; }
+                .slider {
+                    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+                    background-color: #4a4e5a; transition: .4s; border-radius: 34px;
+                    &::before {
+                        position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
+                        background-color: white; transition: .4s; border-radius: 50%;
+                    }
+                }
+                input:checked + .slider { background-color: $accent-color; }
+                input:checked + .slider:before { transform: translateX(24px); }
+            }
         }
     }
 
-    .system-actions {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
+    // --- GRID STYLES (Hệ thống) ---
+    .system-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 900px;
 
-        .sys-btn {
-            background-color: #34495e;
-            color: white;
-            border: 1px solid $border-color-subtle;
-            padding: 15px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
+        .sys-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px; border-radius: 16px;
+            text-align: center; cursor: pointer;
+            transition: all 0.2s;
 
-            &:hover { background-color: #2c3e50; transform: translateY(-2px); }
-            
-            &.danger {
-                background-color: rgba(231, 76, 60, 0.2);
-                color: #e74c3c;
-                border-color: #e74c3c;
-                &:hover { background-color: #e74c3c; color: white; }
+            .icon { font-size: 2.5rem; margin-bottom: 15px; }
+            h4 { margin: 0 0 10px 0; color: $text-primary; font-size: 1.1rem; }
+            p { margin: 0; color: $text-secondary; font-size: 0.85rem; }
+
+            &:hover {
+                transform: translateY(-5px);
+                background: rgba(255, 255, 255, 0.1);
+                border-color: $accent-color;
+            }
+
+            &.danger:hover {
+                border-color: $danger-color;
+                background: rgba($danger-color, 0.1);
+                h4 { color: $danger-color; }
             }
         }
     }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+// Animation
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
