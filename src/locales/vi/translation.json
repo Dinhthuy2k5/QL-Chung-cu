@@ -49,8 +49,8 @@
     "filter_button": "Lọc",
     "apartment_filter": {
         "title": "Bộ lọc",
-        "unit_number": "Số nhà",
-        "unit_number_placeholder": "Nhập số nhà...",
+        "unit_number": "Số phòng",
+        "unit_number_placeholder": "Nhập số phòng...",
         "area": "Diện tích",
         "area_range": "Từ {{min}}m² - {{max}}m²",
         "apartment_type": "Loại căn hộ",

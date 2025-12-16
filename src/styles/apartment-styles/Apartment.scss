@@ -38,14 +38,20 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
         padding: 20px;
         display: flex;
         align-items: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; 
         box-shadow: 0 4px 15px rgba(0,0,0,0.2); // Bóng đổ tối hơn
 
         &:hover {
             transform: translateY(-5px);
-            background: rgba(45, 47, 70, 0.9); // Highlight nhẹ khi hover
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            border-color: rgba(255,255,255,0.2);
+            
+            // 1. Đồng bộ bóng đổ (Shadow)
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
+            
+            // 2. Đồng bộ màu nền (Darker Background)
+            background: rgba(39, 41, 61, 0.9); 
+            
+            // 3. Đồng bộ viền phát sáng màu xanh (Accent Color)
+            border-color: $accent-color; 
         }
 
         .stat-icon {
@@ -160,6 +166,19 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
 .modern-table {
     width: 100%;
     border-collapse: collapse;
+
+    // QUAN TRỌNG: Cố định layout bảng để các cột thẳng hàng
+    table-layout: fixed; 
+    min-width: 1000px; // Đảm bảo bảng không bị co quá nhỏ
+
+    // --- ĐỊNH NGHĨA CHIỀU RỘNG CỘT (Căn chỉnh cân đối) ---
+    th:nth-child(1), td:nth-child(1) { width: 100px; text-align: center; }  // ID (Nhỏ)
+    th:nth-child(2), td:nth-child(2) { width: 170px; text-align: left; }   // Số phòng
+    th:nth-child(3), td:nth-child(3) { width: 200px; text-align: left; }   // Loại hình
+    th:nth-child(4), td:nth-child(4) { width: 180px; text-align: left; }   // Phân loại (Badge)
+    th:nth-child(5), td:nth-child(5) { width: 170px; text-align: left; }   // Diện tích
+    th:nth-child(6), td:nth-child(6) { width: 320px; text-align: left; }    // Địa chỉ (Tự giãn phần còn lại)
+    // th:nth-child(7), td:nth-child(7) { width: 60px; text-align: center; } // Hành động
     
     thead {
         background: rgba(0, 0, 0, 0.25); // Header tối hơn nền bảng
@@ -171,6 +190,8 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
             text-transform: uppercase;
             letter-spacing: 1px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1); // Viền mờ
+
+            white-space: nowrap; // Không xuống dòng tiêu đề
         }
     }
 
@@ -188,7 +209,7 @@ $card-hover-bg: rgba(255, 255, 255, 0.05);
                 vertical-align: middle;
                 font-size: 0.95rem;
                 color: $text-primary; // Chữ trắng
-
+                text-overflow: ellipsis; // Cắt bớt nếu quá dài
                 &.id-col { color: $text-secondary; font-family: monospace; }
                 &.highlight-text { font-weight: bold; color: #4cc9f0; font-size: 1.1rem; } // Đổi sang màu xanh sáng cho nổi
                 &.address-col { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,0.8); }

@@ -8,9 +8,11 @@ function EditFilter(props) {
     const { t } = useTranslation();
 
     const [currentView, setView] = useState('main');
+
+    // Cập nhật State mặc định diện tích từ [20, 150] -> [20, 200]
     const [filters, setFilters] = useState({
         soNha: "",
-        dienTich: [20, 150],
+        dienTich: [20, 200],
         loaiCanHo: []
     });
 
@@ -32,9 +34,10 @@ function EditFilter(props) {
     }
 
     const handleReset = () => {
+        // Cập nhật Reset về [20, 200]
         setFilters({
             soNha: "",
-            dienTich: [20, 150],
+            dienTich: [20, 200],
             loaiCanHo: []
         });
     }
@@ -46,7 +49,8 @@ function EditFilter(props) {
 
     // Render màn hình chính
     const renderMainView = () => {
-        const loaiCanHoOptions = ['Studio', '1PN', '2PN', '3PN', '3PN+1'];
+        // Cập nhật danh sách tùy chọn Loại căn hộ theo yêu cầu
+        const loaiCanHoOptions = ['2 Phòng ngủ', '3 Phòng ngủ', 'Penthouse'];
 
         const dienTichValue = `${filters.dienTich[0]}m² - ${filters.dienTich[1]}m²`;
 
@@ -58,7 +62,8 @@ function EditFilter(props) {
                 </div>
                 <div className="filter-body">
                     <div className="form-group">
-                        <label className="section-title">{t('apartment_filter.unit_number') || "Số căn hộ"}</label>
+                        {/* Đổi nhãn thành Số phòng */}
+                        <label className="section-title">{t('apartment_filter.unit_number') || "Số phòng"}</label>
                         <input type="text"
                             value={filters.soNha}
                             onChange={(e) => handleFilterChange('soNha', e.target.value)}
@@ -118,8 +123,8 @@ function EditFilter(props) {
                     </div>
                     <Slider
                         range
-                        min={0}
-                        max={500}
+                        min={20}   // Cập nhật Min = 20
+                        max={200}  // Cập nhật Max = 200
                         step={5}
                         value={dienTich}
                         onChange={(value) => handleFilterChange('dienTich', value)}

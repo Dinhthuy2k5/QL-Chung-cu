@@ -56,6 +56,44 @@ class Home extends React.Component {
         feeActivities: [],
     };
 
+
+
+    // --- CẬP NHẬT MỚI: GỌI API ĐỂ LẤY ROLE ---
+    setDefaultTabByRole = async () => {
+        const token = getToken();
+        if (!token) return;
+
+        const config = { headers: { 'Authorization': `Bearer ${token}` } };
+        // API lấy thông tin người dùng hiện tại
+        const apiUrl = 'http://localhost:8080/qlcc/users/myInfo';
+
+        try {
+            const response = await axios.get(apiUrl, config);
+
+            // Dữ liệu trả về theo cấu trúc trong ảnh bạn gửi: result -> role
+            const userInfo = response.data.result;
+
+            console.log("Current User Info:", userInfo); // Debug xem log
+
+            // Lấy role và chuyển về chữ hoa để so sánh chuẩn xác
+            const role = userInfo.role ? userInfo.role.toUpperCase() : "";
+            const username = userInfo.username ? userInfo.username.toLowerCase() : "";
+
+            // Logic: Nếu là Kế toán (Role là KETOAN hoặc username chứa ketoan) -> Tab Thu phí
+            if (role.includes("KETOAN") || username.includes("ketoan")) {
+                this.setState({ activeActivityTab: 'fee' });
+            } else {
+                // Trường hợp còn lại (QUANLY, ADMIN...) -> Tab Cư dân
+                this.setState({ activeActivityTab: 'resident' });
+            }
+
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin người dùng:", error);
+            // Nếu lỗi API, giữ mặc định là 'resident'
+            this.setState({ activeActivityTab: 'resident' });
+        }
+    }
+
     // --- 1. API LẤY DỮ LIỆU BIỂU ĐỒ (6 tháng gần nhất) ---
     fetchChartData = async () => {
         const token = getToken();
@@ -139,6 +177,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        this.setDefaultTabByRole(); // 1. Xác định tab mặc định ngay khi load
         this.fetchChartData();
         this.fetchResidentActivities();
         this.fetchFeeActivities();

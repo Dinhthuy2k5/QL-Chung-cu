@@ -158,8 +158,8 @@ function Apartment(props) {
                                                     </div>
                                                 </div>
                                                 <div className="card-footer">
-                                                    <button className="btn-action edit">{t('apartment_table.edit') || "Sửa"}</button>
-                                                    <button className="btn-action delete">{t('apartment_table.delete') || "Xóa"}</button>
+                                                    {/* <button className="btn-action edit">{t('apartment_table.edit') || "Sửa"}</button>
+                                                    <button className="btn-action delete">{t('apartment_table.delete') || "Xóa"}</button> */}
                                                 </div>
                                             </div>
                                         );
@@ -185,7 +185,7 @@ function Apartment(props) {
                                 <th>{t('apartment_table.status') || "Phân loại"}</th>
                                 <th>{t('apartment_table.area')}</th>
                                 <th>{t('apartment_table.address')}</th>
-                                <th>{t('apartment_table.action') || "Hành động"}</th>
+                                <th>{t() || ""}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,10 +199,10 @@ function Apartment(props) {
                                         <td>{item.dienTich} m²</td>
                                         <td className="address-col">{item.diaChi}</td>
                                         <td>
-                                            <div className="action-buttons">
+                                            {/* <div className="action-buttons">
                                                 <button className="btn-icon edit" title="Edit">&#9998;</button>
                                                 <button className="btn-icon delete" title="Delete">&#128465;</button>
-                                            </div>
+                                            </div> */}
                                         </td>
                                     </tr>
                                 ))
