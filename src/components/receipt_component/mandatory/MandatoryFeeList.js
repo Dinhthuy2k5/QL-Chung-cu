@@ -18,23 +18,6 @@ function MandatoryFeeList() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // --- FIX VỊ TRÍ MODAL: ĐẨY LÊN TRÊN ---
-    useEffect(() => {
-        // Tìm phần tử overlay cha (lớp phủ mờ)
-        const overlay = document.querySelector('.modal-overlay');
-        if (overlay) {
-            // Thêm class đặc biệt để CSS nhận biết
-            overlay.classList.add('modal-top-align');
-        }
-
-        // Dọn dẹp: Xóa class khi tắt component này để các modal khác không bị ảnh hưởng
-        return () => {
-            if (overlay) {
-                overlay.classList.remove('modal-top-align');
-            }
-        };
-    }, []);
-    // ---------------------------------------
 
 
 

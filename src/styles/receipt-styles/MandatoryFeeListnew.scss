@@ -8,19 +8,25 @@ $danger-color: #fd5d93;
 $total-color: #0ea5e9;
 $bg-dark-input: #1e1e2f;
 
-/* --- 2. LOGIC ĐẨY MODAL LÊN TRÊN (ĐÃ SỬA LỖI) --- */
-// Class này được thêm vào bằng JS trong file MandatoryFeeList.js
-// Dùng :global để đảm bảo SCSS không đổi tên class
-:global(.modal-overlay.modal-top-align) {
-    align-items: flex-start !important; // Căn lên đỉnh
-    padding-top: 130px !important;      // Khoảng cách từ đỉnh (đã căn chỉnh cho vừa dưới tab)
-    overflow-y: hidden;                 // Ngăn cuộn trang nền
+/* --- LOGIC ĐẨY MODAL LÊN TRÊN (CÁCH MỚI CHUẨN XÁC) --- */
+
+// Áp dụng cho overlay có class .top-aligned
+.modal-overlay.top-aligned {
+    align-items: flex-start !important; // Bắt buộc căn lên đỉnh
+    padding-top: 30px !important;      // Khoảng cách từ menu xuống (Bạn chỉnh số này)
+    overflow-y: hidden;                 // Không cuộn trang nền
 }
 
-// Chỉnh lại chiều cao max của modal khi ở chế độ này
-:global(.modal-overlay.modal-top-align .modal-content) {
-    max-height: 80vh !important; // Giảm bớt chiều cao để không bị tràn đáy màn hình
-    margin-bottom: 20px;
+// Chỉnh lại chiều cao và hiệu ứng cho modal bên trong
+.modal-overlay.top-aligned .modal-content {
+    max-height: 85vh !important; 
+    margin-bottom: 0 !important;
+    animation: slideDownFade 0.3s ease-out !important;
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-30px); } // Trượt từ trên xuống
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- 3. CONTAINER CHÍNH --- */
