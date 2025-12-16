@@ -177,10 +177,21 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.setDefaultTabByRole(); // 1. Xác định tab mặc định ngay khi load
-        this.fetchChartData();
-        this.fetchResidentActivities();
-        this.fetchFeeActivities();
+        // Kiểm tra token trước khi gọi API
+        const token = getToken();
+        if (token) {
+            this.setDefaultTabByRole();
+            this.fetchChartData();
+            this.fetchResidentActivities();
+            this.fetchFeeActivities();
+        } else {
+            // Nếu không có token (đã đăng xuất), set state về rỗng để giao diện cập nhật
+            this.setState({
+                chartData: null,
+                residentActivities: [],
+                feeActivities: []
+            });
+        }
     }
 
     setActivityTab = (tab) => {
@@ -191,6 +202,8 @@ class Home extends React.Component {
         const { totalApartments, totalResidents, t, navigate } = this.props;
         const { activeActivityTab, chartData, residentActivities, feeActivities } = this.state;
 
+        // --- 1. KIỂM TRA ĐĂNG NHẬP ---
+        const isLoggedIn = !!getToken(); // True nếu có token, False nếu không
         const activitiesToDisplay = activeActivityTab === 'resident' ? residentActivities : feeActivities;
 
         // Tùy chọn hiển thị biểu đồ
@@ -286,7 +299,12 @@ class Home extends React.Component {
                             </div>
                         </div>
                         <div className="panel-body chart-wrapper">
-                            {chartData ? (
+                            {/* --- LOGIC HIỂN THỊ BIỂU ĐỒ --- */}
+                            {!isLoggedIn ? (
+                                <div className="login-required-state">
+                                    <p>Vui lòng đăng nhập để xem biểu đồ</p>
+                                </div>
+                            ) : chartData ? (
                                 <Line data={chartData} options={chartOptions} />
                             ) : (
                                 <div className="loading-state">{t('dashboard.loading')}</div>
@@ -312,45 +330,45 @@ class Home extends React.Component {
                         </div>
 
                         <div className="panel-body list-wrapper">
-                            <ul className="activity-list">
-                                {activitiesToDisplay.length > 0 ? (
-                                    activitiesToDisplay.map((activity, index) => {
-                                        // 1. Lấy loại hoạt động từ API (ưu tiên 'type', fallback sang 'loai' nếu có)
-                                        // API của bạn trả về: "Đóng góp", "Thu phí", "Tạm trú"...
-                                        const rawType = activity.type || activity.loai || 'Thông báo';
 
-                                        // 2. Chuyển đổi sang class name chuẩn để dùng trong SCSS
-                                        // Ví dụ: "Đóng góp" -> "đóng-góp", "Thu phí" -> "thu-phí"
-                                        const typeClass = rawType.toLowerCase().trim().replace(/\s+/g, '-');
+                            {/* --- LOGIC HIỂN THỊ DANH SÁCH --- */}
+                            {!isLoggedIn ? (
+                                <div className="login-required-state">
+                                    <p>Vui lòng đăng nhập để xem hoạt động</p>
+                                </div>
+                            ) : (
+                                <ul className="activity-list">
+                                    {activitiesToDisplay.length > 0 ? (
+                                        activitiesToDisplay.map((activity, index) => {
+                                            const rawType = activity.type || activity.loai || 'Thông báo';
+                                            const typeClass = rawType.toLowerCase().trim().replace(/\s+/g, '-');
+                                            const icon = activeActivityTab === 'resident' ? '👤' : '💲';
 
-                                        // 3. Chọn icon
-                                        const icon = activeActivityTab === 'resident' ? '👤' : '💲';
-
-                                        return (
-                                            <li key={index} className="activity-item">
-                                                <div className={`activity-icon ${activeActivityTab === 'resident' ? 'res' : 'fee'}`}>
-                                                    {icon}
-                                                </div>
-                                                <div className="activity-content">
-                                                    {/* Class động: 'thu-phí', 'đóng-góp', 'tạm-trú'... khớp với SCSS */}
-                                                    <span className={`activity-type-badge ${typeClass}`}>
-                                                        {rawType}
-                                                    </span>
-                                                    <p className="activity-msg">{activity.text}</p>
-                                                    <span className="activity-time">
-                                                        {activity.ngayTao ? new Date(activity.ngayTao).toLocaleDateString('vi-VN') : 'Vừa xong'}
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        );
-                                    })
-                                ) : (
-                                    <div className="empty-state">
-                                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No Data" width="60" />
-                                        <p>{t('dashboard.no_activity')}</p>
-                                    </div>
-                                )}
-                            </ul>
+                                            return (
+                                                <li key={index} className="activity-item">
+                                                    <div className={`activity-icon ${activeActivityTab === 'resident' ? 'res' : 'fee'}`}>
+                                                        {icon}
+                                                    </div>
+                                                    <div className="activity-content">
+                                                        <span className={`activity-type-badge ${typeClass}`}>
+                                                            {rawType}
+                                                        </span>
+                                                        <p className="activity-msg">{activity.text}</p>
+                                                        <span className="activity-time">
+                                                            {activity.ngayTao ? new Date(activity.ngayTao).toLocaleDateString('vi-VN') : 'Vừa xong'}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="empty-state">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No Data" width="60" />
+                                            <p>{t('dashboard.no_activity')}</p>
+                                        </div>
+                                    )}
+                                </ul>
+                            )}
                         </div>
                     </div>
                 </div>

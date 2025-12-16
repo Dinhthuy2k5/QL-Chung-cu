@@ -134,6 +134,21 @@ $orange-grad: linear-gradient(to bottom right, #fd7e14, #d66203);
     display: flex;
     flex-direction: column;
     // Bỏ background cũ đi vì đã dùng mixin
+
+    // THÊM CLASS NÀY ĐỂ ĐỒNG BỘ THÔNG BÁO ĐĂNG NHẬP
+    .login-required-state {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        color: rgba(255, 255, 255, 0.5); // Màu xám mờ nhẹ ($text-secondary với opacity)
+        font-style: italic;
+        font-size: 1.45rem;
+        text-align: center;
+        
+        p { margin: 0; }
+    }
 }
 
 // --- 3. BIỂU ĐỒ (CHART PANEL) ---
