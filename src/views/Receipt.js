@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import '../styles/receipt-styles/Receipt.scss';
 import MandatoryFeeTab from "../components/receipt_component/mandatory/MandatoryFeeTab";
 import VoluntaryContribution from "../components/receipt_component/VoluntaryContribution";
@@ -11,6 +11,17 @@ function Receipt() {
     const { t } = useTranslation();
     const navigate = useNavigate(); // Dùng để chuyển trang
     const location = useLocation(); // Dùng để lấy đường dẫn hiện tại
+
+
+    // Cache cho Khoản thu bắt buộc (Lưu ID đã tìm và Kết quả tìm kiếm)
+    const [mandatoryCache, setMandatoryCache] = useState({
+        id: '',
+        data: null
+    });
+
+    // Cache cho Đóng góp tự nguyện (Lưu danh sách đóng góp)
+    const [voluntaryCache, setVoluntaryCache] = useState(null);
+    // -------------------------------------------
 
     // 2. Hàm kiểm tra xem tab nào đang active để tô màu nút
     const checkActive = (path) => {
@@ -55,13 +66,13 @@ function Receipt() {
             <div className="tab-content">
                 <Routes>
                     {/* Route mặc định khi vào /receipts */}
-                    <Route path="/" element={<MandatoryFeeTab />} />
+                    <Route path="/" element={<MandatoryFeeTab cache={mandatoryCache} setCache={setMandatoryCache} />} />
 
                     {/* Route dự phòng nếu người dùng gõ /receipts/mandatory */}
-                    <Route path="mandatory" element={<MandatoryFeeTab />} />
+                    <Route path="mandatory" element={<MandatoryFeeTab cache={mandatoryCache} setCache={setMandatoryCache} />} />
 
                     {/* Route cho /receipts/voluntary */}
-                    <Route path="voluntary" element={<VoluntaryContribution />} />
+                    <Route path="voluntary" element={<VoluntaryContribution cache={voluntaryCache} setCache={setVoluntaryCache} />} />
 
                     {/* Route cho /receipts/history */}
                     <Route path="history" element={<ApartmentPaymentHistory />} />

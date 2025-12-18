@@ -6,7 +6,7 @@ import CollectFeeWizard from './CollectFeeWizard';
 import { useTranslation } from 'react-i18next';
 import MandatoryDashboard from './MandatoryDashboard';
 
-const MandatoryFeeTab = () => {
+const MandatoryFeeTab = ({ cache, setCache }) => {
     const { t } = useTranslation();
     const [showCreateWizard, setShowCreateWizard] = useState(false);
     const [showCollectWizard, setShowCollectWizard] = useState(false);
@@ -49,7 +49,7 @@ const MandatoryFeeTab = () => {
                             <button onClick={() => setShowList(false)}>&times;</button>
                         </div>
                         <div className="modal-body full-width-body">
-                            <MandatoryFeeList />
+                            <MandatoryFeeList cache={cache} setCache={setCache} />
                         </div>
                     </div>
                 </div>

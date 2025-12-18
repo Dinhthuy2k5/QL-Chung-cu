@@ -30,6 +30,14 @@ function AppContent() {
   const [apartments, setApartments] = useState([]);
   const [residents, setResidents] = useState([]);
 
+  // --- 1. TẠO CACHE CHO HOME ---
+  const [homeCache, setHomeCache] = useState({
+    chartData: null,
+    residentActivities: [],
+    feeActivities: [],
+    hasLoaded: false // Cờ đánh dấu đã tải dữ liệu lần đầu hay chưa
+  });
+
   // Hàm gọi API (bạn có thể gộp 2 hàm này lại)
   const fetchData = async () => {
     const token = getToken();
@@ -71,6 +79,15 @@ function AppContent() {
     // Thêm 2 dòng này để xóa dữ liệu khi đăng xuất
     setApartments([]);
     setResidents([]);
+
+    // RESET CACHE KHI ĐĂNG XUẤT
+    setHomeCache({
+      chartData: null,
+      residentActivities: [],
+      feeActivities: [],
+      hasLoaded: false
+    });
+
     navigate("/"); // <-- Lệnh navigate này giờ đã hợp lệ
 
 
@@ -89,7 +106,14 @@ function AppContent() {
           setIsViewInfor={setIsViewInfor} />
 
         <Routes>
-          <Route path="/" element={<Home totalApartments={apartments.length} totalResidents={residents.length} />} />
+          <Route path="/" element={
+            <Home
+              totalApartments={apartments.length}
+              totalResidents={residents.length}
+              homeCache={homeCache}           // Truyền dữ liệu đã lưu
+              setHomeCache={setHomeCache}     // Truyền hàm cập nhật
+            />
+          } />
           <Route path="/log-in" element={<Login onLoggedIn={handleLoggedIn} setUserLoggedIn={handleUserLoggedIn} />} />
           <Route path="/apartments" element={<Apartment listApartments={apartments} />} />
           <Route path="/residents/*" element={<Resident listResidents={residents} />} />

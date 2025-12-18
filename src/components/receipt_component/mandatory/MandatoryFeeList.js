@@ -7,14 +7,15 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 
 // 2. Chuyển sang Function Component
-function MandatoryFeeList() {
+function MandatoryFeeList({ cache, setCache }) {
 
     // 3. Lấy hàm 't'
     const { t } = useTranslation();
 
     // 4. Chuyển đổi state
-    const [idThoiGianThu, setIdThoiGianThu] = useState('');
-    const [feeData, setFeeData] = useState(null);
+    // 1. KHỞI TẠO STATE TỪ CACHE (Nếu có cache thì dùng, không thì rỗng)
+    const [idThoiGianThu, setIdThoiGianThu] = useState(cache?.id || '');
+    const [feeData, setFeeData] = useState(cache?.data || null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -57,10 +58,20 @@ function MandatoryFeeList() {
                 ).length;
             }
 
-            setFeeData({
+            const newData = {
                 ...response.data.result,
                 paidApartmentCount: paidCount
-            });
+            };
+
+            setFeeData(newData);
+
+            // 2. QUAN TRỌNG: CẬP NHẬT NGƯỢC LẠI VÀO CACHE Ở FILE CHA
+            if (setCache) {
+                setCache({
+                    id: idThoiGianThu,
+                    data: newData
+                });
+            }
             setIsLoading(false);
         } catch (error) {
             const errorMessage = error.response ? error.response.data.message : t('mandatory_fee_list.error_loading_generic');

@@ -109,24 +109,34 @@ class Home extends React.Component {
             const labels = apiData.danhSachThang.map(item => item.thangNam);
             const data = apiData.danhSachThang.map(item => item.tongTienThu / 1000000); // Đơn vị: Triệu VNĐ
 
-            this.setState({
-                chartData: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Tổng thu (Triệu VNĐ)',
-                        data: data,
-                        borderColor: '#007bff', // Màu đường
-                        backgroundColor: 'rgba(0, 123, 255, 0.15)', // Màu nền dưới đường
-                        borderWidth: 3,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#007bff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        tension: 0.4, // Độ cong mềm mại
-                        fill: true, // Tô màu nền
-                    }]
-                }
-            });
+            const chartDataObj = {
+                labels: labels,
+                datasets: [{
+                    label: 'Tổng thu (Triệu VNĐ)',
+                    data: data,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.15)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#007bff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.4,
+                    fill: true,
+                }]
+            };
+
+            this.setState({ chartData: chartDataObj });
+
+            // LƯU VÀO CACHE APP.JS
+            if (this.props.setHomeCache) {
+                this.props.setHomeCache(prev => ({
+                    ...prev,
+                    chartData: chartDataObj,
+                    hasLoaded: true // Đánh dấu đã có dữ liệu
+                }));
+            }
+
 
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu biểu đồ:", error);
@@ -150,6 +160,15 @@ class Home extends React.Component {
                     .slice(0, 7);
 
                 this.setState({ residentActivities: sortedActivities });
+
+                // LƯU VÀO CACHE APP.JS
+                if (this.props.setHomeCache) {
+                    this.props.setHomeCache(prev => ({
+                        ...prev,
+                        residentActivities: sortedActivities,
+                        hasLoaded: true
+                    }));
+                }
             }
         } catch (error) {
             console.error("Lỗi khi tải biến động cư dân:", error);
@@ -170,6 +189,15 @@ class Home extends React.Component {
                     .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao))
                     .slice(0, 7);
                 this.setState({ feeActivities: sortedActivities });
+
+                // LƯU VÀO CACHE APP.JS
+                if (this.props.setHomeCache) {
+                    this.props.setHomeCache(prev => ({
+                        ...prev,
+                        feeActivities: sortedActivities,
+                        hasLoaded: true
+                    }));
+                }
             }
         } catch (error) {
             console.error("Lỗi khi tải biến động thu phí:", error);
@@ -177,15 +205,28 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        // Kiểm tra token trước khi gọi API
         const token = getToken();
         if (token) {
-            this.setDefaultTabByRole();
-            this.fetchChartData();
-            this.fetchResidentActivities();
-            this.fetchFeeActivities();
+            this.setDefaultTabByRole(); // Hàm này nhẹ, cứ để chạy lại để check role
+
+            // --- LOGIC MỚI: KIỂM TRA CACHE TRƯỚC ---
+            const { homeCache } = this.props;
+
+            // Nếu đã có dữ liệu trong Cache (hasLoaded = true)
+            if (homeCache && homeCache.hasLoaded) {
+                // Lấy từ Cache đổ vào State -> Không cần gọi API
+                this.setState({
+                    chartData: homeCache.chartData,
+                    residentActivities: homeCache.residentActivities,
+                    feeActivities: homeCache.feeActivities
+                });
+            } else {
+                // Nếu chưa có Cache -> Gọi API
+                this.fetchChartData();
+                this.fetchResidentActivities();
+                this.fetchFeeActivities();
+            }
         } else {
-            // Nếu không có token (đã đăng xuất), set state về rỗng để giao diện cập nhật
             this.setState({
                 chartData: null,
                 residentActivities: [],

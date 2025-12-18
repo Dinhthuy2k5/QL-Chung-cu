@@ -4,7 +4,7 @@ import axios from "axios";
 import '../../styles/receipt-styles/VoluntaryContribution.scss';
 import { useTranslation } from "react-i18next";
 
-function VoluntaryContribution() {
+function VoluntaryContribution({ cache, setCache }) {
     const { t } = useTranslation();
 
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -20,7 +20,8 @@ function VoluntaryContribution() {
     };
     const [updateForm, setUpdateForm] = useState(initialUpdateForm);
 
-    const [listContribution, setListContribution] = useState([]);
+    // 1. Dùng cache nếu có, nếu không thì mảng rỗng
+    const [listContribution, setListContribution] = useState(cache || []);
 
     // --- Các hàm xử lý giữ nguyên ---
     const toggleCreateModal = (status) => {
@@ -48,15 +49,25 @@ function VoluntaryContribution() {
 
         try {
             const response = await axios.get(apiUrl, config);
-            setListContribution(response.data.result.danhSachKhoanDongGop || []);
+            const data = response.data.result.danhSachKhoanDongGop || [];
+
+            setListContribution(data);
+
+            // 2. LƯU VÀO CACHE CỦA CHA
+            if (setCache) {
+                setCache(data);
+            }
         } catch (error) {
-            console.error("Lỗi tải dữ liệu:", error);
+            console.error(error);
         }
-    }, []);
+    }, [setCache]); // Thêm setCache vào dependency
 
     useEffect(() => {
-        fetchContributions();
-    }, [fetchContributions]);
+        // 3. CHỈ GỌI API NẾU CHƯA CÓ CACHE
+        if (!cache) {
+            fetchContributions();
+        }
+    }, [cache, fetchContributions]);
 
     const handleCreateSubmit = async (e) => {
         e.preventDefault();
@@ -74,6 +85,8 @@ function VoluntaryContribution() {
         } catch (error) {
             alert(t('voluntary_contribution.alerts.create_fail') || "Tạo thất bại");
         }
+
+
     }
 
     const handleUpdateSubmit = async (e) => {
@@ -88,6 +101,8 @@ function VoluntaryContribution() {
             await axios.post(apiUrl, updateForm, config);
             alert(t('voluntary_contribution.alerts.update_success') || "Cập nhật thành công!");
             toggleUpdateModal(false);
+
+            fetchContributions();
         } catch (error) {
             alert(t('voluntary_contribution.alerts.update_fail') || "Cập nhật thất bại");
         }
