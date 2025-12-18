@@ -95,7 +95,7 @@ function AppContent() {
           <Route path="/residents/*" element={<Resident listResidents={residents} />} />
           <Route path="/change-infor" element={<Change_Infor username={userLoggedIn} isChangeInfor={isChangeInfor} />} />
           <Route path="/view-infor" element={<Change_Infor username={userLoggedIn} isViewInfor={isViewInfor} />} />
-          <Route path="/receipts" element={<Receipt />} />
+          <Route path="/receipts/*" element={<Receipt />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </header>
