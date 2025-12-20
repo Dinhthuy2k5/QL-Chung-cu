@@ -17,13 +17,13 @@ import StatisticByTime from "../components/resident_component/StatisticByTime";
 import { useTranslation } from "react-i18next";
 
 // 2. Chuyển đổi sang Function Component
-function Resident(props) {
+function Resident({ listResidents, setListResidents, listFamilies, setListFamilies }) {
 
     // 3. Lấy hàm t và hook location
     const { t } = useTranslation();
     const location = useLocation(); // Hook để thay thế window.location.pathname
 
-    const [listResidents, setListResidents] = useState([]);
+
     // State Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingResident, setEditingResident] = useState(null);
@@ -34,9 +34,7 @@ function Resident(props) {
     const [isStatDropdownOpen, setStatDropdownOpen] = useState(false);
 
     // Đồng bộ props listResidents
-    useEffect(() => {
-        setListResidents(props.listResidents || []);
-    }, [props.listResidents]);
+
 
     // --- Chuyển đổi các hàm của class thành const functions ---
 
@@ -185,7 +183,8 @@ function Resident(props) {
                         // handleSearch được xử lý trong ListResident
                         />
                     } />
-                    <Route path="families" element={<Families />} />
+                    <Route path="families" element={<Families listFamilies={listFamilies}
+                        setListFamilies={setListFamilies} />} />
 
                     <Route path="statistic/by-gender" element={<StatisticByGender />} />
                     <Route path="statistic/by-age" element={<StatisticByAge />} />

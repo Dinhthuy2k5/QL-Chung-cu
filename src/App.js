@@ -30,6 +30,8 @@ function AppContent() {
   const [apartments, setApartments] = useState([]);
   const [residents, setResidents] = useState([]);
 
+  const [families, setFamilies] = useState([]);
+
   // --- 1. TẠO CACHE CHO HOME ---
   const [homeCache, setHomeCache] = useState({
     chartData: null,
@@ -55,6 +57,9 @@ function AppContent() {
       if (resResidents.data && resResidents.data.result) {
         setResidents(resResidents.data.result);
       }
+
+      const resFamilies = await axios.get(`http://localhost:8080/qlcc/ho-gia-dinh`, config);
+      if (resFamilies.data?.result) setFamilies(resFamilies.data.result);
     } catch (error) {
       console.log("Lỗi khi tải dữ liệu cho App.js", error);
     }
@@ -79,6 +84,7 @@ function AppContent() {
     // Thêm 2 dòng này để xóa dữ liệu khi đăng xuất
     setApartments([]);
     setResidents([]);
+    setFamilies([]);
 
     // RESET CACHE KHI ĐĂNG XUẤT
     setHomeCache({
@@ -116,7 +122,10 @@ function AppContent() {
           } />
           <Route path="/log-in" element={<Login onLoggedIn={handleLoggedIn} setUserLoggedIn={handleUserLoggedIn} />} />
           <Route path="/apartments" element={<Apartment listApartments={apartments} />} />
-          <Route path="/residents/*" element={<Resident listResidents={residents} />} />
+          <Route path="/residents/*" element={<Resident listResidents={residents}
+            setListResidents={setResidents}
+            listFamilies={families}
+            setListFamilies={setFamilies} />} />
           <Route path="/change-infor" element={<Change_Infor username={userLoggedIn} isChangeInfor={isChangeInfor} />} />
           <Route path="/view-infor" element={<Change_Infor username={userLoggedIn} isViewInfor={isViewInfor} />} />
           <Route path="/receipts/*" element={<Receipt />} />

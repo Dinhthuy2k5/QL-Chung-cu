@@ -11,6 +11,9 @@ $danger-color: #fd5d93;
 
 .family-list-container {
     width: 100%;
+    max-width: 1450px; 
+    margin: 0 auto; // Căn giữa nội dung
+    min-height: 100vh;
     padding: 20px 30px;
     color: $text-primary;
     animation: fadeIn 0.5s ease-out;
