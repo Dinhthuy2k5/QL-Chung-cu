@@ -2,7 +2,7 @@ import './styles/App.scss';
 import Home from './views/Home.js';
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Login from './pages/Login.js'
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Đảm bảo import useEffect
 import Header from './views/Nav/Header.js';
 import Apartment from './views/Apartments.js';
 import Resident from './views/Residents.js';
@@ -13,13 +13,9 @@ import VantaBackground from './views/VantaBackground.js';
 import Receipt from './views/Receipt.js';
 import axios from 'axios';
 import { getToken } from './services/localStorageService.js';
-import { useEffect } from 'react';
 
-
-
-// Component AppContent sẽ chứa toàn bộ logic và giao diện của bạn
 function AppContent() {
-  const navigate = useNavigate(); // <-- Bây giờ useNavigate được gọi BÊN TRONG Router, nên sẽ hoạt động
+  const navigate = useNavigate();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState("");
@@ -29,7 +25,6 @@ function AppContent() {
 
   const [apartments, setApartments] = useState([]);
   const [residents, setResidents] = useState([]);
-
   const [families, setFamilies] = useState([]);
 
   // --- 1. TẠO CACHE CHO HOME ---
@@ -37,26 +32,36 @@ function AppContent() {
     chartData: null,
     residentActivities: [],
     feeActivities: [],
-    hasLoaded: false // Cờ đánh dấu đã tải dữ liệu lần đầu hay chưa
+    hasLoaded: false
   });
 
-  // Hàm gọi API (bạn có thể gộp 2 hàm này lại)
+  // --- 2. THÊM MỚI: TỰ ĐỘNG RESET CACHE KHI DỮ LIỆU THAY ĐỔI ---
+  useEffect(() => {
+    // Nếu Cache đã được load (tức là người dùng đã vào Home rồi),
+    // mà sau đó dữ liệu residents/families/apartments thay đổi (do Thêm/Sửa/Xóa),
+    // thì ta cần đánh dấu cache là "cũ" (hasLoaded = false).
+    if (homeCache.hasLoaded) {
+      console.log("Dữ liệu thay đổi, reset cache Home để tải lại hoạt động mới...");
+      setHomeCache(prev => ({
+        ...prev,
+        hasLoaded: false
+      }));
+    }
+    // Effect này sẽ chạy mỗi khi biến residents, families hoặc apartments thay đổi
+  }, [residents, families, apartments]);
+  // -------------------------------------------------------------
+
   const fetchData = async () => {
     const token = getToken();
     if (!token) return;
     const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
     try {
-      // Lấy dữ liệu căn hộ
       const resApartments = await axios.get(`http://localhost:8080/qlcc/can-ho`, config);
-      if (resApartments.data && resApartments.data.result) {
-        setApartments(resApartments.data.result);
-      }
-      // Lấy dữ liệu cư dân
+      if (resApartments.data?.result) setApartments(resApartments.data.result);
+
       const resResidents = await axios.get(`http://localhost:8080/qlcc/nhan-khau`, config);
-      if (resResidents.data && resResidents.data.result) {
-        setResidents(resResidents.data.result);
-      }
+      if (resResidents.data?.result) setResidents(resResidents.data.result);
 
       const resFamilies = await axios.get(`http://localhost:8080/qlcc/ho-gia-dinh`, config);
       if (resFamilies.data?.result) setFamilies(resFamilies.data.result);
@@ -65,7 +70,6 @@ function AppContent() {
     }
   };
 
-  // Gọi API khi đăng nhập thành công
   useEffect(() => {
     if (isLoggedIn) {
       fetchData();
@@ -81,12 +85,10 @@ function AppContent() {
     setIsLoggedIn(false);
     setUserLoggedIn("");
 
-    // Thêm 2 dòng này để xóa dữ liệu khi đăng xuất
     setApartments([]);
     setResidents([]);
     setFamilies([]);
 
-    // RESET CACHE KHI ĐĂNG XUẤT
     setHomeCache({
       chartData: null,
       residentActivities: [],
@@ -94,15 +96,12 @@ function AppContent() {
       hasLoaded: false
     });
 
-    navigate("/"); // <-- Lệnh navigate này giờ đã hợp lệ
-
-
+    navigate("/");
   }
 
   const handleUserLoggedIn = (username) => {
     setUserLoggedIn(username);
   }
-
 
   return (
     <div className="App">
@@ -116,8 +115,8 @@ function AppContent() {
             <Home
               totalApartments={apartments.length}
               totalResidents={residents.length}
-              homeCache={homeCache}           // Truyền dữ liệu đã lưu
-              setHomeCache={setHomeCache}     // Truyền hàm cập nhật
+              homeCache={homeCache}
+              setHomeCache={setHomeCache}
             />
           } />
           <Route path="/log-in" element={<Login onLoggedIn={handleLoggedIn} setUserLoggedIn={handleUserLoggedIn} />} />
@@ -136,7 +135,6 @@ function AppContent() {
   );
 }
 
-// Component App chính giờ đây chỉ có nhiệm vụ duy nhất là cung cấp BrowserRouter
 function App() {
   return (
     <BrowserRouter>
