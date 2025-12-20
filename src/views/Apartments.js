@@ -10,6 +10,10 @@ function Apartment(props) {
     const [isEditFilter, setIsEditFilter] = useState(false);
     const [viewMode, setViewMode] = useState('grid');
 
+    // --- STATE PHÂN TRANG ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(12); // Mặc định 12 thẻ cho đẹp Grid (chia hết cho 2,3,4)
+
     // --- 1. HÀM SẮP XẾP (Giữ nguyên để đảm bảo thứ tự tầng/phòng đúng) ---
     const sortApartments = (list) => {
         return list.sort((a, b) => {
@@ -34,26 +38,33 @@ function Apartment(props) {
         }
     }, [props.listApartments]);
 
-    // --- 2. HÀM GOM NHÓM CHỈ THEO TÒA (ĐÃ SỬA) ---
+    // --- LOGIC TÍNH TOÁN DỮ LIỆU TRANG HIỆN TẠI ---
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentApartments = filteredApartments.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredApartments.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+    const handleRowsPerPageChange = (e) => {
+        setItemsPerPage(Number(e.target.value));
+        setCurrentPage(1); // Reset về trang 1 khi đổi số lượng
+    };
+
+    // --- 2. HÀM GOM NHÓM (DÙNG DỮ LIỆU ĐÃ PHÂN TRANG: currentApartments) ---
     const groupedApartments = useMemo(() => {
         const groups = {};
-
-        filteredApartments.forEach(item => {
-            // Chỉ lấy tên tòa: "A" từ "A101"
+        // Lưu ý: Dùng currentApartments thay vì filteredApartments
+        currentApartments.forEach(item => {
             const building = item.soNha.match(/^[a-zA-Z]+/)?.[0] || "Khác";
-
-            // Key nhóm bây giờ chỉ là tên Tòa
             const groupKey = `${t('apartment_table.building') || "Tòa"} ${building}`;
-
             if (!groups[groupKey]) {
                 groups[groupKey] = [];
             }
             groups[groupKey].push(item);
         });
-
         return groups;
-    }, [filteredApartments, t]);
-
+    }, [currentApartments, t]);
     // --- 3. ICON ĐỘNG (Giữ nguyên) ---
     const getApartmentIcon = (item) => {
         const type = item.loaiCanHo ? item.loaiCanHo.toLowerCase() : "";
@@ -120,17 +131,13 @@ function Apartment(props) {
 
             {/* --- PHẦN HIỂN THỊ DỮ LIỆU --- */}
 
-            {/* VIEW MODE: GRID (Dạng thẻ - Phân tách theo TÒA) */}
+            {/* VIEW MODE: GRID */}
             {viewMode === 'grid' && (
                 <div className="apartment-floors-wrapper">
                     {Object.keys(groupedApartments).length > 0 ? (
-                        // Sắp xếp tên Tòa (Tòa A, Tòa B...) trước khi map
                         Object.keys(groupedApartments).sort().map(groupKey => (
                             <div key={groupKey} className="floor-group">
-                                {/* Tiêu đề Tòa */}
                                 <h3 className="floor-title">{groupKey}</h3>
-
-                                {/* Grid các căn hộ trong Tòa đó */}
                                 <div className="apartment-grid-container">
                                     {groupedApartments[groupKey].map(item => {
                                         const iconData = getApartmentIcon(item);
@@ -158,8 +165,6 @@ function Apartment(props) {
                                                     </div>
                                                 </div>
                                                 <div className="card-footer">
-                                                    {/* <button className="btn-action edit">{t('apartment_table.edit') || "Sửa"}</button>
-                                                    <button className="btn-action delete">{t('apartment_table.delete') || "Xóa"}</button> */}
                                                 </div>
                                             </div>
                                         );
@@ -173,7 +178,7 @@ function Apartment(props) {
                 </div>
             )}
 
-            {/* VIEW MODE: LIST (Dạng bảng cũ - Giữ nguyên) */}
+            {/* VIEW MODE: LIST */}
             {viewMode === 'list' && (
                 <div className="glass-table-container">
                     <table className="modern-table">
@@ -189,8 +194,9 @@ function Apartment(props) {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredApartments.length > 0 ? (
-                                filteredApartments.map((item) => (
+                            {/* Dùng currentApartments thay vì filteredApartments */}
+                            {currentApartments.length > 0 ? (
+                                currentApartments.map((item) => (
                                     <tr key={item.idCanHo}>
                                         <td className="id-col">#{item.idCanHo}</td>
                                         <td className="highlight-text">{item.soNha}</td>
@@ -198,12 +204,7 @@ function Apartment(props) {
                                         <td>{getStatusBadge(item.dienTich)}</td>
                                         <td>{item.dienTich} m²</td>
                                         <td className="address-col">{item.diaChi}</td>
-                                        <td>
-                                            {/* <div className="action-buttons">
-                                                <button className="btn-icon edit" title="Edit">&#9998;</button>
-                                                <button className="btn-icon delete" title="Delete">&#128465;</button>
-                                            </div> */}
-                                        </td>
+                                        <td></td>
                                     </tr>
                                 ))
                             ) : (
@@ -211,6 +212,57 @@ function Apartment(props) {
                             )}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* --- THANH PHÂN TRANG (PAGINATION) --- */}
+            {filteredApartments.length > 0 && (
+                <div className="pagination-wrapper">
+                    <div className="rows-per-page">
+                        <span>Hiển thị:</span>
+                        <select value={itemsPerPage} onChange={handleRowsPerPageChange}>
+                            <option value={10}>10</option>
+                            <option value={12}>12</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+                    <div className="page-numbers">
+                        <button
+                            className="page-btn prev"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            &lt;
+                        </button>
+
+                        {/* Logic hiển thị số trang */}
+                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(number => (
+                            // Chỉ hiện trang đầu, trang cuối, và các trang xung quanh trang hiện tại
+                            (number === 1 || number === totalPages || (number >= currentPage - 1 && number <= currentPage + 1)) ? (
+                                <button
+                                    key={number}
+                                    onClick={() => handlePageChange(number)}
+                                    className={`page-btn ${currentPage === number ? 'active' : ''}`}
+                                >
+                                    {number}
+                                </button>
+                            ) : (
+                                (number === currentPage - 2 || number === currentPage + 2) ? <span key={number} className="dots">...</span> : null
+                            )
+                        ))}
+
+                        <button
+                            className="page-btn next"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                    <div className="page-info">
+                        Trang {currentPage} / {totalPages}
+                    </div>
                 </div>
             )}
         </div>

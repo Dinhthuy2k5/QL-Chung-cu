@@ -17,10 +17,27 @@ function ListResidents(props) {
     const [isTemporaryAddress, setIsTemporaryAddress] = useState(false);
     const [filteredList, setFilteredList] = useState([]);
 
+    // --- STATE PHÂN TRANG ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(12); // Mặc định 10 dòng
+
     // 3. Effect: Cập nhật filteredList khi listResidents từ cha thay đổi
     useEffect(() => {
         setFilteredList(listResidents);
     }, [listResidents]);
+
+    // --- LOGIC PHÂN TRANG ---
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentResidents = filteredList.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+    const handleRowsPerPageChange = (e) => {
+        setItemsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
 
     // 4. Hàm xử lý tìm kiếm (Nhận data từ SearchBar)
     const handleSearch = (query) => {
@@ -134,7 +151,7 @@ function ListResidents(props) {
                 </div>
             </div>
 
-            {/* --- TABLE: Glassmorphism Style --- */}
+            {/* --- TABLE --- */}
             <div className="glass-table">
                 <table>
                     <thead>
@@ -151,16 +168,15 @@ function ListResidents(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredList && filteredList.length > 0 ? (
-                            filteredList.map((item) => (
+                        {/* Dùng currentResidents thay vì filteredList */}
+                        {currentResidents && currentResidents.length > 0 ? (
+                            currentResidents.map((item) => (
                                 <tr key={item.cccd}>
                                     <td style={{ fontFamily: 'monospace', color: '#4cc9f0', fontWeight: 'bold' }}>
                                         {item.cccd}
                                     </td>
                                     <td>{item.cccdChuHo}</td>
-                                    <td style={{ fontWeight: '600', color: '#ffffff' }}>
-                                        {item.hoVaTen}
-                                    </td>
+                                    <td style={{ fontWeight: '600', color: '#ffffff' }}>{item.hoVaTen}</td>
                                     <td>{item.ngaySinh}</td>
                                     <td>{item.gioiTinh}</td>
                                     <td>{item.danToc}</td>
@@ -186,6 +202,55 @@ function ListResidents(props) {
                     </tbody>
                 </table>
             </div>
+
+            {/* --- THANH PHÂN TRANG (PAGINATION) --- */}
+            {filteredList.length > 0 && (
+                <div className="pagination-wrapper">
+                    <div className="rows-per-page">
+                        <span>Hiển thị:</span>
+                        <select value={itemsPerPage} onChange={handleRowsPerPageChange}>
+                            <option value={10}>10</option>
+                            <option value={12}>12</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+                    <div className="page-numbers">
+                        <button
+                            className="page-btn prev"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            &lt;
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(number => (
+                            (number === 1 || number === totalPages || (number >= currentPage - 1 && number <= currentPage + 1)) ? (
+                                <button
+                                    key={number}
+                                    onClick={() => handlePageChange(number)}
+                                    className={`page-btn ${currentPage === number ? 'active' : ''}`}
+                                >
+                                    {number}
+                                </button>
+                            ) : (
+                                (number === currentPage - 2 || number === currentPage + 2) ? <span key={number} className="dots">...</span> : null
+                            )
+                        ))}
+
+                        <button
+                            className="page-btn next"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                    <div className="page-info">
+                        Trang {currentPage} / {totalPages}
+                    </div>
+                </div>
+            )}
 
             {/* --- Modals --- */}
             <TemporaryAbsenceModal

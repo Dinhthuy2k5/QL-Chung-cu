@@ -469,3 +469,91 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         position: relative;
     }
 }
+
+/* --- 5. THANH PHÂN TRANG (PAGINATION) --- */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 15px 20px;
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: $glass-border;
+    border-radius: 12px;
+    color: $text-secondary;
+    animation: fadeIn 0.5s ease-in-out;
+
+    .rows-per-page {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+
+        select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: $text-primary;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+
+            option {
+                background: #1e1e28;
+            }
+        }
+    }
+
+    .page-numbers {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .page-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: $text-secondary;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+
+            &:hover:not(:disabled) {
+                background: rgba(255, 255, 255, 0.1);
+                color: $text-primary;
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            &.active {
+                background: $accent-color;
+                color: white;
+                border-color: $accent-color;
+                box-shadow: 0 2px 8px rgba($accent-color, 0.4);
+            }
+
+            &:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+            
+            &.prev, &.next {
+                font-size: 1.2rem;
+            }
+        }
+        
+        .dots {
+            color: $text-secondary;
+            margin: 0 5px;
+        }
+    }
+
+    .page-info {
+        font-size: 0.9rem;
+    }
+}
