@@ -29,6 +29,10 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     margin: 0 auto;
     padding: 30px;
     color: $text-primary;
+    
+    // --- ĐỒNG BỘ FONT CHỮ VỚI HOME ---
+    font-family: 'Inter', sans-serif;
+    
     animation: fadeIn 0.5s ease-out;
 }
 
@@ -39,9 +43,8 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     overflow: hidden; 
 }
 
-/* --- 3. SIDEBAR (BÊN TRÁI - ĐÃ CHỈNH SỬA) --- */
+/* --- 3. SIDEBAR (BÊN TRÁI) --- */
 .settings-sidebar {
-    // 1. Tăng chiều rộng để đủ chỗ cho chữ dài
     width: 320px; 
     background-color: $sidebar-bg;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -57,7 +60,7 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             text-transform: uppercase; 
             letter-spacing: 1px; 
             color: $text-primary; 
-            text-align: center; // Căn giữa tiêu đề CÀI ĐẶT
+            text-align: center;
         }
     }
 
@@ -75,10 +78,8 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             align-items: center; 
             gap: 12px;
             transition: all 0.2s;
-            
-            // 2. Giảm cỡ chữ và ép hiển thị 1 dòng
-            font-size: 0.95rem; // Nhỏ hơn một chút để gọn
-            white-space: nowrap; // Không bao giờ xuống dòng
+            font-size: 0.95rem;
+            white-space: nowrap;
 
             &:hover {
                 background-color: rgba(255, 255, 255, 0.05);
@@ -91,7 +92,6 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
                 box-shadow: 0 4px 12px rgba($accent-color, 0.4);
             }
             
-            // Chỉnh icon to hơn chút cho cân đối
             span:first-child { 
                 font-size: 1.2rem; 
             }
@@ -103,7 +103,7 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 .settings-main {
     flex: 1;
     padding: 40px;
-    overflow-y: auto; // Cuộn riêng nội dung bên phải nếu dài
+    overflow-y: auto;
 
     .content-header {
         margin-bottom: 30px;
@@ -135,7 +135,7 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
                 font-size: 1rem;
                 box-sizing: border-box;
                 transition: all 0.2s;
-                font-family: inherit;
+                font-family: inherit; // Kế thừa font Inter từ cha
 
                 &:focus {
                     outline: none; border-color: $accent-color;
@@ -160,7 +160,7 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
     }
 
-    // --- LIST STYLES (Thông báo) ---
+    // --- LIST STYLES ---
     .settings-list {
         max-width: 800px;
         
@@ -177,7 +177,6 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
                 span { font-size: 0.85rem; color: $text-secondary; }
             }
 
-            // Switch Toggle
             .switch {
                 position: relative; display: inline-block; width: 50px; height: 26px;
                 input { opacity: 0; width: 0; height: 0; }
@@ -195,7 +194,7 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
     }
 
-    // --- GRID STYLES (Hệ thống) ---
+    // --- GRID STYLES ---
     .system-grid {
         display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 900px;
 
@@ -225,5 +224,4 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 }
 
-// Animation
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

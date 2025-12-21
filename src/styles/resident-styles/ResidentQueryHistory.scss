@@ -1,106 +1,140 @@
-// Biến màu cho theme
-$dark-bg: #2c3038;
-$header-bg: #353a42;
-$border-color: #495057;
-$text-color: #e9ecef;
-$row-hover-bg: #3e444c;
-$primary-blue: #007bff;
-$primary-blue-hover: #0056b3;
-$error-color: #dc3545;
+/* --- BIẾN MÀU --- */
+$accent-color: #4361ee;
+$text-primary: #ffffff;
+$text-secondary: #d1d1d1;
+$danger-color: #fd5d93;
 
-.history-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    color: $text-color;
-}
+/* --- STYLE RIÊNG CHO TRANG TRUY VẤN --- */
 
-.history-search-bar {
+.query-search-group {
     display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 12px; // Khoảng cách giữa ô input và nút tìm kiếm
+    align-items: center;
+    width: 100%;
+    max-width: 700px; 
 
-    input[type="text"] {
+    // Bao quanh input để đặt icon kính lúp
+    .input-wrapper {
+        position: relative;
         flex-grow: 1;
-        padding: 12px 15px;
-        font-size: 1rem;
-        background-color: $dark-bg; // Giả sử bạn có biến này
-        border: 1px solid $border-color;
-        color: $text-color;
-        border-radius: 6px;
+        display: flex;
+        align-items: center;
 
-        &:focus {
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: $text-secondary;
+            font-size: 0.9rem;
+            pointer-events: none; // Để bấm xuyên qua icon vào input
+        }
+
+        .glass-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: $text-primary;
+            padding: 10px 15px 10px 38px; // Padding trái lớn để tránh icon
+            border-radius: 8px;
+            font-size: 0.95rem;
             outline: none;
-            border-color: $primary-blue;
-            box-shadow: 0 0 5px rgba($primary-blue, 0.5);
+            transition: all 0.2s;
+            height: 42px; // Chiều cao cố định
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.4);
+            }
+
+            &:focus {
+                background: rgba(0, 0, 0, 0.4);
+                border-color: $accent-color;
+                box-shadow: 0 0 0 3px rgba($accent-color, 0.2);
+            }
         }
     }
 
-    button {
-        background-color: $primary-blue;
+    // Nút tìm kiếm
+    .search-btn {
+        height: 42px; // Bằng chiều cao input
+        padding: 0 25px;
+        background: $accent-color;
         color: white;
         border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: bold;
+        border-radius: 8px;
+        font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba($accent-color, 0.3);
+        white-space: nowrap;
 
         &:hover {
-            background-color: $primary-blue-hover;
+            transform: translateY(-2px);
+            background: lighten($accent-color, 5%);
         }
 
         &:disabled {
-            background-color: #555;
+            background: #555;
             cursor: not-allowed;
+            transform: none;
         }
     }
 }
 
-.history-results {
-    .error-message {
-        color: $error-color;
-        text-align: center;
-        font-weight: bold;
-        padding: 20px;
+/* --- TÙY CHỈNH BẢNG (Ghi đè hoặc bổ sung cho glass-table) --- */
+
+// 1. Căn giữa dòng Loading
+.loading-cell {
+    text-align: center !important;
+    padding: 40px !important;
+    color: $text-secondary;
+    
+    .loading-spinner {
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top-color: $accent-color;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
     }
+}
 
-    // Dùng lại style table từ FamilyList.scss để đồng bộ
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: $dark-bg;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+// 2. Căn giữa dòng Không có dữ liệu (QUAN TRỌNG)
+.no-data {
+    text-align: center !important; // Bắt buộc căn giữa
+    padding: 50px !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic;
+    font-size: 1rem;
+}
 
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid $border-color;
-            font-size: 0.9rem;
-        }
+// 3. Các thành phần nhỏ khác
+.error-banner {
+    background: rgba($danger-color, 0.1);
+    border: 1px solid rgba($danger-color, 0.3);
+    color: $danger-color;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+}
 
-        thead tr {
-            background-color: $header-bg;
-            font-weight: bold;
-        }
-        
-        th {
-            white-space: nowrap;
-        }
+.executor-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #ffd700; // Màu vàng kim
+    font-weight: 500;
+}
 
-        tbody tr {
-            transition: background-color 0.2s ease;
-            &:hover {
-                background-color: $row-hover-bg;
-            }
-        }
-        
-        td {
-            word-break: break-word; // Cho phép chữ dài tự xuống dòng
-        }
-    }
+.highlight-text {
+    color: #4cc9f0;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
