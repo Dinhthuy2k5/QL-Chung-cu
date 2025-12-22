@@ -10,6 +10,7 @@ function VoluntaryContribution({ cache, setCache }) {
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
 
+    // ... (Giữ nguyên các state form: initialCreateForm, createForm, initialUpdateForm, updateForm) ...
     const initialCreateForm = { tenKhoanDongGop: '', ngayBatDauThu: '', hanDongGop: '' };
     const [createForm, setCreateForm] = useState(initialCreateForm);
 
@@ -19,11 +20,9 @@ function VoluntaryContribution({ cache, setCache }) {
         nguoiNhan: '', ghiChu: ''
     };
     const [updateForm, setUpdateForm] = useState(initialUpdateForm);
-
-    // 1. Dùng cache nếu có, nếu không thì mảng rỗng
     const [listContribution, setListContribution] = useState(cache || []);
 
-    // --- Các hàm xử lý giữ nguyên ---
+    // ... (Giữ nguyên các hàm xử lý: toggleModal, handleFormChange, fetchContributions, handleSubmit...) ...
     const toggleCreateModal = (status) => {
         setCreateModalOpen(status);
         if (!status) setCreateForm(initialCreateForm);
@@ -43,40 +42,26 @@ function VoluntaryContribution({ cache, setCache }) {
     const fetchContributions = useCallback(async () => {
         const token = getToken();
         if (!token) return;
-
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = `http://localhost:8080/qlcc/khoan-dong-gop/all`;
-
         try {
             const response = await axios.get(apiUrl, config);
             const data = response.data.result.danhSachKhoanDongGop || [];
-
             setListContribution(data);
-
-            // 2. LƯU VÀO CACHE CỦA CHA
-            if (setCache) {
-                setCache(data);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }, [setCache]); // Thêm setCache vào dependency
+            if (setCache) setCache(data);
+        } catch (error) { console.error(error); }
+    }, [setCache]);
 
     useEffect(() => {
-        // 3. CHỈ GỌI API NẾU CHƯA CÓ CACHE
-        if (!cache) {
-            fetchContributions();
-        }
+        if (!cache) fetchContributions();
     }, [cache, fetchContributions]);
 
     const handleCreateSubmit = async (e) => {
         e.preventDefault();
         const token = getToken();
         if (!token) return;
-
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = `http://localhost:8080/qlcc/khoan-dong-gop/create`;
-
         try {
             await axios.post(apiUrl, createForm, config);
             alert(t('voluntary_contribution.alerts.create_success') || "Tạo thành công!");
@@ -85,30 +70,25 @@ function VoluntaryContribution({ cache, setCache }) {
         } catch (error) {
             alert(t('voluntary_contribution.alerts.create_fail') || "Tạo thất bại");
         }
-
-
     }
 
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         const token = getToken();
         if (!token) return;
-
         const config = { headers: { 'Authorization': `Bearer ${token}` } };
         const apiUrl = `http://localhost:8080/qlcc/khoan-dong-gop/chi-tiet`;
-
         try {
             await axios.post(apiUrl, updateForm, config);
             alert(t('voluntary_contribution.alerts.update_success') || "Cập nhật thành công!");
             toggleUpdateModal(false);
-
             fetchContributions();
         } catch (error) {
             alert(t('voluntary_contribution.alerts.update_fail') || "Cập nhật thất bại");
         }
     }
 
-    // --- Render Modal giữ nguyên, chỉ hiển thị code chính ---
+    // ... (Giữ nguyên phần render Modal: renderCreateModal, renderUpdateModal) ...
     const renderCreateModal = () => (
         <div className="modal-overlay" onClick={() => toggleCreateModal(false)}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -146,27 +126,36 @@ function VoluntaryContribution({ cache, setCache }) {
     );
 
     return (
-        // THAY ĐỔI QUAN TRỌNG: Dùng div.voluntary-container thay vì Fragment <>
         <div className="voluntary-container">
             {isCreateModalOpen && renderCreateModal()}
             {isUpdateModalOpen && renderUpdateModal()}
 
-            <div className="section-header">
-                <h2>{t('voluntary_contribution.title') || "QUẢN LÝ ĐÓNG GÓP TỰ NGUYỆN"}</h2>
-                <p>{t('voluntary_contribution.description') || "Tạo các đợt vận động đóng góp và ghi nhận thông tin chi tiết."}</p>
-            </div>
-            <div className="section-actions">
-                <button onClick={() => toggleCreateModal(true)}>{t('voluntary_contribution.create_campaign_button') || "Tạo đợt đóng góp"}</button>
-                <button onClick={() => toggleUpdateModal(true)}>{t('voluntary_contribution.update_contribution_button') || "Cập nhật đóng góp"}</button>
+            {/* --- 1. PHẦN THAO TÁC NGHIỆP VỤ (ĐỒNG BỘ VỚI BẮT BUỘC) --- */}
+            <div className="quick-actions-panel">
+                <h3>Thao tác nghiệp vụ</h3>
+                <div className="action-buttons">
+                    <button className="btn-action create" onClick={() => toggleCreateModal(true)}>
+                        <span className="icon">✚</span> {t('voluntary_contribution.create_campaign_button') || "Tạo đợt đóng góp"}
+                    </button>
+                    <button className="btn-action update" onClick={() => toggleUpdateModal(true)}>
+                        <span className="icon">✎</span> {t('voluntary_contribution.update_contribution_button') || "Cập nhật đóng góp"}
+                    </button>
+                </div>
             </div>
 
+            {/* --- 2. PHẦN BẢNG DỮ LIỆU --- */}
             <div className="receipt-table-container">
+                {/* Thêm tiêu đề nhỏ cho bảng nếu cần */}
+                <h4>
+                    Danh sách các đợt vận động
+                </h4>
+
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Tên Khoản Đóng Góp</th>
-                            <th>Ngày Tạo</th>
+                            <th>Ngày Thu</th>
                             <th>Hạn Đóng Góp</th>
                             <th>Số Hộ Đóng</th>
                             <th>Tổng Tiền</th>
@@ -176,16 +165,22 @@ function VoluntaryContribution({ cache, setCache }) {
                         {listContribution.length > 0 ? (
                             listContribution.map(item => (
                                 <tr key={item.idKhoanDongGop}>
-                                    <td>{item.idKhoanDongGop}</td>
-                                    <td>{item.tenKhoanDongGop}</td>
-                                    <td>{item.ngayTao}</td>
-                                    <td>{item.hanDongGop}</td>
-                                    <td>{item.soCanHoDongGop}</td>
-                                    <td>{(item.tongTienThuDuoc || 0).toLocaleString('vi-VN')} VNĐ</td>
+                                    <td className="highlight-id">#{item.idKhoanDongGop}</td>
+                                    <td style={{ fontWeight: 600, color: 'white' }}>{item.tenKhoanDongGop}</td>
+                                    <td>{item.ngayThu
+                                        ? new Date(item.ngayThu).toLocaleDateString('vi-VN')
+                                        : '---'}</td>
+                                    <td>{item.hanThu
+                                        ? new Date(item.hanThu).toLocaleDateString('vi-VN')
+                                        : '---'}</td>
+                                    <td style={{ textAlign: 'center' }}>{item.soCanHoDongGop}</td>
+                                    <td style={{ color: '#00f2c3', fontWeight: 'bold' }}>
+                                        {(item.tongTienThuDuoc || 0).toLocaleString('vi-VN')} VNĐ
+                                    </td>
                                 </tr>
                             ))
                         ) : (
-                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '30px' }}>Chưa có dữ liệu</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: 'center', padding: '30px', fontStyle: 'italic', opacity: 0.7 }}>Chưa có dữ liệu</td></tr>
                         )}
                     </tbody>
                 </table>

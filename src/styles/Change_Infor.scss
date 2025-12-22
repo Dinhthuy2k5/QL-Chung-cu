@@ -1,64 +1,81 @@
-// src/styles/Change_Infor.scss
+/* --- 1. BIẾN MÀU & MIXIN (Đồng bộ toàn app) --- */
+$accent-color: #4361ee;       // Xanh chủ đạo
+$text-primary: #ffffff;       // Chữ trắng
+$text-secondary: #d1d1d1;     // Chữ xám nhạt
+$bg-dark-input: #1e1e2f;      // Nền input tối
+
+// Cấu hình nền kính
+$glass-bg: rgba(39, 41, 61, 0.75); 
+$glass-border: 1px solid rgba(255, 255, 255, 0.1);
+$glass-blur: 12px;
+$glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+@mixin glass-panel {
+    background: $glass-bg;
+    backdrop-filter: blur($glass-blur);
+    -webkit-backdrop-filter: blur($glass-blur);
+    border: $glass-border;
+    box-shadow: $glass-shadow;
+    border-radius: 16px;
+}
+
+/* --- 2. LAYOUT CONTAINER --- */
 body, html {
   margin: 0;
   padding: 0;
-  /* Ngăn cuộn ngang trên toàn bộ trang */
   overflow-x: hidden; 
 }
+
 .change-info-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; // Căn giữa theo chiều dọc
     padding: 40px 20px;
+    min-height: calc(100vh - 80px); // Trừ đi chiều cao header (ước lượng)
     
-    // THAY ĐỔI QUAN TRỌNG:
-    // Cố định chiều cao của container bằng đúng không gian còn lại dưới header.
-    // Con số 120px là chiều cao ước tính của header, bạn có thể điều chỉnh nếu cần.
-    height: calc(100vh - 120px); 
-    
-    background-color: #212529;
+    // Xóa màu nền cứng cũ, để trong suốt để lộ hình nền Vanta.js
+    background-color: transparent; 
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.5s ease-out;
 }
 
+/* --- 3. FORM STYLE (STYLE KÍNH) --- */
 .change-info-form {
-    background-color: #343a40;
-    padding: 30px 40px;
-    border-radius: 12px;
-    border: 1px solid #495057;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    @include glass-panel; // Áp dụng hiệu ứng kính
+    
+    padding: 40px;
     width: 100%;
-    max-width: 500px;
+    max-width: 550px; // Giới hạn chiều rộng form
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    position: relative;
 
-    // Các thuộc tính này vẫn giữ nguyên để form tự cuộn bên trong
-    max-height: calc(100vh - 220px);
-    overflow-y: auto; 
+    // Scrollbar cho form nếu màn hình quá nhỏ
+    max-height: 85vh;
+    overflow-y: auto;
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-    // Style cho thanh cuộn (tùy chọn)
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-    &::-webkit-scrollbar-track {
-        background: #343a40;
-        border-radius: 4px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #6c757d;
-        border-radius: 4px;
-        border: 2px solid #343a40;
-
-        &:hover {
-            background-color: #adb5bd;
-        }
-    }
-
-    // ... các style khác cho h2, .form-group, .submit-btn giữ nguyên như cũ ...
     h2 {
         text-align: center;
-        color: #f8f9fa;
-        margin-bottom: 20px;
-        font-size: 24px;
+        color: $text-primary;
+        margin: 0 0 10px 0;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        
+        // Thêm đường gạch chân nhỏ dưới tiêu đề
+        &::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: $accent-color;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
     }
 
     .form-group {
@@ -68,27 +85,42 @@ body, html {
         label {
             margin-bottom: 8px;
             font-weight: 600;
-            color: #ced4da;
+            color: $text-secondary;
+            font-size: 0.9rem;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            background-color: #495057;
-            border: 1px solid #6c757d;
+            padding: 12px 15px;
+            
+            // Style Input đồng bộ với trang Cài đặt
+            background-color: rgba(0, 0, 0, 0.2); // Nền tối trong suốt
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            font-size: 16px;
-            color: #f8f9fa;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-size: 1rem;
+            color: $text-primary;
+            transition: all 0.2s ease;
+            font-family: inherit;
 
             &::placeholder {
-                color: #adb5bd;
+                color: rgba(255, 255, 255, 0.3);
             }
 
             &:focus {
                 outline: none;
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+                border-color: $accent-color;
+                background-color: rgba(0, 0, 0, 0.3);
+                box-shadow: 0 0 0 3px rgba($accent-color, 0.2);
+            }
+
+            // Input ReadOnly (khi xem thông tin)
+            &[readOnly] {
+                background-color: rgba(255, 255, 255, 0.05);
+                border-color: transparent;
+                color: rgba(255, 255, 255, 0.7);
+                cursor: default;
+                
+                &:focus { box-shadow: none; border-color: transparent; }
             }
         }
     }
@@ -96,25 +128,39 @@ body, html {
     .divider {
         border: none;
         height: 1px;
-        background-color: #495057;
-        margin: 15px 0;
+        background-color: rgba(255, 255, 255, 0.1);
+        margin: 10px 0;
     }
 
     .submit-btn {
-        margin-top: 15px;
+        margin-top: 10px;
         padding: 14px;
-        background-color: #28a745;
+        background-color: $accent-color;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: bold;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.2s ease, transform 0.1s ease;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba($accent-color, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
 
         &:hover {
-            background-color: #218838;
+            background-color: lighten($accent-color, 5%);
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba($accent-color, 0.4);
+        }
+
+        &:active {
+            transform: scale(0.98);
         }
     }
+}
+
+// Animation
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }

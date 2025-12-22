@@ -1,10 +1,11 @@
-/* --- 1. BIẾN MÀU & MIXIN (Đồng bộ toàn app) --- */
-$accent-color: #4361ee;       // Xanh chủ đạo
-$text-primary: #ffffff;       // Chữ trắng
-$text-secondary: #d1d1d1;     // Chữ xám nhạt
-$success-color: #00f2c3;
-$warning-color: #ff8d72;
-$danger-color: #fd5d93;
+/* --- 1. BIẾN MÀU & MIXIN (CHUẨN ĐỒNG BỘ) --- */
+$accent-color: #4361ee;       // Xanh dương
+$success-color: #00f2c3;      // Xanh lá
+$warning-color: #ff8d72;      // Cam
+$danger-color: #fd5d93;       // Hồng/Đỏ
+$info-color: #0ea5e9;         // Xanh lơ
+$text-primary: #ffffff;
+$text-secondary: #d1d1d1;
 $bg-dark-input: #1e1e2f;
 
 // Cấu hình nền kính
@@ -22,137 +23,154 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     border-radius: 12px;
 }
 
-/* --- 2. CONTAINER CHÍNH (THÊM MỚI) --- */
+/* --- 2. CONTAINER CHÍNH --- */
 .voluntary-container {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    color: $text-primary; // Quan trọng: Đặt màu chữ trắng
-    padding: 10px 0;
-    animation: fadeIn 0.5s ease-out; // Hiệu ứng hiện dần
-}
-
-/* --- 2. HEADER & TITLE --- */
-.section-header {
-    margin-bottom: 30px;
+    gap: 20px;
+    color: $text-primary;
+    padding-bottom: 30px;
     animation: fadeIn 0.5s ease-out;
+}
 
-    h2 {
-        margin: 0 0 10px 0;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: $text-primary;
-        text-transform: uppercase;
+/* --- 3. PANEL THAO TÁC (QUICK ACTIONS) - ĐỒNG BỘ MANDATORY --- */
+.quick-actions-panel {
+    @include glass-panel;
+    padding: 20px;
+    
+    h3 { 
+        margin: 0 0 15px 0; 
+        font-size: 0.9rem; 
+        color: $text-secondary; 
+        text-transform: uppercase; 
         letter-spacing: 1px;
-    }
-
-    p {
-        margin: 0;
-        color: $text-secondary;
-        font-size: 1rem;
-    }
-}
-
-/* --- 3. THANH NÚT BẤM (ACTIONS) --- */
-.section-actions {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    animation: fadeIn 0.5s ease-out 0.1s backwards;
-
-    button {
-        background-color: $accent-color;
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 8px;
-        font-size: 1rem;
         font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 10px rgba($accent-color, 0.3);
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        opacity: 0.8;
+        padding-left: 5px;
+        border-left: 3px solid $accent-color; // Điểm nhấn
+        line-height: 1;
+    }
 
-        &:hover {
-            background-color: lighten($accent-color, 5%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba($accent-color, 0.5);
-        }
+    .action-buttons {
+        display: grid;
+        // Chia cột linh hoạt, nút to rõ ràng
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        gap: 15px;
 
-        // Nút thứ 2 (Cập nhật) có màu khác để phân biệt
-        &:nth-child(2) {
-            background-color: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: none;
+        .btn-action {
+            // Style nền tối, viền mờ (Giống Mandatory)
+            padding: 15px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            color: $text-secondary;
             
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-                border-color: $text-primary;
-                transform: translateY(-2px);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+
+            .icon { 
+                font-size: 1.2rem; 
+                transition: transform 0.2s;
             }
+
+            // --- MÀU SẮC RIÊNG CHO TỪNG NÚT ---
+            
+            // 1. Nút Tạo (Xanh Dương)
+            &.create { 
+                .icon { color: $accent-color; } 
+                &:hover { 
+                    background: rgba($accent-color, 0.1); 
+                    border-color: $accent-color; 
+                    color: white;
+                    .icon { transform: scale(1.1); }
+                }
+            }
+            
+            // 2. Nút Cập nhật (Màu Cam - Warning)
+            &.update { 
+                .icon { color: $warning-color; }
+                &:hover { 
+                    background: rgba($warning-color, 0.1); 
+                    border-color: $warning-color; 
+                    color: white;
+                    .icon { transform: scale(1.1); }
+                }
+            }
+
+            &:active { transform: scale(0.98); }
         }
     }
 }
 
-/* --- 4. BẢNG DỮ LIỆU (GLASS TABLE) --- */
-/* --- 4. BẢNG DỮ LIỆU (Đã căn chỉnh cân đối) --- */
+/* --- 4. BẢNG DỮ LIỆU --- */
 .receipt-table-container {
     @include glass-panel;
-    padding: 0; // Để header dính sát viền trên
-    overflow: hidden; // Bo góc
+    padding: 0; 
+    overflow: hidden; 
     display: flex;
     flex-direction: column;
-    
-    // Giới hạn chiều cao bảng và cho phép cuộn
+    flex-grow: 1; 
     min-height: 400px;
-    max-height: 70vh; 
-    overflow-y: auto; // Cuộn dọc nếu danh sách dài
     
-    // Tùy chỉnh thanh cuộn
-    &::-webkit-scrollbar { width: 8px; height: 8px; }
-    &::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    // Tiêu đề nhỏ trên bảng (nếu có)
+    h4 {
+       padding: 10px 20px 15px 20px; 
+        
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700; // Đậm hơn chút
+        color: $info-color; // Dùng màu xanh lơ cho nổi bật (hoặc $text-primary nếu thích trắng)
+        border-bottom: 1px solid rgba(255,255,255,0.1); // Đường kẻ rõ hơn chút
+        text-transform: uppercase; // Chữ in hoa cho giống tiêu đề chuyên nghiệp
+        letter-spacing: 0.5px;
+    }
+    
+    .table-responsive {
+        overflow-y: auto;
+        flex-grow: 1;
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    }
 
     table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1000px; // Đảm bảo bảng đủ rộng (có scroll ngang nếu cần)
+        min-width: 900px; 
 
-        // --- HEADER ---
         thead th {
             position: sticky;
             top: 0;
-            background-color: #2b2d42; // Màu nền header đậm để che nội dung khi cuộn
+            background-color: rgba(30, 30, 40, 0.95);
             color: $text-secondary;
-            
-            // Căn lề và Padding chuẩn
             text-align: left; 
-            padding: 18px 20px; // Tăng padding dọc chút cho thoáng
-            
-            font-size: 0.85rem;
+            padding: 15px 20px;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             z-index: 2;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            white-space: nowrap; // Không xuống dòng tiêu đề
+            white-space: nowrap; 
         }
 
-        // --- BODY ---
         tbody td {
-            // Căn lề trái giống header
             text-align: left;
-            padding: 15px 20px; // Padding ngang 20px (phải bằng th)
-            
+            padding: 12px 20px; 
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: $text-primary;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             vertical-align: middle;
             
-            // Cột số tiền (Căn phải sẽ đẹp hơn nếu muốn, ở đây giữ trái cho đồng bộ)
-            // &:last-child { text-align: right; } 
+            &.highlight-id { font-family: monospace; color: $info-color; }
+            &.money { color: $success-color; font-weight: 600; }
         }
 
         tbody tr {
@@ -163,113 +181,82 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 }
 
-/* --- 5. MODAL STYLING (Form Tạo & Cập nhật) --- */
+/* --- 5. MODAL STYLING (Vẫn giữ nguyên vị trí đã chỉnh) --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     display: flex; justify-content: center; align-items: center;
+    padding-top: 130px;      
     z-index: 2000;
     animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
-    background: rgba(39, 41, 61, 0.95); // Nền kính đậm
+    background: rgba(39, 41, 61, 0.95); 
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     border-radius: 16px;
     width: 95%; max-width: 700px;
-    max-height: 90vh;
+    max-height: calc(100vh - 150px); 
     display: flex; flex-direction: column;
     overflow: hidden;
     animation: slideUp 0.3s ease-out;
 
     .modal-header {
-        padding: 20px 30px;
+        padding: 15px 25px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex; justify-content: space-between; align-items: center;
         background: rgba(255,255,255,0.02);
 
-        h3 {
-            margin: 0; font-size: 1.3rem; font-weight: 700;
-            color: $accent-color; text-transform: uppercase;
-        }
-
-        button {
-            background: none; border: none; font-size: 2rem;
-            color: $text-secondary; cursor: pointer; line-height: 1;
-            &:hover { color: $danger-color; }
-        }
+        h3 { margin: 0; font-size: 1.2rem; font-weight: 700; color: $accent-color; text-transform: uppercase; }
+        button { background: none; border: none; font-size: 1.8rem; color: $text-secondary; cursor: pointer; line-height: 1; &:hover { color: $danger-color; } }
     }
 
-    form {
-        display: flex; flex-direction: column;
-        flex-grow: 1; overflow: hidden;
-    }
+    form { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
 
     .modal-body {
-        padding: 30px;
+        padding: 25px;
         overflow-y: auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr; // Chia 2 cột
-        gap: 20px;
-
-        // Tùy chỉnh scrollbar modal
+        display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
         &::-webkit-scrollbar { width: 6px; }
         &::-webkit-scrollbar-track { background: transparent; }
         &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
         .form-group {
             display: flex; flex-direction: column;
-
             &.full-width { grid-column: 1 / -1; }
-
-            label {
-                margin-bottom: 8px; color: $text-secondary;
-                font-size: 0.9rem; font-weight: 600;
-            }
-
+            label { margin-bottom: 6px; color: $text-secondary; font-size: 0.85rem; font-weight: 600; }
             input, select, textarea {
-                width: 100%; padding: 12px 15px;
+                width: 100%; padding: 10px 12px;
                 background-color: $bg-dark-input;
                 border: 1px solid rgba(255, 255, 255, 0.15);
                 border-radius: 8px;
                 color: $text-primary;
                 font-size: 0.95rem; box-sizing: border-box;
                 transition: all 0.2s;
-
-                &:focus {
-                    outline: none; border-color: $accent-color;
-                    box-shadow: 0 0 0 3px rgba($accent-color, 0.25);
-                }
+                &:focus { outline: none; border-color: $accent-color; box-shadow: 0 0 0 3px rgba($accent-color, 0.25); }
             }
-            
-            // Fix input date icon màu trắng
             input[type="date"] { color-scheme: dark; }
-            textarea { resize: vertical; min-height: 80px; }
+            textarea { resize: vertical; min-height: 70px; }
         }
     }
 
     .modal-footer {
-        padding: 20px 30px;
+        padding: 15px 25px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         display: flex; justify-content: flex-end;
         background: rgba(0,0,0,0.2);
-
         button {
-            padding: 12px 30px;
+            padding: 10px 25px;
             background-color: $accent-color;
             color: white; border: none;
             border-radius: 8px;
-            font-size: 1rem; font-weight: 600;
+            font-size: 0.95rem; font-weight: 600;
             cursor: pointer; transition: all 0.2s;
             box-shadow: 0 4px 10px rgba($accent-color, 0.3);
-
-            &:hover {
-                background-color: lighten($accent-color, 5%);
-                transform: translateY(-2px);
-            }
+            &:hover { background-color: lighten($accent-color, 5%); transform: translateY(-2px); }
         }
     }
 }
