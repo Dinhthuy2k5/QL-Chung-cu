@@ -1,87 +1,58 @@
 # 🏙️ Hệ thống Quản lý Chung cư (Frontend)
 
-Đây là dự án **frontend** cho phần mềm **Quản lý Chung cư**, được xây dựng bằng **React**.  
-Ứng dụng này cung cấp một **Bảng điều khiển (Dashboard)** quản trị toàn diện, cho phép Ban quản lý thực hiện các nghiệp vụ cốt lõi, bao gồm **quản lý cư dân**, **quản lý căn hộ**, và **quản lý tài chính - khoản thu**.
+Đây là dự án **Frontend** cho phần mềm **Quản lý Chung cư**, được xây dựng bằng **ReactJS**.  
+Ứng dụng cung cấp một giao diện bảng điều khiển (Dashboard) hiện đại, trực quan, hỗ trợ Ban quản lý thực hiện các nghiệp vụ hành chính và tài chính một cách hiệu quả.
 
-Giao diện được thiết kế theo phong cách **hiện đại** (theme tối, hiệu ứng *kính mờ – glassmorphism*) và **hỗ trợ đa ngôn ngữ** (Tiếng Việt / Tiếng Anh).
+Giao diện được thiết kế theo phong cách **Glassmorphism (Kính mờ)** sang trọng, hỗ trợ chế độ nền tối (Dark Mode) và đa ngôn ngữ (Tiếng Việt / Tiếng Anh).
 
-![Ảnh chụp màn hình Trang chủ](https://github.com/user-attachments/assets/7cada972-d8b9-4824-963f-6ae1211f3bc8)
+![Ảnh chụp màn hình Trang chủ](./src/assets/dashboard.png)
 
 ---
 
 ## 🚀 Các Tính năng Nổi bật
 
-Dự án được chia thành các module chính với các chức năng chuyên sâu:
+Hệ thống được chia thành các phân hệ chính hỗ trợ đầy đủ quy trình quản lý:
 
-### 1. Trang chủ (Dashboard)
-* **Thống kê nhanh:** Hiển thị tổng quan số lượng căn hộ, cư dân và khoản thu qua các thẻ (card) trực quan.  
-* **Biểu đồ Doanh thu:** Biểu đồ cột thống kê tổng thu phí theo 6 tháng gần nhất (gọi API).  
-* **Hoạt động Gần đây:** Giao diện tab hiển thị các biến động mới nhất về **Cư dân** (tạm trú, tạm vắng...) và **Thu phí** (thanh toán mới...).
+### 1. 📊 Trang chủ (Dashboard)
+* **Tổng quan:** Hiển thị nhanh các chỉ số quan trọng (Số lượng căn hộ, Cư dân, Tổng khoản thu).
+* **Biểu đồ thống kê:** Theo dõi xu hướng doanh thu phí dịch vụ qua các tháng.
+* **Nhật ký hoạt động:** Cập nhật thời gian thực các biến động về nhân khẩu (đăng ký tạm trú/tạm vắng) và trạng thái thu phí mới nhất.
 
----
+### 2. 🏢 Quản lý Căn hộ
+* **Danh sách Căn hộ:** Quản lý thông tin chi tiết của từng căn hộ trong tòa nhà.
+* **Chế độ hiển thị:** Linh hoạt chuyển đổi giữa dạng **Lưới (Grid)** chia theo tòa nhà và dạng **Danh sách (List)** truyền thống.
+* **Bộ lọc thông minh:** Tìm kiếm căn hộ theo diện tích, số phòng ngủ, trạng thái sử dụng.
 
-### 2. Quản lý Căn hộ
-* **Danh sách Căn hộ:** Hiển thị chi tiết danh sách các căn hộ trong chung cư.  
-* **Bộ lọc Nâng cao:** Lọc căn hộ theo Số nhà, Loại căn hộ (Studio, 1PN, 2PN...), và khoảng Diện tích (sử dụng thanh trượt).
+### 3. 👥 Quản lý Cư dân
+* **Hồ sơ Cư dân:** Lưu trữ và tra cứu thông tin chi tiết (CCCD, SĐT, Quê quán...).
+* **Quản lý Hộ gia đình:** Theo dõi thành viên trong hộ, hỗ trợ chức năng tách hộ hoặc đổi chủ hộ.
+* **Thủ tục hành chính:**
+    * Đăng ký **Tạm trú / Tạm vắng** trực tuyến.
+    * Thêm mới hoặc xóa nhân khẩu.
+* **Tra cứu lịch sử:** Xem lại lịch sử thay đổi thông tin nhân khẩu của từng cá nhân.
+* **Thống kê nhân khẩu:** Phân tích dữ liệu cư dân theo độ tuổi, giới tính và thời gian.
 
----
+### 4. 💰 Quản lý Tài chính & Khoản thu
+* **Khoản thu Bắt buộc:**
+    * Tạo các đợt thu phí định kỳ (Phí dịch vụ, gửi xe, vệ sinh...).
+    * Theo dõi trạng thái đóng phí của từng căn hộ.
+    * Hệ thống **Nhắc nợ** tự động hiển thị các căn hộ còn nợ phí.
+* **Đóng góp Tự nguyện:** Quản lý các đợt vận động quyên góp (Quỹ từ thiện, ủng hộ...).
+* **Lịch sử thanh toán:** Tra cứu chi tiết lịch sử giao dịch của từng căn hộ.
 
-### 3. Quản lý Cư dân
-* **Danh sách Cư dân:** Bảng hiển thị toàn bộ cư dân với các thông tin chi tiết (CCCD, Họ tên, SĐT...).  
-* **Tìm kiếm:** Tìm kiếm cư dân theo nhiều tiêu chí (CCCD, Họ tên, CCCD Chủ hộ...).  
-* **Quản lý Biến động:**  
-  * Form cấp giấy **Tạm vắng**.  
-  * Form cấp giấy **Tạm trú**.  
-  * Thêm / Sửa / Xóa thông tin nhân khẩu.  
-* **Quản lý Hộ gia đình:**  
-  * Hiển thị danh sách các hộ gia đình.  
-  * Cho phép thay đổi **chủ hộ**.  
-* **Thống kê:**  
-  * Biểu đồ tròn thống kê theo **Giới tính**.  
-  * Biểu đồ cột thống kê theo **Độ tuổi**.  
-  * Thống kê nhân khẩu mới theo **khoảng thời gian**.  
-* **Truy vấn:**  
-  * Xem **lịch sử thay đổi nhân khẩu** theo CCCD.
-
----
-
-### 4. Quản lý Khoản thu
-Giao diện tab hiện đại, chia làm 3 khu vực chức năng:
-
-* **Quản lý Phí Bắt buộc:**  
-  * **Tạo Khoản thu:** Form động cho phép tạo các loại phí khác nhau (Phí tiện ích, Phí chung cư, Phí gửi xe).  
-  * **Tính tổng Thanh toán:** Gọi API `batch` để tính tổng phí cho toàn bộ căn hộ theo kỳ thu.  
-  * **Xác nhận Thanh toán:** Form nhập ID kỳ thu và danh sách ID căn hộ đã nộp.  
-  * **Xem Danh sách:** Mở modal chi tiết, lập danh sách các khoản thu bắt buộc theo ID kỳ thu.  
-  * **Xuất Báo cáo:** Xuất file CSV chuyên nghiệp từ dữ liệu đã lập danh sách.
-
-* **Quản lý Đóng góp Tự nguyện:**  
-  * Tạo đợt đóng góp mới (Quỹ từ thiện, quỹ khuyến học...).  
-  * Cập nhật chi tiết đóng góp của từng căn hộ.
-
-* **Tra cứu Lịch sử Căn hộ:**  
-  * Tra cứu toàn bộ lịch sử thanh toán (bắt buộc và tự nguyện) theo ID Căn hộ.
-
----
-
-### 5. Cài đặt & Tài khoản
-* **Cài đặt Chung:** Cập nhật thông tin chung của chung cư (Tên, Địa chỉ...).  
-* **Đa ngôn ngữ:** Chuyển đổi giao diện giữa Tiếng Việt (VI) và Tiếng Anh (EN).  
-* **Tài khoản:** Cập nhật thông tin cá nhân và thay đổi mật khẩu.
-
+### 5. ⚙️ Cài đặt hệ thống
+* Tùy chỉnh thông tin chung của tòa nhà.
+* Quản lý thông tin tài khoản quản trị, quy định và hạn mức.
 ---
 
 ## 💻 Công nghệ sử dụng
 
-### Frontend
-* **React (v18+)**  
-* **React Router (v6)** – Quản lý điều hướng trang (nested routes).  
-* **SCSS (Sass)** – Viết CSS theo cấu trúc module.  
-* **Axios** – Gọi API RESTful.  
-* **Chart.js (react-chartjs-2)** – Vẽ các biểu đồ thống kê.  
-* **Vanta.js (three.js)** – Tạo hiệu ứng hình nền động.  
-* **react-i18next** – Quản lý đa ngôn ngữ (i18n).  
-* **rc-slider** – Tạo thanh trượt (slider).
+* **Frontend:** React (v18), React Router v6.
+* **Styling:** SCSS (Sass) với kiến trúc Module.
+* **HTTP Client:** Axios.
+* **Visualization:** Chart.js, React-Chartjs-2.
+* **Effects:** Vanta.js (Hiệu ứng nền động).
+* **Internationalization:** react-i18next.
 
 ### Backend (Yêu cầu)
 * Dự án này yêu cầu một backend **Spring Boot (Java)** đang chạy tại địa chỉ `http://localhost:8080`.  
@@ -142,7 +113,6 @@ src/
 │   ├── Settings.js
 │   └── Nav/
 ├── App.js               # Component gốc, quản lý state chính và routes
-├── App.scss             # Style chung cho App
 ├── i18n.js              # Cấu hình đa ngôn ngữ
 └── index.js             # Điểm bắt đầu của ứng dụng
 ```

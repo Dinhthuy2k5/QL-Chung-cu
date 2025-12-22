@@ -21,7 +21,7 @@ export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setI
                     {/* Bạn có thể đặt logo ở đây */}
                     <NavLink to="/">
                         {/* <img src="/path/to/logo.png" alt="Logo" /> */}
-                        My Website
+                        Quản lý Chung cư BlueMoon
                     </NavLink>
                 </div>
                 <div className="nav-actions" >
