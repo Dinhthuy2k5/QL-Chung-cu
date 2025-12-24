@@ -75,9 +75,9 @@ export default function Header({ isLoggedIn, handleLoggedOut, userLoggedIn, setI
                     <NavLink to="/receipts" className={({ isActive }) => (isActive ? "active" : "")}>
                         {t('nav.receipt')}
                     </NavLink>
-                    <NavLink to="/statistics" className={({ isActive }) => (isActive ? "active" : "")}>
+                    {/* <NavLink to="/statistics" className={({ isActive }) => (isActive ? "active" : "")}>
                         {t('nav.statistic')}
-                    </NavLink>
+                    </NavLink> */}
                     <NavLink to="/settings" className={({ isActive }) => (isActive ? "active" : "")}>
                         {t('nav.setting')}
                     </NavLink>
