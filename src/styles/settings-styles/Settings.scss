@@ -141,6 +141,18 @@ $glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
                     outline: none; border-color: $accent-color;
                     box-shadow: 0 0 0 3px rgba($accent-color, 0.25);
                 }
+
+                &:read-only, &:disabled {
+                    background-color: rgba(255, 255, 255, 0.05); // Nền nhạt hơn chút
+                    color: rgba(255, 255, 255, 0.6); // Chữ mờ đi
+                    cursor: default; // Con trỏ chuột bình thường
+                    border-color: transparent; // Bỏ viền cho đỡ rối
+                    
+                    &:focus {
+                        box-shadow: none; // Không highlight khi click vào
+                        border-color: transparent;
+                    }
+                }
             }
         }
 

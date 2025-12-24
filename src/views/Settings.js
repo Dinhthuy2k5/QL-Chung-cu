@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import '../styles/settings-styles/Settings.scss';
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { getToken } from "../services/localStorageService"; // 1. Import hàm lấy token
 
 function Settings() {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('general');
     const [isLoading, setIsLoading] = useState(false);
+
+    // 2. Xác định quyền: Nếu không có token => là Khách (chỉ xem)
+    const isGuest = !getToken();
 
     // --- 1. STATE: THÔNG TIN CHUNG ---
     const [generalForm, setGeneralForm] = useState({
@@ -27,10 +31,10 @@ function Settings() {
     // --- 3. STATE: QUY ĐỊNH ---
     const [rulesForm, setRulesForm] = useState({
         closingDate: 25,
-        deadlineDate: 10,
-        maxMotorbike: 2,
-        maxCar: 1,
-        lateFeePercent: 0.05
+        deadlineDate: 5,
+        maxMotorbike: 3,
+        maxCar: 2,
+        lateFeePercent: 0.04
     });
 
     // --- 4. STATE: MẪU THÔNG BÁO ---
@@ -39,13 +43,16 @@ function Settings() {
         emailContent: 'Kính gửi cư dân {ten_cu_dan}, căn hộ {can_ho}.\nTổng phí tháng {thang} của quý khách là: {tong_tien}.\nVui lòng thanh toán trước ngày {han_nop}.\nXin cảm ơn!'
     });
 
-    // Hàm giả lập tính năng đang phát triển
     const handleDevFeature = (e) => {
         if (e) e.preventDefault();
+        if (isGuest) return; // Khách không bấm được
         alert(t('settings_page.alert_dev_feature'));
     };
 
     const handleChange = (e, setForm, form) => {
+        // Nếu là khách thì chặn luôn sự kiện thay đổi
+        if (isGuest) return;
+
         const { name, value, type, checked } = e.target;
         setForm({
             ...form,
@@ -55,8 +62,9 @@ function Settings() {
 
     const handleSave = (e) => {
         e.preventDefault();
+        if (isGuest) return; // Chặn double-check
+
         setIsLoading(true);
-        // Tại đây gọi API lưu dữ liệu...
         setTimeout(() => {
             setIsLoading(false);
             alert(t('settings_page.alert_save_success'));
@@ -77,27 +85,50 @@ function Settings() {
             <form className="settings-form" onSubmit={handleSave}>
                 <div className="form-group">
                     <label>{t('settings_page.general.label_name')}</label>
-                    <input type="text" name="tenChungCu" value={generalForm.tenChungCu} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
+                    <input
+                        type="text" name="tenChungCu"
+                        value={generalForm.tenChungCu}
+                        onChange={(e) => handleChange(e, setGeneralForm, generalForm)}
+                        readOnly={isGuest} // Khóa nếu là khách
+                    />
                 </div>
                 <div className="form-group">
                     <label>{t('settings_page.general.label_address')}</label>
-                    <input type="text" name="diaChi" value={generalForm.diaChi} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
+                    <input
+                        type="text" name="diaChi"
+                        value={generalForm.diaChi}
+                        onChange={(e) => handleChange(e, setGeneralForm, generalForm)}
+                        readOnly={isGuest}
+                    />
                 </div>
                 <div className="form-row">
                     <div className="form-group">
                         <label>{t('settings_page.general.label_phone')}</label>
-                        <input type="text" name="sdt" value={generalForm.sdt} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
+                        <input
+                            type="text" name="sdt"
+                            value={generalForm.sdt}
+                            onChange={(e) => handleChange(e, setGeneralForm, generalForm)}
+                            readOnly={isGuest}
+                        />
                     </div>
                     <div className="form-group">
                         <label>{t('settings_page.general.label_email')}</label>
-                        <input type="email" name="email" value={generalForm.email} onChange={(e) => handleChange(e, setGeneralForm, generalForm)} />
+                        <input
+                            type="email" name="email"
+                            value={generalForm.email}
+                            onChange={(e) => handleChange(e, setGeneralForm, generalForm)}
+                            readOnly={isGuest}
+                        />
                     </div>
                 </div>
-                <div className="form-footer">
-                    <button type="submit" className="save-btn" disabled={isLoading}>
-                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
-                    </button>
-                </div>
+                {/* Chỉ hiện nút Lưu nếu KHÔNG phải là khách */}
+                {!isGuest && (
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={isLoading}>
+                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
@@ -117,6 +148,7 @@ function Settings() {
                             name="bankId"
                             value={bankForm.bankId}
                             onChange={(e) => handleChange(e, setBankForm, bankForm)}
+                            disabled={isGuest} // Select dùng disabled thay vì readOnly
                         >
                             <option value="MB">MB Bank</option>
                             <option value="VCB">Vietcombank</option>
@@ -127,15 +159,25 @@ function Settings() {
                     </div>
                     <div className="form-group">
                         <label>{t('settings_page.bank.label_acc_number')}</label>
-                        <input type="text" name="accountNumber" value={bankForm.accountNumber} onChange={(e) => handleChange(e, setBankForm, bankForm)} />
+                        <input
+                            type="text" name="accountNumber"
+                            value={bankForm.accountNumber}
+                            onChange={(e) => handleChange(e, setBankForm, bankForm)}
+                            readOnly={isGuest}
+                        />
                     </div>
                 </div>
                 <div className="form-group">
                     <label>{t('settings_page.bank.label_acc_name')}</label>
-                    <input type="text" name="accountName" value={bankForm.accountName} onChange={(e) => handleChange(e, setBankForm, bankForm)} />
+                    <input
+                        type="text" name="accountName"
+                        value={bankForm.accountName}
+                        onChange={(e) => handleChange(e, setBankForm, bankForm)}
+                        readOnly={isGuest}
+                    />
                 </div>
 
-                {/* Preview QR */}
+                {/* Preview QR - Vẫn hiển thị cho khách xem */}
                 <div className="form-group">
                     <label style={{ color: '#00f2c3' }}>{t('settings_page.bank.label_qr_preview')}</label>
                     <div style={{ marginTop: '15px', padding: '15px', background: 'white', width: 'fit-content', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -149,11 +191,13 @@ function Settings() {
                     </div>
                 </div>
 
-                <div className="form-footer">
-                    <button type="submit" className="save-btn" disabled={isLoading}>
-                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
-                    </button>
-                </div>
+                {!isGuest && (
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={isLoading}>
+                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
@@ -169,39 +213,41 @@ function Settings() {
                 <div className="form-row">
                     <div className="form-group">
                         <label>{t('settings_page.rules.label_closing_date')}</label>
-                        <input type="number" name="closingDate" min="1" max="31" value={rulesForm.closingDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                        <input type="number" name="closingDate" min="1" max="31" value={rulesForm.closingDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} readOnly={isGuest} />
                         <small style={{ color: 'gray', fontSize: '0.8rem' }}>{t('settings_page.rules.note_closing_date')}</small>
                     </div>
                     <div className="form-group">
                         <label>{t('settings_page.rules.label_deadline')}</label>
-                        <input type="number" name="deadlineDate" min="1" max="31" value={rulesForm.deadlineDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                        <input type="number" name="deadlineDate" min="1" max="31" value={rulesForm.deadlineDate} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} readOnly={isGuest} />
                     </div>
                 </div>
 
                 <div className="form-row">
                     <div className="form-group">
                         <label>{t('settings_page.rules.label_max_motorbike')}</label>
-                        <input type="number" name="maxMotorbike" value={rulesForm.maxMotorbike} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                        <input type="number" name="maxMotorbike" value={rulesForm.maxMotorbike} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} readOnly={isGuest} />
                     </div>
                     <div className="form-group">
                         <label>{t('settings_page.rules.label_max_car')}</label>
-                        <input type="number" name="maxCar" value={rulesForm.maxCar} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} />
+                        <input type="number" name="maxCar" value={rulesForm.maxCar} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} readOnly={isGuest} />
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label>{t('settings_page.rules.label_late_fee')}</label>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <input type="number" name="lateFeePercent" step="0.01" value={rulesForm.lateFeePercent} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} style={{ width: '120px' }} />
+                        <input type="number" name="lateFeePercent" step="0.01" value={rulesForm.lateFeePercent} onChange={(e) => handleChange(e, setRulesForm, rulesForm)} style={{ width: '120px' }} readOnly={isGuest} />
                         <span>% / ngày</span>
                     </div>
                 </div>
 
-                <div className="form-footer">
-                    <button type="submit" className="save-btn" disabled={isLoading}>
-                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
-                    </button>
-                </div>
+                {!isGuest && (
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={isLoading}>
+                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
@@ -216,7 +262,7 @@ function Settings() {
             <form className="settings-form" onSubmit={handleSave}>
                 <div className="form-group">
                     <label>{t('settings_page.template.label_subject')}</label>
-                    <input type="text" name="emailSubject" value={templateForm.emailSubject} onChange={(e) => handleChange(e, setTemplateForm, templateForm)} />
+                    <input type="text" name="emailSubject" value={templateForm.emailSubject} onChange={(e) => handleChange(e, setTemplateForm, templateForm)} readOnly={isGuest} />
                 </div>
 
                 <div className="form-group">
@@ -226,6 +272,7 @@ function Settings() {
                         name="emailContent"
                         value={templateForm.emailContent}
                         onChange={(e) => handleChange(e, setTemplateForm, templateForm)}
+                        readOnly={isGuest}
                         style={{
                             width: '100%',
                             padding: '15px',
@@ -248,11 +295,13 @@ function Settings() {
                     </div>
                 </div>
 
-                <div className="form-footer">
-                    <button type="submit" className="save-btn" disabled={isLoading}>
-                        {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
-                    </button>
-                </div>
+                {!isGuest && (
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={isLoading}>
+                            {isLoading ? t('settings_page.saving_button') : t('settings_page.save_button')}
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
@@ -271,8 +320,8 @@ function Settings() {
                         <span>{t('settings_page.notif.email_desc')}</span>
                     </div>
                     <label className="switch">
-                        <input type="checkbox" defaultChecked onChange={handleDevFeature} />
-                        <span className="slider round"></span>
+                        <input type="checkbox" defaultChecked onChange={handleDevFeature} disabled={isGuest} />
+                        <span className="slider round" style={{ opacity: isGuest ? 0.5 : 1, cursor: isGuest ? 'not-allowed' : 'pointer' }}></span>
                     </label>
                 </div>
                 <div className="setting-item">
@@ -281,8 +330,8 @@ function Settings() {
                         <span>{t('settings_page.notif.app_desc')}</span>
                     </div>
                     <label className="switch">
-                        <input type="checkbox" defaultChecked onChange={handleDevFeature} />
-                        <span className="slider round"></span>
+                        <input type="checkbox" defaultChecked onChange={handleDevFeature} disabled={isGuest} />
+                        <span className="slider round" style={{ opacity: isGuest ? 0.5 : 1, cursor: isGuest ? 'not-allowed' : 'pointer' }}></span>
                     </label>
                 </div>
                 <div className="setting-item">
@@ -291,8 +340,8 @@ function Settings() {
                         <span>{t('settings_page.notif.sms_desc')}</span>
                     </div>
                     <label className="switch">
-                        <input type="checkbox" onChange={handleDevFeature} />
-                        <span className="slider round"></span>
+                        <input type="checkbox" onChange={handleDevFeature} disabled={isGuest} />
+                        <span className="slider round" style={{ opacity: isGuest ? 0.5 : 1, cursor: isGuest ? 'not-allowed' : 'pointer' }}></span>
                     </label>
                 </div>
             </div>
@@ -307,22 +356,22 @@ function Settings() {
                 <p>{t('settings_page.sys.desc')}</p>
             </div>
             <div className="system-grid">
-                <div className="sys-card" onClick={handleDevFeature}>
+                <div className="sys-card" onClick={handleDevFeature} style={{ cursor: isGuest ? 'not-allowed' : 'pointer', opacity: isGuest ? 0.7 : 1 }}>
                     <div className="icon">☁️</div>
                     <h4>{t('settings_page.sys.backup_title')}</h4>
                     <p>{t('settings_page.sys.backup_desc')}</p>
                 </div>
-                <div className="sys-card" onClick={handleDevFeature}>
+                <div className="sys-card" onClick={handleDevFeature} style={{ cursor: isGuest ? 'not-allowed' : 'pointer', opacity: isGuest ? 0.7 : 1 }}>
                     <div className="icon">Tb</div>
                     <h4>{t('settings_page.sys.restore_title')}</h4>
                     <p>{t('settings_page.sys.restore_desc')}</p>
                 </div>
-                <div className="sys-card" onClick={handleDevFeature}>
+                <div className="sys-card" onClick={handleDevFeature} style={{ cursor: isGuest ? 'not-allowed' : 'pointer', opacity: isGuest ? 0.7 : 1 }}>
                     <div className="icon">📝</div>
                     <h4>{t('settings_page.sys.log_title')}</h4>
                     <p>{t('settings_page.sys.log_desc')}</p>
                 </div>
-                <div className="sys-card danger" onClick={handleDevFeature}>
+                <div className="sys-card danger" onClick={handleDevFeature} style={{ cursor: isGuest ? 'not-allowed' : 'pointer', opacity: isGuest ? 0.7 : 1 }}>
                     <div className="icon">🗑️</div>
                     <h4>{t('settings_page.sys.cache_title')}</h4>
                     <p>{t('settings_page.sys.cache_desc')}</p>
@@ -331,9 +380,7 @@ function Settings() {
         </div>
     );
 
-    // ==========================================
-    // MAIN RENDER
-    // ==========================================
+    // ... (Giữ nguyên phần MAIN RENDER phía dưới không đổi) ...
     return (
         <div className="settings-container">
             <div className="settings-layout">
