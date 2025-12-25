@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// Lưu ý: Kiểm tra lại đường dẫn import MandatoryFeeList cho đúng với cấu trúc thư mục của bạn
 import MandatoryFeeList from './MandatoryFeeList';
 import CreateFeeWizard from './CreateFeeWizard';
 import CollectFeeWizard from './CollectFeeWizard';
@@ -12,11 +11,20 @@ const MandatoryFeeTab = ({ cache, setCache }) => {
     const [showCollectWizard, setShowCollectWizard] = useState(false);
     const [showList, setShowList] = useState(false);
 
-    // ĐÃ XÓA state paymentResult ở đây vì đã chuyển vào CollectFeeWizard
+    // 1. Thêm state để quản lý việc làm mới dữ liệu
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    // 2. Định nghĩa hàm onRefresh
+    const handleRefresh = () => {
+        // Tăng giá trị key để buộc các component con (Dashboard) re-render và gọi lại API
+        setRefreshKey(prevKey => prevKey + 1);
+    };
 
     return (
         <div className="mandatory-tab">
+            {/* 3. Truyền key vào Dashboard. Khi key đổi, Dashboard sẽ unmount & mount lại => chạy lại useEffect fetch data */}
             <MandatoryDashboard
+                key={refreshKey}
                 onOpenCreate={() => setShowCreateWizard(true)}
                 onOpenCollect={() => setShowCollectWizard(true)}
                 onOpenList={() => setShowList(true)}
@@ -24,13 +32,18 @@ const MandatoryFeeTab = ({ cache, setCache }) => {
 
             {/* Modal Tạo Khoản Thu */}
             {showCreateWizard && (
-                <CreateFeeWizard onClose={() => setShowCreateWizard(false)} />
+                <CreateFeeWizard
+                    onClose={() => setShowCreateWizard(false)}
+                    onRefresh={handleRefresh} // <--- ĐÃ BỔ SUNG PROP QUAN TRỌNG NÀY
+                />
             )}
 
-            {/* Modal Thu Phí (Đã bao gồm màn hình kết quả bên trong) */}
+            {/* Modal Thu Phí */}
             {showCollectWizard && (
                 <CollectFeeWizard
                     onClose={() => setShowCollectWizard(false)}
+                    // Nếu muốn Thu phí xong cũng cập nhật Dashboard, bạn có thể truyền thêm:
+                    onRefresh={handleRefresh}
                 />
             )}
 
@@ -49,7 +62,11 @@ const MandatoryFeeTab = ({ cache, setCache }) => {
                             <button onClick={() => setShowList(false)}>&times;</button>
                         </div>
                         <div className="modal-body full-width-body">
-                            <MandatoryFeeList cache={cache} setCache={setCache} />
+                            <MandatoryFeeList
+                                key={refreshKey} // Cũng reload lại list nếu cần
+                                cache={cache}
+                                setCache={setCache}
+                            />
                         </div>
                     </div>
                 </div>
