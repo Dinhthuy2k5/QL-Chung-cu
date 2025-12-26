@@ -29,7 +29,7 @@ function Resident({ listResidents, setListResidents, listFamilies, setListFamili
     // --- 1. HÀM XÓA (CẬP NHẬT ALERT) ---
     const deleteAResident = (cccd) => {
         // Xác nhận trước khi xóa
-        if (!window.confirm(t('resident_list.confirm_delete') || "Bạn có chắc chắn muốn xóa cư dân này?")) {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa cư dân này?")) {
             return;
         }
 

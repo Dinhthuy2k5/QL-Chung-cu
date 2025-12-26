@@ -1,0 +1,194 @@
+/* --- BIẾN MÀU (ĐỒNG BỘ) --- */
+$primary-bg: #1e1e2f;       // Nền tối chuẩn
+$secondary-bg: #27293d;     // Nền panel
+$accent-color: #4361ee;     // Xanh dương
+$success-color: #00f2c3;    // Xanh lá
+$warning-color: #ff8d72;    // Cam
+$danger-color: #fd5d93;     // Đỏ/Hồng
+$text-white: #ffffff;
+$text-gray: #d1d1d1;
+$border-color: rgba(255, 255, 255, 0.1);
+
+/* --- 1. OVERLAY (LỚP PHỦ TOÀN MÀN HÌNH) --- */
+.standalone-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); // Nền đen mờ
+    backdrop-filter: blur(5px);           // Hiệu ứng kính mờ
+    z-index: 9999;                        // Luôn nằm trên cùng
+    display: flex;
+    justify-content: center;
+    align-items: center;                  // Căn giữa màn hình
+    animation: fadeInOverlay 0.2s ease-out;
+}
+
+/* --- 2. POPUP CONTENT (CỬA SỔ CHÍNH) --- */
+.standalone-content {
+    background: $primary-bg;
+    width: 90%;
+    height: 90vh;                         // Chiều cao cố định 90% màn hình
+    max-width: 1400px;                    // Không quá rộng trên màn hình lớn
+    border-radius: 12px;
+    border: 1px solid $border-color;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;               // QUAN TRỌNG: Xếp dọc
+    overflow: hidden;                     // Không cho tràn ra ngoài bo góc
+    animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* --- HEADER --- */
+    .popup-header {
+        flex-shrink: 0;                   // Không co lại
+        padding: 20px 25px;
+        border-bottom: 1px solid $border-color;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.02);
+
+        h3 {
+            margin: 0;
+            color: $accent-color;
+            text-transform: uppercase;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .close-btn {
+            background: none; border: none;
+            color: $text-gray; font-size: 2rem;
+            line-height: 1; cursor: pointer;
+            transition: color 0.2s;
+            &:hover { color: $danger-color; }
+        }
+    }
+
+    /* --- BODY --- */
+    .popup-body {
+        flex: 1;                          // Chiếm toàn bộ không gian còn lại
+        display: flex;
+        flex-direction: column;           // Xếp dọc nội dung bên trong
+        padding: 20px 25px;
+        overflow: hidden;                 // Cắt phần thừa
+        min-height: 0;                    // Fix lỗi Flexbox trên một số trình duyệt
+
+        /* Thanh tìm kiếm */
+        .search-bar-container {
+            display: flex; gap: 15px; margin-bottom: 20px; flex-shrink: 0;
+            
+            input {
+                flex: 1;
+                padding: 12px 15px;
+                background: $secondary-bg;
+                border: 1px solid $border-color;
+                border-radius: 8px;
+                color: $text-white;
+                font-size: 1rem;
+                &:focus { outline: none; border-color: $accent-color; }
+            }
+            button {
+                padding: 0 30px;
+                background: $accent-color;
+                color: white; border: none; border-radius: 8px;
+                font-weight: 600; cursor: pointer;
+                &:hover { filter: brightness(1.1); }
+            }
+        }
+
+        .error-msg { color: $danger-color; text-align: center; margin-bottom: 15px; flex-shrink: 0; }
+
+        /* Wrapper dữ liệu (Summary + Table) */
+        .data-wrapper {
+            flex: 1;                      // Chiếm hết chỗ còn lại
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;             // Cắt
+            min-height: 0;
+
+            .summary-section {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+                margin-bottom: 20px;
+                flex-shrink: 0;
+
+                .sum-box {
+                    background: rgba(255,255,255,0.03);
+                    padding: 15px; border-radius: 8px; border: 1px solid $border-color;
+                    text-align: center; display: flex; flex-direction: column;
+                    span { font-size: 0.85rem; color: $text-gray; margin-bottom: 5px; text-transform: uppercase; }
+                    strong { font-size: 1.1rem; color: $text-white; }
+                    &.green strong { color: $success-color; }
+                    &.blue strong { color: #0ea5e9; }
+                }
+            }
+
+            /* --- BẢNG DỮ LIỆU (SCROLL TẠI ĐÂY) --- */
+            .table-scroll-area {
+                flex: 1;                  // Tự giãn
+                overflow: auto;           // Thanh cuộn xuất hiện ở đây
+                border: 1px solid $border-color;
+                border-radius: 12px;
+                background: rgba(0,0,0,0.2);
+
+                // Scrollbar đẹp
+                &::-webkit-scrollbar { width: 8px; height: 8px; }
+                &::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+                &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+                table {
+                    width: 100%; border-collapse: collapse;
+                    
+                    thead th {
+                        position: sticky; top: 0;
+                        background: #2b2d42; // Màu header bảng
+                        padding: 15px;
+                        text-align: left;
+                        color: $text-gray;
+                        font-weight: 700;
+                        font-size: 0.85rem;
+                        text-transform: uppercase;
+                        border-bottom: 1px solid $border-color;
+                        white-space: nowrap;
+                        z-index: 10;
+                    }
+
+                    tbody td {
+                        padding: 12px 15px;
+                        border-bottom: 1px solid rgba(255,255,255,0.05);
+                        color: $text-white;
+                        font-size: 0.95rem;
+                        
+                        .status-badge {
+                            padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+                            &.paid { background: rgba($success-color, 0.15); color: $success-color; border: 1px solid rgba($success-color, 0.3); }
+                            &.unpaid { background: rgba($warning-color, 0.15); color: $warning-color; border: 1px solid rgba($warning-color, 0.3); }
+                        }
+                    }
+                    tbody tr:hover { background: rgba(255,255,255,0.05); }
+                }
+            }
+        }
+    }
+
+    /* --- FOOTER --- */
+    .popup-footer {
+        flex-shrink: 0;                   // Cố định đáy
+        padding: 15px 25px;
+        border-top: 1px solid $border-color;
+        background: rgba(0,0,0,0.2);
+        display: flex; justify-content: flex-end;
+
+        .export-btn {
+            background: $success-color; color: #000;
+            border: none; padding: 12px 25px; border-radius: 8px;
+            font-weight: 700; cursor: pointer; transition: transform 0.2s;
+            &:hover { transform: translateY(-2px); }
+        }
+    }
+}
+
+// Animation
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }

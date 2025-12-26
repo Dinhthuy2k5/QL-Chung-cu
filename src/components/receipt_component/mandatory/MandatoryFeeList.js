@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 // Bỏ import { error } from "three"; vì nó không cần thiết và sai
 import { getToken } from "../../../services/localStorageService";
-import '../../../styles/receipt-styles/MandatoryFeeListnew.scss'
+import '../../../styles/receipt-styles/MandatoryFeeList1.scss'
 import axios from "axios";
 // 1. Import hook
 import { useTranslation } from "react-i18next";
 
 // 2. Chuyển sang Function Component
-function MandatoryFeeList({ cache, setCache }) {
+function MandatoryFeeList({ onClose, cache, setCache }) {
 
     // 3. Lấy hàm 't'
     const { t } = useTranslation();
@@ -209,73 +209,92 @@ function MandatoryFeeList({ cache, setCache }) {
         document.body.removeChild(link);
     };
 
-    // 6. Trả về JSX
+    // --- CẤU TRÚC RENDER MỚI: TỰ BỌC OVERLAY ---
     return (
-        <div className="fee-list-container">
-            <div className="fee-list-controls">
-                <input
-                    type="text"
-                    placeholder={t('mandatory_fee_list.placeholder_time_id')}
-                    value={idThoiGianThu}
-                    onChange={handleInputChange}
-                />
-                <button onClick={handleGenerateList} disabled={isLoading}>
-                    {isLoading ? t('mandatory_fee_list.loading_button') : t('mandatory_fee_list.generate_button')}
-                </button>
-            </div>
+        <div className="standalone-overlay">
+            <div className="standalone-content">
 
-            {error && <p className="error-message">{error}</p>}
+                {/* 1. HEADER */}
+                <div className="popup-header">
+                    <h3>{t('receipt_page.modal_mandatory_list.title') || "DANH SÁCH KHOẢN THU BẮT BUỘC"}</h3>
+                    <button className="close-btn" onClick={onClose}>&times;</button>
+                </div>
 
-            {feeData && (
-                <div className="fee-list-results">
-                    <div className="fee-list-summary">
-                        <div className="summary-item"><span>{t('mandatory_fee_list.summary_collection_date')}</span><strong>{feeData.ngayThu}</strong></div>
-                        <div className="summary-item"><span>{t('mandatory_fee_list.summary_due_date')}</span><strong>{feeData.hanThu}</strong></div>
-                        <div className="summary-item success"><span>{t('mandatory_fee_list.summary_paid')}</span>
-                            <strong>{feeData.paidApartmentCount} / {feeData.totalCanHo}</strong></div>
-                        <div className="summary-item total"><span>{t('mandatory_fee_list.summary_total')}</span><strong>{formatCurrency(feeData.tongPhiAll)}</strong></div>
-                    </div>
+                {/* 2. BODY (Chứa Search + Table) */}
+                <div className="popup-body">
 
-                    <div className="fee-list-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>{t('mandatory_fee_list.table_header.apartment_id')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.status')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.total_fee')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.apartment_fee')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.parking_fee')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.utility_fee')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.paid_amount')}</th>
-                                    <th>{t('mandatory_fee_list.table_header.debt_amount')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {feeData.danhSachTongThanhToan.map(item => (
-                                    <tr key={item.idCanHo}>
-                                        <td>{item.idCanHo}</td>
-                                        <td><span className={`status ${item.trangThai === 'DA_THANH_TOAN' ? 'paid' : 'unpaid'}`}>
-                                            {item.trangThai === 'DA_THANH_TOAN' ? t('mandatory_fee_list.status_paid') : t('mandatory_fee_list.status_unpaid')}
-                                        </span></td>
-                                        <td>{formatCurrency(item.tongPhi)}</td>
-                                        <td>{formatCurrency(item.tongPhiChungCu)}</td>
-                                        <td>{formatCurrency(item.tongGuiXe)}</td>
-                                        <td>{formatCurrency(item.tongTienIch)}</td>
-                                        <td>{formatCurrency(item.soTienDaNop)}</td>
-                                        <td>{formatCurrency(item.soDu)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="fee-list-footer">
-                        <button className="export-btn" onClick={handleExportReport}>
-                            {t('mandatory_fee_list.export_button')}
+                    {/* Search Bar */}
+                    <div className="search-bar-container">
+                        <input
+                            type="text"
+                            placeholder={t('mandatory_fee_list.placeholder_time_id') || "Nhập ID thời gian (VD: 12-2025)"}
+                            value={idThoiGianThu}
+                            onChange={handleInputChange}
+                        />
+                        <button onClick={handleGenerateList} disabled={isLoading}>
+                            {isLoading ? "Đang tải..." : "Lập danh sách"}
                         </button>
                     </div>
+
+                    {error && <p className="error-msg">{error}</p>}
+
+                    {/* Table Container */}
+                    {feeData && (
+                        <div className="data-wrapper">
+                            {/* Summary */}
+                            <div className="summary-section">
+                                <div className="sum-box"><span>Ngày thu</span><strong>{feeData.ngayThu}</strong></div>
+                                <div className="sum-box"><span>Hạn thu</span><strong>{feeData.hanThu}</strong></div>
+                                <div className="sum-box green"><span>Đã nộp</span><strong>{feeData.paidApartmentCount} / {feeData.totalCanHo}</strong></div>
+                                <div className="sum-box blue"><span>Tổng thu</span><strong>{formatCurrency(feeData.tongPhiAll)}</strong></div>
+                            </div>
+
+                            {/* TABLE (Cuộn ở đây) */}
+                            <div className="table-scroll-area">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID Căn Hộ</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Tổng Phí</th>
+                                            <th>Phí Chung Cư</th>
+                                            <th>Phí Gửi Xe</th>
+                                            <th>Phí Tiện Ích</th>
+                                            <th>Đã Nộp</th>
+                                            <th>Còn Nợ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {feeData.danhSachTongThanhToan.map(item => (
+                                            <tr key={item.idCanHo}>
+                                                <td>{item.idCanHo}</td>
+                                                <td><span className={`status-badge ${item.trangThai === 'DA_THANH_TOAN' ? 'paid' : 'unpaid'}`}>
+                                                    {item.trangThai === 'DA_THANH_TOAN' ? "Đã thanh toán" : "Chưa thanh toán"}
+                                                </span></td>
+                                                <td>{formatCurrency(item.tongPhi)}</td>
+                                                <td>{formatCurrency(item.tongPhiChungCu)}</td>
+                                                <td>{formatCurrency(item.tongGuiXe)}</td>
+                                                <td>{formatCurrency(item.tongTienIch)}</td>
+                                                <td>{formatCurrency(item.soTienDaNop)}</td>
+                                                <td>{formatCurrency(item.soDu)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+
+                {/* 3. FOOTER (Luôn hiển thị) */}
+                {feeData && (
+                    <div className="popup-footer">
+                        <button className="export-btn" onClick={handleExportReport}>
+                            📥 Xuất báo cáo
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
