@@ -7,16 +7,22 @@ const MandatoryDashboard = ({
     onOpenCreate,
     onOpenCalculate,
     onOpenCollect,
-    onOpenList
+    onOpenList,
+    currentPeriodId // <--- THÊM PROP NÀY: ID đợt thu muốn xem (VD: "12-2025")
 }) => {
     const [feeData, setFeeData] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // --- 1. LOGIC ID THỜI GIAN THU ---
-    const today = new Date();
-    const currentMonth = today.getMonth() + 1;
-    const currentYear = today.getFullYear();
-    const idThoiGianThu = `${currentMonth}-${currentYear}`;
+    // --- LOGIC XÁC ĐỊNH ID ĐỢT THU ---
+    // Ưu tiên dùng ID truyền từ ngoài vào. Nếu không có thì lấy tháng hiện tại.
+    const idThoiGianThu = useMemo(() => {
+        if (currentPeriodId) return currentPeriodId;
+
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1;
+        const currentYear = today.getFullYear();
+        return `${currentMonth}${currentYear}`; // Format mặc định: 12-2025
+    }, [currentPeriodId]);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -25,11 +31,17 @@ const MandatoryDashboard = ({
 
             setLoading(true);
 
+            // --- LOG ĐỂ DEBUG ---
+            console.log("Dashboard đang gọi API với ID:", idThoiGianThu);
+
             try {
                 const config = { headers: { 'Authorization': `Bearer ${token}` } };
                 const apiUrl = `http://localhost:8080/qlcc/phi/phi-bat-buoc/${idThoiGianThu}`;
 
                 const response = await axios.get(apiUrl, config);
+
+                // --- LOG KẾT QUẢ TRẢ VỀ ---
+                console.log("Kết quả API Dashboard:", response.data);
 
                 if (response.data && response.data.result) {
                     setFeeData(response.data.result);
@@ -47,24 +59,29 @@ const MandatoryDashboard = ({
         fetchDashboardData();
     }, [idThoiGianThu]);
 
-    // --- 2. TÍNH TOÁN SỐ LIỆU ---
+    // --- TÍNH TOÁN SỐ LIỆU ---
     const stats = useMemo(() => {
-        if (!feeData) return { mustCollect: 0, collected: 0, rate: 0 };
+        // Nếu API trả về null hoặc không có danh sách -> Trả về 0
+        if (!feeData || !feeData.danhSachTongThanhToan) return { mustCollect: 0, collected: 0, rate: 0, paidCount: 0 };
 
+        // 1. TỔNG PHẢI THU: Lấy từ 'tongPhiAll' của API
         const mustCollect = feeData.tongPhiAll || 0;
 
-        const collected = feeData.danhSachTongThanhToan
-            ? feeData.danhSachTongThanhToan.reduce((sum, item) => sum + (item.soTienDaNop || 0), 0)
-            : 0;
+        // 2. THỰC THU: Tổng 'soTienDaNop'
+        const collected = feeData.danhSachTongThanhToan.reduce((sum, item) => sum + (item.soTienDaNop || 0), 0);
 
+        // 3. TỶ LỆ HOÀN THÀNH (THEO TIỀN)
         const rate = mustCollect > 0 ? ((collected / mustCollect) * 100).toFixed(1) : 0;
 
-        return { mustCollect, collected, rate };
+        // 4. SỐ CĂN HỘ ĐÃ NỘP (Đếm thủ công theo trạng thái)
+        const paidCount = feeData.danhSachTongThanhToan.filter(item => item.trangThai === 'DA_THANH_TOAN').length;
+
+        return { mustCollect, collected, rate, paidCount };
     }, [feeData]);
 
-    // --- 3. BIẾN KIỂM TRA DỮ LIỆU CÓ Ý NGHĨA KHÔNG ---
-    // Chỉ coi là "Có dữ liệu" khi feeData không null VÀ Tổng phải thu > 0
-    const hasData = feeData && feeData.tongPhiAll > 0;
+    // Điều kiện hiển thị dữ liệu: Phải có object feeData
+    // Lưu ý: Dù tongPhiAll = 0 (vừa tạo xong chưa tính phí) thì vẫn coi là "có dữ liệu" để hiện số 0
+    const hasData = feeData !== null;
 
     const formatCurrency = (val) => val ? val.toLocaleString('vi-VN') + ' đ' : '0 đ';
 
@@ -73,7 +90,7 @@ const MandatoryDashboard = ({
 
             {/* THANH THAO TÁC NGHIỆP VỤ */}
             <div className="quick-actions-panel">
-                <h3>Thao tác nghiệp vụ (T{currentMonth}/{currentYear})</h3>
+                <h3>Thao tác nghiệp vụ (Kỳ thu: {idThoiGianThu})</h3>
                 <div className="action-buttons">
                     <button className="btn-action create" onClick={onOpenCreate}>
                         <span className="icon">✚</span> Tạo khoản thu
@@ -95,10 +112,8 @@ const MandatoryDashboard = ({
                     {loading ? (
                         <div className="value" style={{ fontSize: '1.2rem', opacity: 0.7 }}>Đang tải...</div>
                     ) : hasData ? (
-                        // Có dữ liệu > 0 thì hiện tiền
                         <div className="value">{formatCurrency(stats.mustCollect)}</div>
                     ) : (
-                        // Không có dữ liệu hoặc = 0 thì hiện chữ báo
                         <div className="value" style={{ fontSize: '1.2rem', opacity: 0.7, fontStyle: 'italic' }}>
                             Chưa tạo đợt thu
                         </div>
@@ -121,7 +136,7 @@ const MandatoryDashboard = ({
                 </div>
 
                 {/* CARD 3: TỶ LỆ HOÀN THÀNH */}
-                <div className="kpi-card green">
+                <div className="kpi-card purple">
                     <h4>Tỷ lệ hoàn thành</h4>
                     {loading ? (
                         <div className="value" style={{ fontSize: '1.2rem', opacity: 0.7 }}>...</div>
@@ -129,7 +144,8 @@ const MandatoryDashboard = ({
                         <>
                             <div className="value">{stats.rate}%</div>
                             <div className="sub-text">
-                                Tiến độ: {feeData.successCount}/{feeData.totalCanHo} căn
+                                {/* Dùng stats.paidCount thay vì feeData.successCount */}
+                                Tiến độ: {stats.paidCount}/{feeData.totalCanHo} căn
                             </div>
                         </>
                     ) : (

@@ -292,12 +292,12 @@ $orange-grad: linear-gradient(to bottom right, #fd7e14, #d66203);
                     text-transform: capitalize;
                     
                     // --- ĐỊNH NGHĨA MÀU CHO CÁC LOẠI (Dùng biến màu chuẩn) ---
-                     &.thêm-nhân-khẩu { background: rgba(0, 242, 195, 0.15); color: $success-color; border: 1px solid rgba(0, 242, 195, 0.3); }
+                    &.thêm-nhân-khẩu { background: rgba(0, 242, 195, 0.15); color: $success-color; border: 1px solid rgba(0, 242, 195, 0.3); }
                     &.xóa-nhân-khẩu { background: rgba(255, 141, 114, 0.15); color: $warning-color; border: 1px solid rgba(255, 141, 114, 0.3); }
                     &.thêm-mới { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border: 1px solid rgba(23, 162, 184, 0.3); }
                     &.tạm-trú { background: rgba(0, 242, 195, 0.15); color: $success-color; border: 1px solid rgba(0, 242, 195, 0.3); }
                     &.tạm-vắng { background: rgba(255, 141, 114, 0.15); color: $warning-color; border: 1px solid rgba(255, 141, 114, 0.3); }
-                    &.thêm-mới { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border: 1px solid rgba(23, 162, 184, 0.3); }
+                    
                     &.thu-phí { background: rgba(67, 97, 238, 0.15); color: $accent-color; border: 1px solid rgba(67, 97, 238, 0.3); }
                     &.đóng-góp { background: rgba(253, 93, 147, 0.15); color: $danger-color; border: 1px solid rgba(253, 93, 147, 0.3); }
                 }

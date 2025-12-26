@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 // Reuse CSS
 import '../../../styles/receipt-styles/CreateFeeWizard.scss';
 
-const CollectFeeWizard = ({ onClose }) => {
+const CollectFeeWizard = ({ onClose, onRefresh }) => { // Thêm onRefresh nếu cần cập nhật lại Dashboard
     const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -65,6 +65,10 @@ const CollectFeeWizard = ({ onClose }) => {
             // Set result state to show success screen
             setPaymentResult(response.data.result);
             setStep(3); // Move to result step
+
+            // Gọi onRefresh để Dashboard cha cập nhật lại số liệu ngay lập tức
+            if (onRefresh) onRefresh();
+
         } catch (error) {
             alert("Lỗi khi xác nhận thanh toán: " + (error.response?.data?.message || error.message));
         } finally {
@@ -157,7 +161,7 @@ const CollectFeeWizard = ({ onClose }) => {
                         </div>
                     )}
 
-                    {/* STEP 3: Result (REDESIGNED - COMPACT & HORIZONTAL) */}
+                    {/* STEP 3: Result (ĐÃ CHỈNH SỬA) */}
                     {step === 3 && paymentResult && (
                         <>
                             {/* Icon Checkmark with Glow */}
@@ -202,8 +206,9 @@ const CollectFeeWizard = ({ onClose }) => {
                                     position: 'relative', overflow: 'hidden'
                                 }}>
                                     <span style={{ fontSize: '0.8rem', color: '#a0aec0', textTransform: 'uppercase', marginBottom: '5px' }}>Thành công</span>
+                                    {/* --- SỬA Ở ĐÂY: Dùng selectedIds.length --- */}
                                     <strong style={{ fontSize: '2rem', color: '#00f2c3', lineHeight: '1' }}>
-                                        {paymentResult.successCount}
+                                        {selectedIds.length}
                                     </strong>
                                     {/* Bottom border stripe */}
                                     <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '4px', background: '#00f2c3' }}></div>
@@ -219,8 +224,9 @@ const CollectFeeWizard = ({ onClose }) => {
                                     position: 'relative', overflow: 'hidden'
                                 }}>
                                     <span style={{ fontSize: '0.8rem', color: '#a0aec0', textTransform: 'uppercase', marginBottom: '5px' }}>Thất bại</span>
+                                    {/* --- Fail count vẫn lấy từ API nếu có, hoặc mặc định 0 --- */}
                                     <strong style={{ fontSize: '2rem', color: '#fd5d93', lineHeight: '1' }}>
-                                        {paymentResult.failCount}
+                                        {paymentResult.failCount || 0}
                                     </strong>
                                     {/* Bottom border stripe */}
                                     <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '4px', background: '#fd5d93' }}></div>
