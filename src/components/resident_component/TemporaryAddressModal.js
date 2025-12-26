@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../styles/resident-styles/MyNewModal.scss'
+import '../../styles/resident-styles/TemporaryModal.scss'
 import { useTranslation } from "react-i18next";
 
 function TemporaryAddressModal({ show, onClose, onSubmit }) {
